@@ -1,0 +1,138 @@
+<% content_for :head do %>
+<script type="text/javascript" charset="utf-8">
+Ext.onReady(function(){
+	var items = [
+		{	name: 'id' },
+		{ name: 'email' },
+		{ name: 'created_at' }
+	]
+
+	var accounts = Ext.data.Record.create(items);
+
+	var selections = new Ext.grid.CheckboxSelectionModel();
+
+	var ds = new Ext.data.Store({
+		reader: new Ext.data.JsonReader({root: 'Accounts', id: 'id'}, accounts),
+		proxy: new Ext.data.HttpProxy({url: '<%= formatted_list_backend_accounts_path(:json) %>'})
+	});
+
+	var grid = new Ext.grid.GridPanel({
+		store: ds,
+		viewConfig: { forceFit: true },
+		clicksToEdit: 'auto',
+		enableColumnHide:false,
+		enableColumnMove:false,
+		border:false,
+		bodyBorder:false,
+		cls:'grid',
+		title:'All Accounts',
+		iconCls:'icon-show-all',
+		region:'center',
+		sm: selections,
+		columns: [
+			selections,
+			{
+				header: "Id", 
+				width: 15, 
+				sortable: true, 
+				dataIndex: 'id'
+			},{ 
+				header: "Email", 
+				width: 120, 
+				sortable: true, 
+				dataIndex: 'email' 
+			},{
+				header: "Created At", 
+				width: 120, 
+				sortable: true, 
+				dataIndex: 'created_at',
+				renderer: Ext.util.Format.dateRenderer('m/d/Y')
+			}	    
+		],
+		tbar: [
+			{
+				id:'add',
+				text: 'Add',
+				disabled:false,
+				cls: 'x-btn-text-icon add',
+				handler:add
+			},'-',{
+				id:'edit',
+				text: 'Edit',
+				disabled:true,
+				cls: 'x-btn-text-icon edit',
+				handler:edit
+			},'-',{
+				id:'remove',
+				text:'Delte',
+				disabled:true,
+				cls:'x-btn-text-icon remove',
+				handler:remove
+			},'->',
+				'Search:', ' ',
+				 new Ext.app.SearchField({
+					store: ds,
+					items: items,
+					width:320
+				})
+		],
+		bbar: new Ext.PagingToolbar({
+			store: ds,
+			displayInfo: true,
+			displayMsg: 'Accounts {0} - {1} of {2}',
+			emptyMsg: "No account to display"
+		})
+	});
+	
+	selections.on('selectionchange', function(){
+		var n = selections.getSelected();
+		var btns = grid.getTopToolbar().items.map;
+		
+    if(!n){
+    	btns.remove.disable();
+			btns.edit.disable();
+      return;
+		} else {
+			btns.remove.enable();
+			btns.edit.enable();
+			return;
+    }
+	});
+	
+	ds.on('remove', function(ds, record, index){
+		mask();
+		new Ajax.Request(record.id, 
+										 {method:'delete', parameters:'id='+id, onSuccess:unmask, onFailure:unmask});
+	});
+	
+	function mask(){
+		grid.el.mask('Sending data to server...', 'x-mask-loading');
+	}
+	
+	function unmask(){
+		grid.el.unmask();
+	}
+	
+	function add(){
+		window.location = 'new'
+	}
+	
+	function edit(){
+		window.location = selections.getSelected().id+'/edit'
+	}
+	
+	function remove(){
+		Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
+			if (btn == 'yes'){
+				selections.each(function(r){
+					ds.remove(r);
+				})
+			}
+		});
+	}
+	
+	Lipsiadmin.app.addItem(grid);
+	ds.load();
+});
+</script>
+<% end %>

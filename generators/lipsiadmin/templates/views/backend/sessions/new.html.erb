@@ -1,0 +1,27 @@
+<html>
+<head>
+	<title>LipsiaAdmin v2.0b</title>
+	<%= stylesheet_link_tag "backend" %>
+</head>
+<body class="Lipsiadmin">
+	<div id="login_box">
+		<div id="fields">
+			<div id="fields-content">
+				<% form_tag backend_sessions_path do %>
+					<h2><em>Login</em> in to Admin Panel</h2>
+					<div class="field">Email:<br />
+						<%= text_field_tag :email, nil, :size => 16 %>
+					</div>
+					<div class="field">Password:<br />
+						<%= password_field_tag :password, nil, :size => 16 %>
+					</div>
+					<div style="text-align:right;">
+						<%= image_submit_tag "/images/backend/btn_login.png" %>
+					</div>
+					<div id="messages" style="text-align:right;margin-top:5px"><%= flash[:notice] %></div>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+//  
+//  Created by Davide D'Agostino on 2007-12-15.
+//  Copyright 2007 Lipsiasoft s.r.l.. All rights reserved.
+// 
+Ext.BLANK_IMAGE_URL = '/javascripts/resources/images/default/s.gif'; 
+Ext.namespace('Lipsiadmin');
+Lipsiadmin.app = function(){
+	return {
+		init : function(id, message){
+			Ext.QuickTips.init();
+			
+			<% for menu in Menu.find(:all, :order => :position) %>
+				this.admin<%= menu.id %>Panel = new Ext.Panel({
+					frame:true,
+					title: '<%= menu.name %>',
+					collapsible:true,
+					contentEl:'admin-<%= menu.id %>',
+					titleCollapse: true
+				});
+				<% @panels << "this.admin#{menu.id}Panel" %>
+      <% end %>
+
+			this.actionPanel = new Ext.Panel({
+				id:'action-panel',
+				region:'west',
+				split:true,
+				collapsible: true,
+				collapseMode: 'mini',
+				width:200,
+				minWidth: 150,
+				border: false,
+				baseCls:'x-plain',
+				items: [<%= @panels.join(",") %>]
+			});
+
+			this.headerPanel = new Ext.Panel({
+				contentEl:'header',
+				region:'north',
+				height:50,
+				border: false,
+				baseCls:'header'
+			});
+			
+			this.contentDynamic = new Ext.Panel({
+				id:'dynamic',
+				region:'center',
+				border:false,
+				layout:'fit'
+			});
+			
+			this.viewport = new Ext.Viewport({
+				layout:'border',
+				items: [this.headerPanel, this.actionPanel, this.contentDynamic]
+			});
+		}, // init
+
+		addItem : function(item){
+			this.contentDynamic.add(item);
+			this.contentDynamic.doLayout();
+		},// addItem
+		
+		addBody : function(withHeader){
+			if (withHeader){
+				this.contentHeader = new Ext.Panel({
+					contentEl:'contentHeader',
+					region:'north',
+					border:false
+				});
+
+				this.contentMain = new Ext.Panel({
+					contentEl:'contentMain',
+					autoScroll:true,
+					region:'center',
+					border:true,
+					bodyStyle:'border-bottom:none;'
+				});
+
+				this.contentPanel = new Ext.Panel({
+					id:'content',
+					region:'center',
+					layout:'border',
+					border:false,
+					items: [this.contentHeader, this.contentMain]
+				});
+			} else {
+				this.contentPanel = new Ext.Panel({
+					contentEl:'contentMain',
+					autoScroll:true,
+					border:true,
+					layout:'border',
+					bodyStyle:'border-bottom:none;border-top:none;background-color:#FFF'
+				});
+			}
+			this.addItem(this.contentPanel);
+		}, // addBody
+		
+		addBodyTabs : function(withHeader, tabId){
+			if (withHeader){
+				this.contentHeader = new Ext.Panel({
+					contentEl:'contentHeader',
+					region:'north',
+					border:false
+				});
+				
+				this.tabPanel = new Ext.TabPanel({
+				  renderTo:tabId,
+				  deferredRender:false,
+					enableTabScroll:true,
+          border:true,
+          region:'center',
+					defaults: { autoScroll:true }
+		    });
+				
+				this.contentMain = new Ext.Panel({
+		      contentEl:'contentMain',
+					region:'center',
+					border:false,
+					layout:'border',
+					bodyStyle:'border-bottom:none;',
+					items: this.tabPanel
+				});
+
+				this.contentPanel = new Ext.Panel({
+					contentEl:'contentMain',
+					id:'content',
+					region:'center',
+					layout:'border',
+					border:false,
+					items: [this.contentHeader, this.contentMain]
+				});
+				
+				this.addItem(this.contentPanel);
+			
+			} else {
+				
+				this.tabPanel = new Ext.TabPanel({
+					contentEl:'contentMain',
+					visibility:'visibility',
+					autoScroll:true,
+					border:true,
+					layout:'border',
+					bodyStyle:'border-bottom:none;border-top:none;background-color:#FFF'
+				});
+			  
+			  this.addItem(this.tabPanel);
+			}
+		}, // addBodyTabs		
+    
+    addTab : function(id, title, show){
+      item = this.tabPanel.add({ contentEl: id, title: title });
+      if (show) { item.show(); }
+    }
+    
+	} // return
+}();
+Ext.onReady(Lipsiadmin.app.init, Lipsiadmin.app, true);

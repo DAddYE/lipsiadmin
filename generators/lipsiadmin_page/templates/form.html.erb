@@ -1,0 +1,22 @@
+<%%= ext_error_messages_for :<%= singular_name %> %>
+<%= template_for_inclusion %>
+<% if with_images -%>
+<!--
+	Per immagini multiple:
+	1) Aggiungere a boxImage float:left;margin:5px;margin-left:0px
+	2) Prima di label_image <br style="clear:both" />
+-->
+<div class="label">
+	<%% if @<%= singular_name %> && @<%= singular_name %>.image %>
+		<div class="boxImage" style="width:<%%= @<%= singular_name %>.image.get_thumbnail(:thumb).width %>px;">
+			<div><%%= image_tag(@<%= singular_name %>.image.public_filename(:thumb)) %></div>
+			<div style="text-align:center;padding:5px"><%%= link_to "Destroy", {:action => :destroy_image, :id => @<%= singular_name %>}, {:confirm => "Sei sicuro di voler eliminare questa immagine?", :method => :delete} %></div>
+		</div>
+	<%% end %>
+</div>
+<div class="label_image">
+	<h3>Image</h3>
+	<div>Browse: <%%= file_field :image, :uploaded_data %></div>
+	<div class="description">L'immagine è un campo necessario</div>
+</div>
+<% end -%>

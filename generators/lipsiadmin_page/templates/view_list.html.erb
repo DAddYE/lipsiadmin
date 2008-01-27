@@ -1,0 +1,124 @@
+<%% content_for :head do %>
+<script type="text/javascript" charset="utf-8">
+Ext.onReady(function(){
+	var items = [
+		<%= model_instance.class.content_columns.collect{ |column| "{ name: '#{column.name}' }" }.join(",\n") %>
+	]
+
+	var <%= plural_name %> = Ext.data.Record.create(items);
+
+	var selections = new Ext.grid.CheckboxSelectionModel();
+
+	var ds = new Ext.data.Store({
+		reader: new Ext.data.JsonReader({root: '<%= plural_name %>', id: 'id'}, <%= plural_name %>),
+		proxy: new Ext.data.HttpProxy({url: '<%%= formatted_list_backend_<%= plural_name %>_path(:json) %>'})
+	});
+
+	var grid = new Ext.grid.GridPanel({
+		store: ds,
+		viewConfig: { forceFit: true },
+		clicksToEdit: 'auto',
+		enableColumnHide:false,
+		enableColumnMove:false,
+		border:false,
+		bodyBorder:false,
+		cls:'grid',
+		title:'All <%= plural_name.capitalize %>',
+		iconCls:'icon-show-all',
+		region:'center',
+		sm: selections,
+		columns: [
+			selections,
+			<%= model_instance.class.content_columns.collect{ |column| "{
+					id: '#{column.name}',
+					header: '#{column.human_name}',
+					dataIndex: '#{column.name}' 
+				}" }.join(",") %>   
+		],
+		tbar: [
+			{
+				id:'add',
+				text: 'Add',
+				disabled:false,
+				cls: 'x-btn-text-icon add',
+				handler:add
+			},'-',{
+				id:'edit',
+				text: 'Edit',
+				disabled:true,
+				cls: 'x-btn-text-icon edit',
+				handler:edit
+			},'-',{
+				id:'remove',
+				text:'Delte',
+				disabled:true,
+				cls:'x-btn-text-icon remove',
+				handler:remove
+			},'->',
+				'Search:', ' ',
+				 new Ext.app.SearchField({
+					store: ds,
+					items: items,
+					width:320
+				})
+		],
+		bbar: new Ext.PagingToolbar({
+			store: ds,
+			displayInfo: true,
+			displayMsg: '<%= plural_name.capitalize %> {0} - {1} of {2}',
+			emptyMsg: "No <%= singular_name %> to display"
+		})
+	});
+	
+	selections.on('selectionchange', function(){
+		var n = selections.getSelected();
+		var btns = grid.getTopToolbar().items.map;
+		
+    if(!n){
+    	btns.remove.disable();
+			btns.edit.disable();
+      return;
+		} else {
+			btns.remove.enable();
+			btns.edit.enable();
+			return;
+    }
+	});
+	
+	ds.on('remove', function(ds, record, index){
+		mask();
+		new Ajax.Request(record.id, 
+										 {method:'delete', parameters:'id='+id, onSuccess:unmask, onFailure:unmask});
+	});
+	
+	function mask(){
+		grid.el.mask('Sending data to server...', 'x-mask-loading');
+	}
+	
+	function unmask(){
+		grid.el.unmask();
+	}
+	
+	function add(){
+		window.location = 'new'
+	}
+	
+	function edit(){
+		window.location = selections.getSelected().id+'/edit'
+	}
+	
+	function remove(){
+		Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
+			if (btn == 'yes'){
+				selections.each(function(r){
+					ds.remove(r);
+				})
+			}
+		});
+	}
+	
+	Lipsiadmin.app.addItem(grid);
+	ds.load();
+});
+</script>
+<%% end %>

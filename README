@@ -1,0 +1,41 @@
+Created by Davide D'Agostino on 2008-01-11.
+Copyright 2008 Lipsiasoft s.r.l. All rights reserved.
+
+Released under the MIT license
+
+Lipsiadmin
+===========
+
+This admin include some default plugin, All rights are reserved to their authors
+
+Plugins:
+
+authenticated_system
+better_error_messages
+better_error
+better_nested_set
+better_nested_set_helper
+better_tag_helper
+include_javascripts
+pdf_helper
+prince
+without_table
+serializo
+
+Prerequisites
+=============
+
+Rails 2.0
+
+
+Installation
+============
+
+script/plugin install http://svn.lipsiadmin.com/lipsiadmin
+
+
+Example
+=======
+
+script/generate lipsiadmin # Generate the base admin
+script/generate lipsiadmin_page yourmodel # Generate a "scaffold" for your model, you can add --with-images for upload images.

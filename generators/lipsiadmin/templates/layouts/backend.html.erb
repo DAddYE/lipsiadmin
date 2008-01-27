@@ -1,0 +1,38 @@
+<html>
+<head>
+	<title>Lipsiadmin 2008b</title>
+	<%= stylesheet_link_tag "/javascripts/resources/css/ext-all" %>
+	<%= stylesheet_link_tag "backend", :cache => "Lipsiadmin" %>
+	<%= javascript_include_tag :defaults, :cache => "Prototype" %>
+	<%= javascript_include_tag "ext-prototype-adapter", "ext-all", "backend", "search-field", :cache => "Lipsiadmin" %>
+	<% if yield(:style) %>
+		<style type="text/css" media="screen">
+			<%= yield(:style) %>
+		</style>
+	<% end %>
+	<% if yield(:script) %>
+		<script type="text/javascript" charset="utf-8">
+			<%= yield(:script) %>
+		</script>
+	<% end %>
+	<%= yield(:head) %>
+</head>
+<body>
+	<span></span>
+	<div id="header">
+		<div id="logo"><%= image_tag("backend/logo.png") %></div>
+		<div id="logout"><div id="logout-text"><%= link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete %></div></div>
+	</div>
+	<% for menu in Menu.find(:all, :order => :position) %>
+		<ul id="admin-<%= menu.id %>">
+			<% for menuitem in menu.menuitems.find(:all, :order => :position) %>
+				<li>
+					<img src="/javascripts/resources/images/default/s.gif" class="<%= menuitem.style %>"/>
+					<%= link_to menuitem.name, menuitem.url %>
+				</li>
+			<% end %>
+		</ul>
+	<% end %>
+	<%= yield %>
+</body>
+</html>

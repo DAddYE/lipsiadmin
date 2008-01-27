@@ -1,0 +1,2 @@
+module Backend::BaseHelper
+end
