@@ -2,7 +2,6 @@ require 'controllers_helpers'
 require 'pdf_helper'
 require 'prince'
 require 'authenticated_system'
-require 'include_javascripts'
 require 'better_errors'
 require 'better_nested_set'
 require 'better_nested_set_helper'
@@ -19,7 +18,6 @@ end
 
 ActionView::Base.class_eval do
   include LipsiaSoft::Acts::BetterNestedSetHelper
-  include LipsiaSoft::IncludeJavascripts
   include LipsiaSoft::BetterTagHelper
   include LipsiaSoft::BetterErrorMessagesFor
 end
