@@ -38,3 +38,7 @@ Example
 
 script/generate lipsiadmin # Generate the base admin
 script/generate lipsiadmin_page yourmodel # Generate a "scaffold" for your model, you can add --with-images for upload images.
+
+See our wiki for more examples and docs
+
+http://rails.lipsiasoft.com/wiki/lipsiadmin
