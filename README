@@ -16,7 +16,6 @@ better_error
 better_nested_set
 better_nested_set_helper
 better_tag_helper
-include_javascripts
 pdf_helper
 prince
 without_table
