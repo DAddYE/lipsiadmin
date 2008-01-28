@@ -10,7 +10,7 @@
 	<%% if @<%= singular_name %> && @<%= singular_name %>.image %>
 		<div class="boxImage" style="width:<%%= @<%= singular_name %>.image.get_thumbnail(:thumb).width %>px;">
 			<div><%%= image_tag(@<%= singular_name %>.image.public_filename(:thumb)) %></div>
-			<div style="text-align:center;padding:5px"><%%= link_to "Destroy", {:action => :destroy_image, :id => @<%= singular_name %>}, {:confirm => "Sei sicuro di voler eliminare questa immagine?", :method => :delete} %></div>
+			<div style="text-align:center;padding:5px"><%%= link_to "Destroy", {:action => :destroy_image, :id => @<%= singular_name %>}, {:confirm => "Are you sure to destroy this image?", :method => :delete} %></div>
 		</div>
 	<%% end %>
 </div>
