@@ -30,7 +30,7 @@ class Backend::AccountsController < BackendController
   
   def update
     @account = Account.find(params[:id])
-    @account.update_attributes(params[:account])
+    @account.update_attributes!(params[:account])
     redirect_to list_backend_accounts_path
   rescue ActiveRecord::RecordInvalid
     render :action => :edit
