@@ -6,7 +6,7 @@ module LipsiaSoft
     end
     
     def lipsia_box(value)
-      value ? "<div class='greenBox'>S</div>" : "<div class='redBox'>N</div>"
+      value ? "<img src=\"/images/backend/flag_green.gif\"/>" : "<img src=\"/images/backend/flag_red.gif\"/>"
     end
     
     def lipsia_image(image)
