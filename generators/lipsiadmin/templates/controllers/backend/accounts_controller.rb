@@ -38,12 +38,7 @@ class Backend::AccountsController < BackendController
   
   def destroy
     Account.find(params[:id]).destroy
-    respond_to do |format|
-      format.json do
-        return_data = { :success => false, :msg => '', :data => {} }  
-        render :json => return_data
-      end
-    end
+    render :json => { :success => false, :msg => '', :data => {} }
   end
 
   def activate
@@ -54,5 +49,4 @@ class Backend::AccountsController < BackendController
     end
     redirect_to new_backend_session_path
   end
-
 end

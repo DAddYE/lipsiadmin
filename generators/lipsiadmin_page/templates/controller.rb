@@ -60,12 +60,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 
   def destroy<%= suffix %>
     <%= model_name %>.find(params[:id]).destroy
-    respond_to do |format|
-      format.json do
-        return_data = { :success => true, :msg => '', :data => {} }  
-        render :json => return_data
-      end
-    end
+    render :json => { :success => true, :msg => '', :data => {} } 
   end
 <% if options[:with_images] -%>  
   def destroy_image
