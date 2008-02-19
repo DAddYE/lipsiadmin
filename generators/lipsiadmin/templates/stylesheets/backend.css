@@ -31,6 +31,16 @@ body {
 	padding:5px 0px 5px 0px;
 }
 
+.label_title { 
+	padding:5px 0px 5px 0px;
+	color: #3764A0; 
+	border-bottom:1px dotted #C4D2E5;
+	padding-bottom:3px;
+	margin-top:20px;
+	font-size:1.2em;
+	font-weight: bold;
+}
+
 .label_image {
 	padding:5px 5px 5px 5px;
 	background-color:#DFE8F6;
