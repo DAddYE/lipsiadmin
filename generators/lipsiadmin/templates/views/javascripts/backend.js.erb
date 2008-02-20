@@ -4,12 +4,23 @@
 // 
 Ext.BLANK_IMAGE_URL = '/javascripts/resources/images/default/s.gif'; 
 Ext.namespace('Lipsiadmin');
+
+Ext.util.Format.eurMoney = function(v){
+	v = (Math.round((v-0)*100))/100;
+	v = (v == Math.floor(v)) ? v + ".00" : ((v*10 == Math.floor(v*10)) ? v + "0" : v);
+	return "€" + v ;
+};
+
+function showMessages(transport){
+	Ext.Msg.alert('Stato', transport.responseText);
+}
+
 Lipsiadmin.app = function(){
 	return {
 		init : function(id, message){
 			Ext.QuickTips.init();
 			
-			<% for menu in Menu.find(:all, :order => :position) %>
+			<% for menu in Menu.find(:all, :order => :position, :conditions => ["admin = ?", current_account.admin ]) %>
 				this.admin<%= menu.id %>Panel = new Ext.Panel({
 					frame:true,
 					title: '<%= menu.name %>',
@@ -86,9 +97,9 @@ Lipsiadmin.app = function(){
 				this.contentPanel = new Ext.Panel({
 					contentEl:'contentMain',
 					autoScroll:true,
-					border:true,
-					layout:'border',
-					bodyStyle:'border-bottom:none;border-top:none;background-color:#FFF'
+					border: false,
+					region:'center',
+					layout:'fit'
 				});
 			}
 			this.addItem(this.contentPanel);
@@ -136,6 +147,7 @@ Lipsiadmin.app = function(){
 				this.tabPanel = new Ext.TabPanel({
 					contentEl:'contentMain',
 					visibility:'visibility',
+					region: 'center',
 					autoScroll:true,
 					border:true,
 					layout:'border',
@@ -147,7 +159,7 @@ Lipsiadmin.app = function(){
 		}, // addBodyTabs		
     
     addTab : function(id, title, show){
-      item = this.tabPanel.add({ contentEl: id, title: title });
+      var item = this.tabPanel.add({ contentEl: id, title: title });
       if (show) { item.show(); }
     }
     

@@ -293,6 +293,7 @@ a:hover { text-decoration:none; color:#3764A0; }
   cursor:move;
 }
 
+.imgButton { vertical-align: text-bottom; }
 #content-header-left { float:left; padding-top:5px; font-size:1.2em; }
 #content-header-right { float:right; }
 #logo { float:left; }
