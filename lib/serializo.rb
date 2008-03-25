@@ -1,24 +1,13 @@
 class Serializo
-  @@obj = Hash.new
-  def initialize(objects)
-    return if objects.nil?
+  def self.generate(objects)
+    objects ||= {}
+    
+    ActiveRecord::WithoutTable.columns = []
     objects.each do |key, value|
-      RAILS_DEFAULT_LOGGER.debug "--> Serializo -> #{key} -> #{value}"
-      code = <<-CLASS
-        def #{key}
-          @@obj[:#{key}]
-        end
-
-        def #{key}=(val)
-          @@obj[:#{key}]=val
-        end
-      CLASS
-      self.class.class_eval code
-      @@obj[key.to_sym]=value
+      RAILS_DEFAULT_LOGGER.debug "---> Serializo: #{key}, #{value}"
+      ActiveRecord::WithoutTable.column(key, :string, value.to_s)
     end
-  end
-  
-  def method_missing(name, *args, &block) 
-    nil
+    
+    return ActiveRecord::WithoutTable.new
   end
 end
