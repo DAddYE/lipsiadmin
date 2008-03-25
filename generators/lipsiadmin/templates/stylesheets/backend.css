@@ -136,7 +136,9 @@ body {
 .icon-edit {
 	background-image:url(/images/backend/edit.gif) !important;
 }
-
+.icon-show-support {
+	background-image:url(/images/backend/icon-show-support.gif) !important;
+}
 
 .icon-by-date {
   background-image:url(/images/backend/icon-by-date.gif) !important;
