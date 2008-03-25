@@ -42,3 +42,12 @@ script/generate lipsiadmin_page yourmodel # Generate a "scaffold" for your model
 See our wiki for more examples and docs
 
 http://rails.lipsiasoft.com/wiki/lipsiadmin
+
+WARNING
+=======
+If you have a table named Items and generate an admin page, search does not work. 
+Guess it has something to do with the item object in the extjs code.
+
+THANKS
+======
+Many thanks to: Gabrio, Philippe and many others that help me in find/fix bugs.
