@@ -11,8 +11,11 @@ Ext.util.Format.eurMoney = function(v){
 	return "€" + v ;
 };
 
+Ext.util.pageSize = 50; // Used in Ext.PagingToolbar
+Ext.util.Pagination = { params:{start:0, limit:Ext.util.pageSize} }; // Used in ds.load();
+
 function showMessages(transport){
-	Ext.Msg.alert('Stato', transport.responseText);
+	Ext.Msg.alert('Attention', transport.responseText);
 }
 
 Lipsiadmin.app = function(){
@@ -68,6 +71,7 @@ Lipsiadmin.app = function(){
 		addItem : function(item){
 			this.contentDynamic.add(item);
 			this.contentDynamic.doLayout();
+			this.unmask();
 		},// addItem
 		
 		addBody : function(withHeader){
@@ -161,8 +165,17 @@ Lipsiadmin.app = function(){
     addTab : function(id, title, show){
       var item = this.tabPanel.add({ contentEl: id, title: title });
       if (show) { item.show(); }
-    }
+    }, // addTab
     
+		mask : function(text){
+			if (text == null || text.length == 0) { text = 'Connecting with server' }
+			this.contentDynamic.el.mask(text, 'x-mask-loading');
+		}, // mask
+		
+		unmask : function(){
+			this.contentDynamic.el.unmask();
+		} // unmask
+		
 	} // return
 }();
 Ext.onReady(Lipsiadmin.app.init, Lipsiadmin.app, true);
