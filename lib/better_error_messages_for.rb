@@ -16,11 +16,9 @@ module LipsiaSoft
             html[key] = 'errorExplanation'
           end
         end
-        header_message = "Attention"
         error_messages = objects.map {|object| object.errors.full_messages.map {|msg| content_tag(:li, msg) } }
-        content_tag(:div,
-          content_tag(options[:header_tag] || :h3, header_message) <<
-            content_tag(:p, 'There were some problems:') <<
+        content_tag(:div, 
+            content_tag(:p, 'Ci sono dei problemi:') <<
             content_tag(:ul, error_messages) << 
             content_tag(:p, '&nbsp;'),
           html
@@ -47,11 +45,19 @@ module LipsiaSoft
         header_message = "Attention"
         error_messages = objects.map {|object| object.errors.full_messages.map {|msg| content_tag(:li, msg) } }
         body_message   = content_tag(:ul, error_messages)
-        javascript_tag("Ext.Msg.show({title:\"#{header_message}\",msg:\"#{escape_javascript(body_message)}\",width:\"300px\",buttons: Ext.MessageBox.OK})")
+        javascript_tag("Ext.onReady(function(){ 
+            Ext.Msg.show({
+               title:'#{header_message}',
+               msg: '#{escape_javascript(body_message)}',
+               buttons: Ext.Msg.OK,
+               minWidth: 400
+            });
+          });"
+        )
       else
         ''
       end
     end
     
   end
-end  
+end

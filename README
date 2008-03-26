@@ -48,6 +48,12 @@ WARNING
 If you have a table named Items and generate an admin page, search does not work. 
 Guess it has something to do with the item object in the extjs code.
 
+REMEMBER
+========
+Edit config/config.yml
+Edit routes after a script/generate lipsiadmin_page
+Remove protect_from_forgery from app/application.rb
+
 THANKS
 ======
 Many thanks to: Gabrio, Philippe and many others that help me in find/fix bugs.
