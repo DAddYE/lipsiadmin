@@ -44,6 +44,7 @@ Ext.onReady(function(){
 				<%= model_instance.class.content_columns.collect{ |column| "{
 						id: '#{column.name}',
 						header: '#{column.human_name}',
+						sortable: true,
 						dataIndex: '#{column.name}' 
 					}" }.join(",") %>   
 			],
