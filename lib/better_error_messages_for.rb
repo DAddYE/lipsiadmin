@@ -18,7 +18,7 @@ module LipsiaSoft
         end
         error_messages = objects.map {|object| object.errors.full_messages.map {|msg| content_tag(:li, msg) } }
         content_tag(:div, 
-            content_tag(:p, 'Ci sono dei problemi:') <<
+            content_tag(:p, 'Attention:') <<
             content_tag(:ul, error_messages) << 
             content_tag(:p, '&nbsp;'),
           html
