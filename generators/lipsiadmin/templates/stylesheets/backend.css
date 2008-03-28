@@ -299,6 +299,7 @@ a:hover { text-decoration:none; color:#3764A0; }
 #content-header-left { float:left; padding-top:5px; font-size:1.2em; }
 #content-header-right { float:right; }
 #logo { float:left; }
+#logo img { border:none; }
 #logout { float:right; }
 #logout-text { padding:5px 10px 0px 0px; }
 #logout a { text-decoration:none; color: #2d537a; font-family: Arial, sans-serif; }

@@ -21,7 +21,7 @@
 <body>
 	<span></span>
 	<div id="header">
-		<div id="logo"><%= image_tag("backend/logo.png") %></div>
+		<div id="logo"><%= link_to image_tag("backend/logo.png"), backend_path %></div>
 		<div id="logout"><div id="logout-text"><%= link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete %></div></div>
 	</div>
 	<% for menu in Menu.find(:all, :order => :position) %>
