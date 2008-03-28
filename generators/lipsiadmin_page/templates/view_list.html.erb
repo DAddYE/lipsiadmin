@@ -99,23 +99,9 @@ Ext.onReady(function(){
 				return;
 	    }
 		});
-
-		ds.on('remove', function(ds, record, index){
-			mask();
-			new Ajax.Request(record.id, 
-											 {method:'delete', parameters:'id='+id, onSuccess:unmask, onFailure:unmask});
-		});
 		
 		grid.getBottomToolbar().on('render', function(){ 	grid.getBottomToolbar().loading.hide(); });
 		
-		function mask(){
-			Lipsiadmin.app.mask('Sending data to server...');
-		}
-
-		function unmask(){
-			Lipsiadmin.app.unmask();
-		}
-
 		function add(){
 			window.location = 'new'
 		}
@@ -128,7 +114,25 @@ Ext.onReady(function(){
 			Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
 				if (btn == 'yes'){
 					selections.each(function(r){
-						ds.remove(r);
+						Lipsiadmin.app.mask('Sending data to server...');
+						Ext.Ajax.request({
+							url: r.id,
+							method: 'DELETE',
+							success: function(result, request){
+								Lipsiadmin.app.unmask();
+								var resultValue = Ext.decode(result.responseText); 
+								if (resultValue.success == true){
+									ds.remove(r);
+								} else { 
+						    	Ext.MessageBox.alert('Warning', resultValue.msg);
+									return;
+								}
+							},								
+							failure: function(result, request) {
+								Lipsiadmin.app.unmask();
+								Ext.Msg.alert('Warning', 'There is a problem in the code. Contact the support.');
+							}
+						});
 					})
 				}
 			});
