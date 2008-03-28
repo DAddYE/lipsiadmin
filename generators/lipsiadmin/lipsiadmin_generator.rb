@@ -11,7 +11,7 @@ class LipsiadminGenerator < Generator::Lipsiadmin
 
   map.backend     '/admin', :controller => 'backend/base', :action => 'index'
   map.activation  '/admin/accounts/activate/:activation_code', :controller => 'backend/accounts', :action=>'activate'
-  map.connect 'javascripts/:action.:format', :controller => 'javascripts'
+  map.connect     '/javascripts/:action.:format', :controller => 'javascripts'
   ROUTES
     
     application_src = File.read(path)
