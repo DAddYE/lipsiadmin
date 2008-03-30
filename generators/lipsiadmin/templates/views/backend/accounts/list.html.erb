@@ -51,7 +51,6 @@ Ext.onReady(function(){
 					dataIndex: 'id'
 				},{ 
 					header: "Email", 
-					width: 120, 
 					sortable: true, 
 					dataIndex: 'email'
 				},{ 
@@ -70,10 +69,11 @@ Ext.onReady(function(){
 					renderer: Ext.util.Format.boolRenderer
 				},{
 					header: "Created At", 
-					width: 120, 
+					width: 50,
+					align:'center', 
 					sortable: true, 
 					dataIndex: 'created_at',
-					renderer: Ext.util.Format.dateRenderer('m/d/Y')
+					renderer: Ext.util.Format.dateRenderer('m/d/Y G:i')
 				}	    
 			],
 			tbar: [
