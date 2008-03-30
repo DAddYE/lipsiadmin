@@ -3,9 +3,13 @@ class Backend::AccountsController < BackendController
     respond_to do |format|
       format.html
       format.json do 
-        account = Account.find(:all)
+        accounts = Account.find(:all)
         return_data = Hash.new 
-        return_data[:Accounts] = account
+        return_data[:accounts] = accounts.collect { |u| { :id => u.id,
+                                                          :email => u.email,
+                                                          :active => u.active?, 
+                                                          :admin => u.admin,
+                                                          :created_at => u.created_at } }
         render :json => return_data
       end
     end
@@ -37,8 +41,11 @@ class Backend::AccountsController < BackendController
   end
   
   def destroy
-    Account.find(params[:id]).destroy
-    render :json => { :success => false, :msg => '', :data => {} }
+    if Account.find(params[:id]).destroy
+      render :json => { :success => true } 
+    else
+      render :json => { :success => false, :msg => "You cannot delete this record." }
+    end  
   end
 
   def activate

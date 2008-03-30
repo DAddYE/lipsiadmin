@@ -11,6 +11,14 @@ Ext.util.Format.eurMoney = function(v){
 	return "€" + v ;
 };
 
+Ext.util.Format.boolRenderer = function(v){
+	if (v){
+		return '<img src="/images/backend/flag_green.gif" width="14" height="11" />'
+	}else{
+		return '<img src="/images/backend/flag_red.gif" width="14" height="11" />'
+	}
+}
+
 Ext.util.pageSize = 50; // Used in Ext.PagingToolbar
 Ext.util.Pagination = { params:{start:0, limit:Ext.util.pageSize} }; // Used in ds.load();
 

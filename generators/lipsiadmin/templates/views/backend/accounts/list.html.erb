@@ -4,12 +4,14 @@ Ext.onReady(function(){
 	var items = [
 		{	name: 'id' },
 		{ name: 'email' },
+		{ name: 'active'},
+		{ name: 'admin'},
 		{ name: 'created_at' }
 	]
 
 	var js = new Ext.data.JsonStore({
 		url: '<%= formatted_list_backend_accounts_path(:json) %>',                                       
-		root: 'Accounts',
+		root: 'accounts',
 		id: 'id',                                            
 		fields: items
 	});
@@ -25,7 +27,7 @@ Ext.onReady(function(){
 			remoteSort: true
 		});
 		
-		ds.setDefaultSort('id', 'desc')
+		ds.setDefaultSort('created_at', 'desc');
 		
 		var grid = new Ext.grid.GridPanel({
 			store: ds,
@@ -51,7 +53,21 @@ Ext.onReady(function(){
 					header: "Email", 
 					width: 120, 
 					sortable: true, 
-					dataIndex: 'email' 
+					dataIndex: 'email'
+				},{ 
+					header: "Active", 
+					width: 30,
+					align: 'center',
+					sortable: true, 
+					dataIndex: 'active',
+					renderer: Ext.util.Format.boolRenderer
+				},{ 
+					header: "Admin", 
+					width: 30,
+					align: 'center',
+					sortable: true, 
+					dataIndex: 'admin',
+					renderer: Ext.util.Format.boolRenderer
 				},{
 					header: "Created At", 
 					width: 120, 
@@ -112,22 +128,7 @@ Ext.onReady(function(){
 	    }
 		});
 		
-		ds.on('remove', function(ds, record, index){
-			mask();
-			new Ajax.Request(record.id, 
-											 {method:'delete', parameters:'id='+id, onSuccess:unmask, onFailure:unmask});
-		});
-		
 		grid.getBottomToolbar().on('render', function(){ 	grid.getBottomToolbar().loading.hide(); });
-
-
-		function mask(){
-			Lipsiadmin.app.mask('Sending data to server...', 'x-mask-loading');
-		}
-
-		function unmask(){
-			Lipsiadmin.app.unmask();
-		}
 
 		function add(){
 			window.location = 'new'
@@ -141,7 +142,25 @@ Ext.onReady(function(){
 			Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
 				if (btn == 'yes'){
 					selections.each(function(r){
-						ds.remove(r);
+						Lipsiadmin.app.mask('Sending data to server...');
+						Ext.Ajax.request({
+							url: r.id,
+							method: 'DELETE',
+							success: function(result, request){
+								Lipsiadmin.app.unmask();
+								var resultValue = Ext.decode(result.responseText); 
+								if (resultValue.success == true){
+									ds.remove(r);
+								} else { 
+						    	Ext.MessageBox.alert('Warning', resultValue.msg);
+									return;
+								}
+							},								
+							failure: function(result, request) {
+								Lipsiadmin.app.unmask();
+								Ext.Msg.alert('Warning', 'There is a problem in the code. Contact the support.');
+							}
+						});
 					})
 				}
 			});

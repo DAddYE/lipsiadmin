@@ -9,9 +9,10 @@ class Account < ActiveRecord::Base
   validates_length_of       :password, :within => 4..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
   validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :email, :case_sensitive => false
-  before_save :encrypt_password
-  before_create :make_activation_code 
+  validates_uniqueness_of   :email,    :case_sensitive => false
+  validates_format_of       :email,    :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  before_save               :encrypt_password
+  before_create             :make_activation_code 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be  ded here.
   attr_accessible :email, :password, :password_confirmation, :admin

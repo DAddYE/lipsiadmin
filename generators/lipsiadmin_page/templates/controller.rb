@@ -11,7 +11,6 @@ class Backend::<%= controller_class_name %>Controller < BackendController
       format.json do
         <%= plural_name %> = <%= model_name %>.find(:all)
         return_data = Hash.new()      
-        return_data[:Total] = <%= plural_name %>.size     
         return_data[:<%= plural_name %>] = <%= plural_name %>.collect{|u| { :id => u.id, <%= model_instance.class.content_columns.collect{ |column| "
                                                         :#{column.name} => u.#{column.name}" }.join(",") %> } } 
         render :json => return_data
