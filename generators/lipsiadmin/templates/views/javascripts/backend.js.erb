@@ -31,15 +31,15 @@ Lipsiadmin.app = function(){
 		init : function(id, message){
 			Ext.QuickTips.init();
 			
-			<% for menu in Menu.find(:all, :order => :position, :conditions => ["admin = ?", current_account.admin ]) %>
-				this.admin<%= menu.id %>Panel = new Ext.Panel({
+			<% for menuitem in Menuitem.find(:all, :order => :position, :group => :menu, :conditions => ["admin = ?", current_account.admin ]) %>
+				this.admin<%= menuitem.id %>Panel = new Ext.Panel({
 					frame:true,
-					title: '<%= menu.name %>',
+					title: '<%= menuitem.menu %>',
 					collapsible:true,
-					contentEl:'admin-<%= menu.id %>',
+					contentEl:'admin-<%= menuitem.id %>',
 					titleCollapse: true
 				});
-				<% @panels << "this.admin#{menu.id}Panel" %>
+				<% @panels << "this.admin#{menuitem.id}Panel" %>
       <% end %>
 
 			this.actionPanel = new Ext.Panel({

@@ -6,6 +6,7 @@ class LipsiadminGenerator < Generator::Lipsiadmin
     text = <<-ROUTES 
   map.namespace(:backend, :path_prefix => :admin) do |backend|
     backend.resources :accounts, :collection => { :list => :any }
+    backend.resources :menuitems, :collection => { :list => :any }
     backend.resources :sessions
   end
 

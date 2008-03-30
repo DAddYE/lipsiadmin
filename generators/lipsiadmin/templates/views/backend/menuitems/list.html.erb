@@ -1,0 +1,199 @@
+<% content_for :head do %>
+<script type="text/javascript" charset="utf-8">
+Ext.onReady(function(){
+	var items = [
+		{ name: 'name' },
+		{ name: 'url' },
+		{ name: 'admin'},
+		{ name: 'menu' },
+		{ name: 'position' },
+		{ name: 'style' },
+		{ name: 'created_at' },
+		{ name: 'updated_at' }
+	]
+	
+	var js = new Ext.data.JsonStore({
+		url: '<%= formatted_list_backend_menuitems_path(:json) %>',                                       
+		root: 'menus',
+		id: 'id',                                            
+		fields: items
+	});
+	
+	js.on('load', function() {
+		var menus = Ext.data.Record.create(items);
+
+		var selections = new Ext.grid.CheckboxSelectionModel();
+
+		var ds = new Ext.data.GroupingStore({
+			proxy: new Ext.ux.data.PagingMemoryProxy(js.reader.jsonData),
+			reader: js.reader,
+			remoteSort: true,
+			sortInfo:{ field: 'position', direction: "ASC" },
+			groupField:'menu'
+		});
+
+		var grid = new Ext.grid.GridPanel({
+			store: ds,
+			viewConfig: { forceFit: true },
+			clicksToEdit: 'auto',
+			enableColumnHide:false,
+			enableColumnMove:false,
+			border:false,
+			bodyBorder:false,
+			cls:'grid',
+			title:'All Menus',
+			iconCls:'icon-show-all',
+			region:'center',
+			sm: selections,
+			columns: [
+				selections,
+				{
+						id: 'name',
+						header: 'Name',
+						sortable: true,
+						dataIndex: 'name'
+					},{
+						id: 'url',
+						header: 'url',
+						sortable: true,
+						dataIndex: 'url'
+					},{
+						id: 'menu',
+						header: 'Menu',
+						sortable: true,
+						dataIndex: 'menu' 
+					},{
+						id: 'style',
+						header: 'Style',
+						sortable: true,
+						dataIndex: 'style'
+					},{
+						id: 'admin',
+						header: 'Admin',
+						sortable: true,
+						align:'center',
+						dataIndex: 'admin',
+						renderer: Ext.util.Format.boolRenderer
+					},{
+						id: 'position',
+						header: 'Position',
+						sortable: true,
+						align:'center',
+						dataIndex: 'position'
+					},{
+						id: 'created_at',
+						header: 'Created at',
+						sortable: true,
+						dataIndex: 'created_at',
+						renderer: Ext.util.Format.dateRenderer('m/d/Y G:i') 
+					},{
+						id: 'updated_at',
+						header: 'Updated at',
+						sortable: true,
+						dataIndex: 'updated_at',
+						renderer: Ext.util.Format.dateRenderer('m/d/Y G:i') 
+					}   
+			],
+			tbar: [
+				{
+					id:'add',
+					text: 'Add',
+					disabled:false,
+					cls: 'x-btn-text-icon add',
+					handler:add
+				},'-',{
+					id:'edit',
+					text: 'Edit',
+					disabled:true,
+					cls: 'x-btn-text-icon edit',
+					handler:edit
+				},'-',{
+					id:'remove',
+					text:'Delete',
+					disabled:true,
+					cls:'x-btn-text-icon remove',
+					handler:remove
+				},'->',
+					'Search:', ' ',
+					 new Ext.app.SearchField({
+						pageSize: Ext.util.pageSize,
+						store: ds,
+						items: items,
+						width:320
+					 })
+			],
+			bbar: new Ext.PagingToolbar({
+				pageSize: Ext.util.pageSize,
+				store: ds,
+				displayInfo: true,
+				displayMsg: 'Menus {0} - {1} of {2}',
+				emptyMsg: "No menu to display"
+			}),
+			view: new Ext.grid.GroupingView({
+	        forceFit:true,
+	        groupTextTpl: '{text}'
+	    }),
+		});
+
+		selections.on('selectionchange', function(){
+			var n = selections.getSelected();
+			var btns = grid.getTopToolbar().items.map;
+
+	    if(!n){
+	    	btns.remove.disable();
+				btns.edit.disable();
+	      return;
+			} else {
+				btns.remove.enable();
+				btns.edit.enable();
+				return;
+	    }
+		});
+		
+		grid.getBottomToolbar().on('render', function(){ 	grid.getBottomToolbar().loading.hide(); });
+		
+		function add(){
+			window.location = 'new'
+		}
+
+		function edit(){
+			window.location = selections.getSelected().id+'/edit'
+		}
+
+		function remove(){
+			Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
+				if (btn == 'yes'){
+					selections.each(function(r){
+						Lipsiadmin.app.mask('Sending data to server...');
+						Ext.Ajax.request({
+							url: r.id,
+							method: 'DELETE',
+							success: function(result, request){
+								Lipsiadmin.app.unmask();
+								var resultValue = Ext.decode(result.responseText); 
+								if (resultValue.success == true){
+									ds.remove(r);
+								} else { 
+						    	Ext.MessageBox.alert('Warning', resultValue.msg);
+									return;
+								}
+							},								
+							failure: function(result, request) {
+								Lipsiadmin.app.unmask();
+								Ext.Msg.alert('Warning', 'There is a problem in the code. Contact the support.');
+							}
+						});
+					})
+				}
+			});
+		}
+
+		Lipsiadmin.app.addItem(grid);
+		ds.load(Ext.util.Pagination);
+	});
+	
+	Lipsiadmin.app.mask("Retrive data from server");
+	js.load();
+});
+</script>
+<% end %>
