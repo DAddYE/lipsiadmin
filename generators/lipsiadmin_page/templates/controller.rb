@@ -61,8 +61,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
   # Add in your model before_destroy and if the callback returns false, 
   # all the later callbacks and the associated action are cancelled.
   def destroy<%= suffix %>
-    <%= model_name %>.find(params[:id])
-    if <%= model_name %>.destroy
+    if <%= model_name %>.find(params[:id]).destroy
       render :json => { :success => true } 
     else
       render :json => { :success => false, :msg => "You cannot delete this record." }
