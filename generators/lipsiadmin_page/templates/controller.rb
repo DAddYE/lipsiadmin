@@ -67,8 +67,6 @@ class Backend::<%= controller_class_name %>Controller < BackendController
     else
       render :json => { :success => false, :msg => "You cannot delete this record." }
     end
-    
-    render :json => { :success => true, :msg => '', :data => {} } 
   end
 <% if options[:with_images] -%>  
   def destroy_image
