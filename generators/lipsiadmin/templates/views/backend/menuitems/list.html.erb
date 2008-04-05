@@ -41,7 +41,7 @@ Ext.onReady(function(){
 			border:false,
 			bodyBorder:false,
 			cls:'grid',
-			title:'All Menus',
+			title: Lipsiadmin.locale.labels.all + 'Menus',
 			iconCls:'icon-show-all',
 			region:'center',
 			sm: selections,
@@ -85,36 +85,36 @@ Ext.onReady(function(){
 						header: 'Created at',
 						sortable: true,
 						dataIndex: 'created_at',
-						renderer: Ext.util.Format.dateRenderer('m/d/Y G:i') 
+						renderer: Ext.util.Format.dateRenderer(Lipsiadmin.locale.dateFormat) 
 					},{
 						id: 'updated_at',
 						header: 'Updated at',
 						sortable: true,
 						dataIndex: 'updated_at',
-						renderer: Ext.util.Format.dateRenderer('m/d/Y G:i') 
+						renderer: Ext.util.Format.dateRenderer(Lipsiadmin.locale.dateFormat) 
 					}   
 			],
 			tbar: [
 				{
 					id:'add',
-					text: 'Add',
+					text: Lipsiadmin.locale.buttons.add,
 					disabled:false,
 					cls: 'x-btn-text-icon add',
 					handler:add
 				},'-',{
 					id:'edit',
-					text: 'Edit',
+					text: Lipsiadmin.locale.buttons.edit,
 					disabled:true,
 					cls: 'x-btn-text-icon edit',
 					handler:edit
 				},'-',{
 					id:'remove',
-					text:'Delete',
+					text: Lipsiadmin.locale.buttons.remove,
 					disabled:true,
 					cls:'x-btn-text-icon remove',
 					handler:remove
 				},'->',
-					'Search:', ' ',
+					 Lipsiadmin.locale.labels.search, ' ',
 					 new Ext.app.SearchField({
 						pageSize: Ext.util.pageSize,
 						store: ds,
@@ -125,9 +125,7 @@ Ext.onReady(function(){
 			bbar: new Ext.PagingToolbar({
 				pageSize: Ext.util.pageSize,
 				store: ds,
-				displayInfo: true,
-				displayMsg: 'Menus {0} - {1} of {2}',
-				emptyMsg: "No menu to display"
+				displayInfo: true
 			}),
 			view: new Ext.grid.GroupingView({
 	        forceFit:true,
@@ -161,10 +159,10 @@ Ext.onReady(function(){
 		}
 
 		function remove(){
-			Ext.Msg.confirm('Are you sure?', 'Do you want permanently '+selections.getCount()+' element/s?', function(btn, text){
+			Ext.Msg.confirm(Lipsiadmin.locale.confirm.title, Lipsiadmin.locale.confirm.msg_1 + selections.getCount() + Lipsiadmin.locale.confirm.msg_2, function(btn, text){
 				if (btn == 'yes'){
 					selections.each(function(r){
-						Lipsiadmin.app.mask('Sending data to server...');
+						Lipsiadmin.app.mask;
 						Ext.Ajax.request({
 							url: r.id,
 							method: 'DELETE',
@@ -174,13 +172,13 @@ Ext.onReady(function(){
 								if (resultValue.success == true){
 									ds.remove(r);
 								} else { 
-						    	Ext.MessageBox.alert('Warning', resultValue.msg);
+						    	Ext.MessageBox.alert(Lipsiadmin.locale.alert.title, resultValue.msg);
 									return;
 								}
 							},								
 							failure: function(result, request) {
 								Lipsiadmin.app.unmask();
-								Ext.Msg.alert('Warning', 'There is a problem in the code. Contact the support.');
+								Ext.Msg.alert(Lipsiadmin.locale.alert.title, Lipsiadmin.locale.alert.msg);
 							}
 						});
 					})
@@ -192,7 +190,7 @@ Ext.onReady(function(){
 		ds.load(Ext.util.Pagination);
 	});
 	
-	Lipsiadmin.app.mask("Retrive data from server");
+	Lipsiadmin.app.mask();
 	js.load();
 });
 </script>

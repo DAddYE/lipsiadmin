@@ -10,6 +10,7 @@ require 'better_error_messages_for'
 require 'without_table'
 require 'lipsiadmin_helper'
 require 'serializo'
+require 'lipsiadmin'
 
 ActiveRecord::Base.class_eval do
   include LipsiaSoft::Acts::NestedSet

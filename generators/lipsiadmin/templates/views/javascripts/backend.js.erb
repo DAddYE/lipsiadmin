@@ -176,7 +176,7 @@ Lipsiadmin.app = function(){
     }, // addTab
     
 		mask : function(text){
-			if (text == null || text.length == 0) { text = 'Connecting with server' }
+			if (text == null || text.length == 0) { text = Ext.LoadMask.prototype.msg }
 			this.contentDynamic.el.mask(text, 'x-mask-loading');
 		}, // mask
 		

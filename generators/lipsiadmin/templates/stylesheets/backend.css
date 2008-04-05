@@ -123,7 +123,9 @@ body {
 .x-grid3-dirty-cell {
 	background:transparent;
 }
-
+.icon-new {
+  background-image:url(/images/backend/icon-new.gif) !important;
+}
 .icon-active {
   background-image:url(/images/backend/icon-active.gif) !important;
 }

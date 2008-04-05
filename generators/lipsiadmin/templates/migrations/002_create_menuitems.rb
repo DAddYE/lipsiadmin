@@ -8,10 +8,10 @@ class CreateMenuitems < ActiveRecord::Migration
     end
     
     Menuitem.create(:name => "Accounts", :url => "/admin/accounts/list", :menu => "Administration",
-                    :position => 1, :admin => true, :style => "icon-show-all")
+                    :position => 1, :admin => true, :style => "icon-no-group")
 
     Menuitem.create(:name => "Menus", :url => "/admin/menuitems/list", :menu => "Administration",
-                    :position => 2, :admin => true, :style => "icon-show-all")
+                    :position => 2, :admin => true, :style => "icon-no-group")
   end
 
   def self.down
