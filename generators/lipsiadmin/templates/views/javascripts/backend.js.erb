@@ -170,10 +170,20 @@ Lipsiadmin.app = function(){
 			}
 		}, // addBodyTabs		
     
+		doLayout : function(){
+			this.contentPanel.doLayout();
+		},//doLayout
+		
     addTab : function(id, title, show){
       var item = this.tabPanel.add({ contentEl: id, title: title });
       if (show) { item.show(); }
+			this.doLayout();
     }, // addTab
+
+		getTabs: function() {
+			return this.tabPanel 
+		}, //getTabs 
+
     
 		mask : function(text){
 			if (text == null || text.length == 0) { text = Ext.LoadMask.prototype.msg }
