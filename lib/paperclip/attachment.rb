@@ -5,8 +5,8 @@ module Paperclip
     
     def self.default_options
       @default_options ||= {
-        :path => ":rails_root/public/images/uploads/:class/:id_:style_:basename.:extension",
-        :url  => "/images/uploads/:class/:id_:style_:basename.:extension",
+        :path => ":rails_root/public/uploads/:class/:id_:attachment_:style_:basename.:extension",
+        :url  => "/uploads/:class/:id_:attachment_:style_:basename.:extension",
         :styles        => {},
         :default_url   => "/images/backend/no_image.png",
         :default_style => :original,
@@ -158,7 +158,7 @@ module Paperclip
         :partition_id => lambda do |attachment, style|
                            ("%09d" % attachment.instance.id).scan(/\d{3}/).join("/")
                          end,
-        :attachment   => lambda{|attachment,style| attachment.name.to_s.downcase.pluralize },
+        :attachment   => lambda{|attachment,style| attachment.name.to_s.downcase },
         :style        => lambda{|attachment,style| style || attachment.default_style },
       }
     end
