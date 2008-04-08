@@ -1,5 +1,5 @@
 <%% page :text => "New <%= plural_name.capitalize %>" do %>
-	<%% form_tag backend_<%= plural_name %>_path, :id => "adminForm"<% if with_images -%>, :multipart => true<% end -%> do %>
+	<%% form_tag backend_<%= plural_name %>_path, :id => "adminForm"<% if with_attachments -%>, :multipart => true<% end -%> do %>
 		<%%= render :partial => "form" %>
 	<%% end %>
 <%% end %>

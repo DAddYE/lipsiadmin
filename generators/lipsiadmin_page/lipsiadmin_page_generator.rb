@@ -1,16 +1,26 @@
 class ScaffoldingSandbox
   include ActionView::Helpers::ActiveRecordHelper
 
-  attr_accessor :form_action, :singular_name, :suffix, :model_instance, :with_images
-
+  attr_accessor :form_action, :singular_name, :suffix, :model_instance
+  
+  INVALID_COLUMNS = ["_file_name","_content_type","_file_size","created_at","updated_at"]
+  
+  def all_input_tags(record, record_name, options)
+    input_block = options[:input_block] || default_input_block
+    record.class.content_columns.collect{ |column| input_block.call(record_name, column) if is_valid?(column) }.compact.join("\n")
+  end
+  
   def sandbox_binding
     binding
   end
   
   def default_input_block
-    Proc.new { |record, column| "<div class=\"label\">#{column.human_name}</div><div>#{input(record, column.name)}</div>" }
+    Proc.new { |record, column| "<div class=\"label\">#{column.human_name}</div><div>#{input(record, column.name)}</div>"}
   end
   
+  def is_valid?(column)
+    !INVALID_COLUMNS.find { |c| column.name.include?(c) }
+  end
 end
 
 class ActionView::Helpers::InstanceTag
@@ -37,8 +47,6 @@ class ActionView::Helpers::InstanceTag
 end
 
 class LipsiadminPageGenerator < Rails::Generator::NamedBase
-  default_options :with_images => false
-  
   attr_reader   :controller_name,
                 :controller_class_path,
                 :controller_file_path,
@@ -48,23 +56,30 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
                 :controller_underscore_name,
                 :controller_singular_name,
                 :controller_plural_name,
-                :with_images
+                :files, :images, 
+                :with_files, :with_images, :with_attachments
   alias_method  :controller_file_name,  :controller_underscore_name
   alias_method  :controller_table_name, :controller_plural_name
   
   def initialize(runtime_args, runtime_options = {})
     super
-  
     @controller_name = @name.pluralize
     @with_images = options[:with_images]
+    @with_files = options[:with_files]
     base_name, @controller_class_path, @controller_file_path, @controller_class_nesting, @controller_class_nesting_depth = extract_modules(@controller_name)
     @controller_class_name_without_nesting, @controller_underscore_name, @controller_plural_name = inflect_names(base_name)
     @controller_singular_name=base_name.singularize
+    
     if @controller_class_nesting.empty?
       @controller_class_name = @controller_class_name_without_nesting
     else
       @controller_class_name = "#{@controller_class_nesting}::#{@controller_class_name_without_nesting}"
     end
+
+    @with_images, @images = (options[:images] && options[:images].size > 0), options[:images] ||= []
+    @with_files, @files = (options[:files] && options[:files].size > 0), options[:files] ||= []
+    
+    @with_attachments = (@with_images || @with_files)
   end
 
 
@@ -121,29 +136,23 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
                             controller_class_path,
                             "#{controller_file_name}_helper.rb")
                           
-      # Unscaffolded views.
-      unscaffolded_actions.each do |action|
-        path = File.join('app/views/backend',
-                          controller_class_path,
-                          controller_file_name,
-                          "#{action}.html.erb")
-        m.template "controller:view.html.erb", path,
-                   :assigns => { :action => action, :path => path}
-      end
+      m.readme "../REMEMBER"
     end
   end
 
   protected
     # Override with your own usage banner.
     def banner
-      "Usage: #{$0} lipsiadmin_page ModelName [ControllerName] [action, ...] --with-images"
+      "Usage: #{$0} lipsiadmin_page ModelName [--with-images||--with-files]"
     end
     
     def add_options!(opt)
       opt.separator ''
       opt.separator 'Options:'
-      opt.on("--with-images",
-             "Add images to the templates for this model") { |v| options[:with_images] = v }
+      opt.on("-i","--with-images=image1,image2", Array,
+             "Add images to the templates for this model") { |v| options[:images] = v }
+      opt.on("-l","--with-files=file1,file2", Array,
+             "Add files to the templates for this model") { |v| options[:files] = v }
     end
 
     def scaffold_views
@@ -159,7 +168,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
     end
 
     def unscaffolded_actions
-      args - scaffold_actions
+      []
     end
 
     def suffix
@@ -170,7 +179,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
       sandbox = ScaffoldingSandbox.new
       sandbox.singular_name = singular_name
       begin
-        sandbox.model_instance = model_instance
+        sandbox.model_instance = model_instance      
         sandbox.instance_variable_set("@#{singular_name}", sandbox.model_instance)
       rescue ActiveRecord::StatementInvalid => e
         logger.error "Before updating lipsiadmin_page from new DB schema, try creating a table for your model (#{class_name})"

@@ -24,15 +24,9 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 
   def create<%= suffix %>
     @<%= singular_name %> = <%= model_name %>.new(params[:<%= singular_name %>])
-<% if options[:with_images] -%>
-    @<%= singular_name %>.build_image(params[:image]) unless params[:image][:uploaded_data].blank?
-<% end -%>
     if @<%= singular_name %>.save
       redirect_to list_backend_<%= plural_name %>_path
     else
-<% if options[:with_images] -%>
-      @<%= singular_name %>.image = nil
-<% end -%>
       render :action => :new
     end
   end
@@ -43,16 +37,9 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 
   def update
     @<%= singular_name %> = <%= model_name %>.find(params[:id])    
-<% if options[:with_images] -%>    
-    @<%= singular_name %>.image.destroy if @<%= singular_name %>.image && !params[:image][:uploaded_data].blank?
-    @<%= singular_name %>.build_image(params[:image]) unless params[:image][:uploaded_data].blank?
-<% end -%>    
     if @<%= singular_name %>.update_attributes(params[:<%= singular_name %>])
       redirect_to list_backend_<%= plural_name %>_path
     else
-<% if options[:with_images] -%>      
-      @<%= singular_name %>.image = nil
-<% end -%>
       render :action => :edit
     end
   end
@@ -66,9 +53,15 @@ class Backend::<%= controller_class_name %>Controller < BackendController
       render :json => { :success => false, :msg => "You cannot delete this record." }
     end
   end
-<% if options[:with_images] -%>  
-  def destroy_image
-    <%= model_name %>.find(params[:id]).image.destroy
+<% for image in images -%>  
+  def destroy_<%= image.downcase %>
+    <%= model_name %>.find(params[:id]).<%= image.downcase %>.destroy
+    redirect_to edit_backend_<%= singular_name %>_path(params[:id])
+  end
+<% end -%>
+<% for file in files -%>  
+  def destroy_<%= file.downcase %>
+    <%= model_name %>.find(params[:id]).<%= file.downcase %>.destroy
     redirect_to edit_backend_<%= singular_name %>_path(params[:id])
   end
 <% end -%>

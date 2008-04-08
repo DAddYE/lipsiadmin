@@ -44,7 +44,8 @@ class LipsiadminGenerator < Generator::Lipsiadmin
       create_all(m, "migrations", "db/migrate")
       create_all(m, "models", "app/models")
       create_all(m, "views", "app/views/")
-      create_all(m, "config", "config")      
+      create_all(m, "config", "config")
+      m.readme "../REMEMBER"      
     end
   end
 

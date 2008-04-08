@@ -11,6 +11,7 @@ require 'without_table'
 require 'lipsiadmin_helper'
 require 'serializo'
 require 'lipsiadmin'
+require 'paperclip'
 
 ActiveRecord::Base.class_eval do
   include LipsiaSoft::Acts::NestedSet
@@ -27,6 +28,9 @@ ActionController::Base.class_eval do
   include LipsiaSoft::ControllersHelpers
   include LipsiaSoft::AuthenticatedSystem
 end
+
+ActiveRecord::Base.extend( Paperclip::ClassMethods )
+File.send :include, Paperclip::Upfile
 
 ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
   error_class = "fieldWithErrors"

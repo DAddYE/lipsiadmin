@@ -20,6 +20,7 @@ pdf_helper
 prince
 without_table
 serializo
+paperclip
 
 Prerequisites
 =============

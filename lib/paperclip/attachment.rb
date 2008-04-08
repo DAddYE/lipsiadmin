@@ -1,0 +1,244 @@
+module Paperclip
+  # The Attachment class manages the files for a given attachment. It saves when the model saves,
+  # deletes when the model is destroyed, and processes the file upon assignment.
+  class Attachment
+    
+    def self.default_options
+      @default_options ||= {
+        :path => ":rails_root/public/images/uploads/:class/:id_:style_:basename.:extension",
+        :url  => "/images/uploads/:class/:id_:style_:basename.:extension",
+        :styles        => {},
+        :default_url   => "/images/backend/no_image.png",
+        :default_style => :original,
+        :validations   => [],
+        :storage       => :filesystem
+      }
+    end
+
+    attr_reader :name, :instance, :file, :styles, :default_style
+
+    # Creates an Attachment object. +name+ is the name of the attachment, +instance+ is the
+    # ActiveRecord object instance it's attached to, and +options+ is the same as the hash
+    # passed to +has_attached_file+.
+    def initialize name, instance, options = {}
+      @name              = name
+      @instance          = instance
+
+      options = self.class.default_options.merge(options)
+
+      @url               = options[:url]
+      @path              = options[:path]
+      @styles            = options[:styles]
+      @default_url       = options[:default_url]
+      @validations       = options[:validations]
+      @default_style     = options[:default_style]
+      @storage           = options[:storage]
+      @options           = options
+      @queued_for_delete = []
+      @processed_files   = {}
+      @errors            = []
+      @file              = nil
+      @validation_errors = nil
+      @dirty             = false
+
+      normalize_style_definition
+      initialize_storage
+
+      if original_filename
+        @processed_files = locate_files
+        @file            = @processed_files[@default_style]
+      end
+    end
+
+    # What gets called when you call instance.attachment = File. It clears errors,
+    # assigns attributes, processes the file, and runs validations. It also queues up
+    # the previous file for deletion, to be flushed away on #save of its host.
+    def assign uploaded_file
+      return nil unless valid_assignment?(uploaded_file)
+
+      queue_existing_for_delete
+      @errors            = []
+      @validation_errors = nil 
+
+      return nil if uploaded_file.nil?
+
+      @file                               = uploaded_file.to_tempfile
+      @instance[:"#{@name}_file_name"]    = uploaded_file.original_filename
+      @instance[:"#{@name}_content_type"] = uploaded_file.content_type
+      @instance[:"#{@name}_file_size"]    = uploaded_file.size
+
+      @dirty = true
+
+      post_process
+    ensure
+      validate
+    end
+
+    # Returns the public URL of the attachment, with a given style. Note that this
+    # does not necessarily need to point to a file that your web server can access
+    # and can point to an action in your app, if you need fine grained security.
+    # This is not recommended if you don't need the security, however, for
+    # performance reasons.
+    def url style = nil
+      @file ? interpolate(@url, style) : interpolate(@default_url, style)
+    end
+
+    # Alias to +url+
+    def to_s style = nil
+      url(style)
+    end
+
+    # Returns true if there are any errors on this attachment.
+    def valid?
+      errors.length == 0
+    end
+
+    # Returns an array containing the errors on this attachment.
+    def errors
+      @errors.compact.uniq
+    end
+
+    # Returns true if there are changes that need to be saved.
+    def dirty?
+      @dirty
+    end
+    
+    # Destroy the file data
+    def destroy
+      send(:queue_existing_for_delete)
+      send(:flush_deletes)
+    end
+    
+    # Saves the file, if there are no errors. If there are, it flushes them to
+    # the instance's errors and returns false, cancelling the save.
+    def save
+      if valid?
+        flush_deletes
+        flush_writes
+        @dirty = false
+        @file = @processed_files[default_style]
+        true
+      else
+        flush_errors
+        false
+      end
+    end
+
+    # Returns representation of the data of the file assigned to the given
+    # style, in the format most representative of the current storage.
+    def to_file style = nil
+      @processed_files[style || default_style]
+    end
+
+    alias_method :to_io, :to_file
+
+    # Returns the name of the file as originally assigned, and as lives in the
+    # <attachment>_file_name attribute of the model.
+    def original_filename
+      instance[:"#{name}_file_name"]
+    end
+
+    # A hash of procs that are run during the interpolation of a path or url.
+    # A variable of the format :name will be replaced with the return value of
+    # the proc named ":name". Each lambda takes the attachment and the current
+    # style as arguments. This hash can be added to with your own proc if
+    # necessary.
+    def self.interpolations
+      @interpolations ||= {
+        :rails_root   => lambda{|attachment,style| RAILS_ROOT },
+        :class        => lambda{|attachment,style| attachment.instance.class.to_s.downcase.pluralize },
+        :basename     => lambda do |attachment,style|
+                           attachment.original_filename.gsub(/\.(.*?)$/, "")
+                         end,
+        :extension    => lambda do |attachment,style| 
+                           ((style = attachment.styles[style]) && style.last) ||
+                           File.extname(attachment.original_filename).gsub(/^\.+/, "")
+                         end,
+        :id           => lambda{|attachment,style| attachment.instance.id },
+        :partition_id => lambda do |attachment, style|
+                           ("%09d" % attachment.instance.id).scan(/\d{3}/).join("/")
+                         end,
+        :attachment   => lambda{|attachment,style| attachment.name.to_s.downcase.pluralize },
+        :style        => lambda{|attachment,style| style || attachment.default_style },
+      }
+    end
+
+    private
+
+    def valid_assignment? file #:nodoc:
+      file.nil? || (file.respond_to?(:original_filename) && file.respond_to?(:content_type))
+    end
+
+    def validate #:nodoc:
+      unless @validation_errors
+        @validation_errors = @validations.collect do |v|
+          v.call(self, instance)
+        end.flatten.compact.uniq
+        @errors += @validation_errors
+      end
+    end
+
+    def normalize_style_definition
+      @styles.each do |name, args|
+        dimensions, format = [args, nil].flatten[0..1]
+        format             = nil if format == ""
+        @styles[name]      = [dimensions, format]
+      end
+    end
+
+    def initialize_storage
+      @storage_module = Paperclip::Storage.const_get(@storage.to_s.capitalize)
+      self.extend(@storage_module)
+    end
+
+    def post_process #:nodoc:
+      return nil if @file.nil?
+      @styles.each do |name, args|
+        begin
+          dimensions, format = args
+          @processed_files[name] = Thumbnail.make(self.file, 
+                                                  dimensions,
+                                                  format, 
+                                                  @whiny_thumnails)
+        rescue Errno::ENOENT  => e
+          @errors << "could not be processed because the file does not exist."
+        rescue PaperclipError => e
+          @errors << e.message
+        end
+      end
+      @processed_files[:original] = @file
+    end
+
+    def interpolate pattern, style = nil #:nodoc:
+      style ||= default_style
+      pattern = pattern.dup
+      self.class.interpolations.each do |tag, l|
+        pattern.gsub!(/:#{tag}/) do |match|
+          l.call( self, style )
+        end
+      end
+      pattern
+    end
+
+    def path style = nil #:nodoc:
+      interpolate(@path, style)
+    end
+
+    def queue_existing_for_delete #:nodoc:
+      @queued_for_delete += @processed_files.values
+      @file               = nil
+      @processed_files    = {}
+      @instance[:"#{@name}_file_name"]    = nil
+      @instance[:"#{@name}_content_type"] = nil
+      @instance[:"#{@name}_file_size"]    = nil
+    end
+
+    def flush_errors #:nodoc:
+      @errors.each do |error|
+        instance.errors.add(name, error)
+      end
+    end
+
+  end
+end
+

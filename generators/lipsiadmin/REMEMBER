@@ -1,0 +1,9 @@
+
+================================================================
+
+Please remember to:
+
+	- Edit config/config.yml
+	- Remove protect_from_forgery from app/application.rb
+
+================================================================
