@@ -28,7 +28,7 @@
 		<ul id="admin-<%= menuitem.id %>">
 			<% for item in Menuitem.find(:all, :conditions => {:menu => menuitem.menu}) %>
 				<li>
-					<img src="/javascripts/resources/images/default/s.gif" class="<%= menuitem.style %>"/>
+					<img src="/javascripts/resources/images/default/s.gif" class="<%= item.style %>"/>
 					<%= link_to item.name, item.url %>
 				</li>
 			<% end %>
