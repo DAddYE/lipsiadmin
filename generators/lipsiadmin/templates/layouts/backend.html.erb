@@ -24,12 +24,12 @@
 		<div id="logo"><%= link_to image_tag("backend/logo.png"), backend_path %></div>
 		<div id="logout"><div id="logout-text"><%= link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete %></div></div>
 	</div>
-	<% Menuitem.find(:all, :order => :position).group_by(&:menu).each do |menu, menuitems| %>
-		<ul id="admin-<%= menuitems.first.id %>">
-			<% for menuitem in menuitems %>
+	<% for menuitem in Menuitem.find(:all, :order => :position, :group => :menu, :conditions => ["admin = ?", current_account.admin ]) %>
+		<ul id="admin-<%= menuitem.id %>">
+			<% for item in Menuitem.find(:all, :conditions => {:menu => menuitem.menu}) %>
 				<li>
 					<img src="/javascripts/resources/images/default/s.gif" class="<%= menuitem.style %>"/>
-					<%= link_to menuitem.name, menuitem.url %>
+					<%= link_to item.name, item.url %>
 				</li>
 			<% end %>
 		</ul>
