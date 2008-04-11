@@ -6,7 +6,7 @@ Released under the MIT license
 Lipsiadmin
 ===========
 
-This admin include some default plugin, All rights are reserved to their authors
+This admin include some default plugins, All rights are reserved to their authors
 
 Plugins:
 
@@ -42,7 +42,14 @@ Example
 =======
 
 script/generate lipsiadmin # Generate the base admin
-script/generate lipsiadmin_page yourmodel # Generate a "scaffold" for your model, you can add --with-images for upload images.
+script/generate lipsiadmin_page yourmodel # Generate a "scaffold" for your model
+
+Usage: script/generate lipsiadmin_page ModelName [--with-images||--with-files]
+
+Options:
+    -i, --with-images=image1,image2  Add images to the templates for this model
+    -l, --with-files=file1,file2     Add files to the templates for this model
+
 
 See our wiki for more examples and docs
 
