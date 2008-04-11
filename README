@@ -31,7 +31,11 @@ Rails 2.0
 Installation
 ============
 
-script/plugin install http://svn.lipsiadmin.com/lipsiadmin
+git clone git://github.com/rails/rails.git vendor/plugins/lipsiadmin
+
+or if you are on edge rails
+
+script/plugin install git://github.com/mislav/will_paginate.git
 
 
 Example
