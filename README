@@ -6,21 +6,13 @@ Released under the MIT license
 Lipsiadmin
 ===========
 
-This admin include some default plugins, All rights are reserved to their authors
+Lipsiadmin is a new revolutionary admin for your projects.
 
-Plugins:
+Is developped by http://www.lipsiasoft.com that use it from 1 year in production enviroments.
 
-authenticated_system
-better_error_messages
-better_error
-better_nested_set
-better_nested_set_helper
-better_tag_helper
-pdf_helper
-prince
-without_table
-serializo
-paperclip
+Lipsiadmin is based on Ext Js 2.1 framework (with prototype adapter) and is ready for Rails 2.0.
+
+This admin is for newbie developper but also for experts, is not entirely written in javascript because the aim of developper wose build in a agile way web/site apps so we use extjs in a new intelligent way a mixin of “old” html and new ajax functions, for example ext manage the layout of page, grids, tree and errors, but form are in html code.
 
 Prerequisites
 =============
