@@ -5,7 +5,7 @@ class Backend::SessionsController < ApplicationController
   def create
     self.current_account = Account.authenticate(params[:email], params[:password])
     if logged_in?
-      redirect_back_or_default(list_backend_accounts_path)
+      redirect_back_or_default(backend_path)
     else
       flash[:notice] = "Wrong user or password"
       redirect_to new_backend_session_path
