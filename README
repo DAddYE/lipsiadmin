@@ -27,7 +27,7 @@ git clone git://github.com/rails/rails.git vendor/plugins/lipsiadmin
 
 or if you are on edge rails
 
-script/plugin install git://github.com/mislav/will_paginate.git
+script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
 
 
 Example
