@@ -23,7 +23,7 @@ Rails 2.0
 Installation
 ============
 
-git clone git://github.com/rails/rails.git vendor/plugins/lipsiadmin
+git clone git://github.com/Lipsiasoft/lipsiadmin.git vendor/plugins/lipsiadmin
 
 or if you are on edge rails
 
