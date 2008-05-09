@@ -1,5 +1,0 @@
-<% page :text => "Edit Menu n. #{@menuitem.id}" do %>
-	<% form_tag(backend_menuitem_path(@menuitem), :id => "adminForm", :method => :put) do %>
-		<%= render :partial => "form" %>
-	<% end %>
-<% end %>

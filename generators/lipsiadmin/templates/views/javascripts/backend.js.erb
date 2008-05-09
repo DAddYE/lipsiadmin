@@ -26,21 +26,27 @@ function showMessages(transport){
 	Ext.Msg.alert('Attention', transport.responseText);
 }
 
+// Fix for Prototype Adapter
+Ext.lib.Event.getTarget = function(e){ 
+         var ee = e.browserEvent || e; 
+         return ee.target ? Event.element(ee) : null;  
+};
+
 Lipsiadmin.app = function(){
 	return {
 		init : function(id, message){
 			Ext.QuickTips.init();
 			
-			<% for menuitem in Menuitem.find(:all, :order => :position, :group => :menu, :conditions => ["admin = ?", current_account.admin ]) %>
-				this.admin<%= menuitem.id %>Panel = new Ext.Panel({
+			<% for project_module in current_account.project_modules %>
+				this.backend<%= project_module.uid %>Panel = new Ext.Panel({
 					frame:true,
-					title: '<%= menuitem.menu %>',
+					title: '<%= project_module.human_name %>',
 					collapsible:true,
-					contentEl:'admin-<%= menuitem.id %>',
+					contentEl:'backend-<%= project_module.uid %>',
 					titleCollapse: true
 				});
-				<% @panels << "this.admin#{menuitem.id}Panel" %>
-      <% end %>
+				<% @panels << "this.backend#{project_module.uid}Panel" %>
+			<% end %>
 
 			this.actionPanel = new Ext.Panel({
 				id:'action-panel',

@@ -5,7 +5,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
   end
 
 <% end -%>
-  def list
+  def index
     respond_to do |format|
       format.html
       format.json do
@@ -25,7 +25,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
   def create<%= suffix %>
     @<%= singular_name %> = <%= model_name %>.new(params[:<%= singular_name %>])
     if @<%= singular_name %>.save
-      redirect_to list_backend_<%= plural_name %>_path
+      redirect_to :action => :index
     else
       render :action => :new
     end
@@ -38,7 +38,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
   def update
     @<%= singular_name %> = <%= model_name %>.find(params[:id])    
     if @<%= singular_name %>.update_attributes(params[:<%= singular_name %>])
-      redirect_to list_backend_<%= plural_name %>_path
+      redirect_to :action => :index
     else
       render :action => :edit
     end
@@ -56,13 +56,13 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 <% for image in images -%>  
   def destroy_<%= image.downcase %>
     <%= model_name %>.find(params[:id]).<%= image.downcase %>.destroy
-    redirect_to edit_backend_<%= singular_name %>_path(params[:id])
+    redirect_to :action => :edit
   end
 <% end -%>
 <% for file in files -%>  
   def destroy_<%= file.downcase %>
     <%= model_name %>.find(params[:id]).<%= file.downcase %>.destroy
-    redirect_to edit_backend_<%= singular_name %>_path(params[:id])
+    redirect_to :action => :edit, :id => params[:id]
   end
 <% end -%>
 end

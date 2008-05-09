@@ -2,7 +2,9 @@ require 'digest/sha1'
 class Account < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
-
+  
+  serialize                 :modules
+  
   validates_presence_of     :email
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
@@ -15,7 +17,7 @@ class Account < ActiveRecord::Base
   before_create             :make_activation_code 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be  ded here.
-  attr_accessible :email, :password, :password_confirmation, :admin
+  attr_protected :activate 
   
   after_create do |account|
     AccountMailer.deliver_signup_notification(account)
@@ -23,6 +25,15 @@ class Account < ActiveRecord::Base
 
   after_save do |account|
     AccountMailer.deliver_activation(account) if account.pending?
+  end
+  
+  def modules
+    read_attribute(:modules) || []
+  end
+  
+  def modules=(perms)
+    perms = perms.collect {|p| p.to_sym unless p.blank? }.compact if perms
+    write_attribute(:modules, perms)
   end
   
   # Activates the user in the database.
@@ -104,7 +115,11 @@ class Account < ActiveRecord::Base
     self.remember_token            = nil
     save(false)
   end
-
+  
+  def project_modules
+    modules.collect { |m| LipsiaSoft::AccessControl.project_module(role, m) }.uniq.compact rescue []
+  end
+  
   protected
     # before filter 
     def encrypt_password

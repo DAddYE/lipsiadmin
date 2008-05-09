@@ -3,7 +3,7 @@
 
 Please remember to:
 
-	- Edit config/config.yml
+	- Edit config/config.yml (If you want receive the activation code)
 	- Remove protect_from_forgery from app/application.rb
 
 ================================================================

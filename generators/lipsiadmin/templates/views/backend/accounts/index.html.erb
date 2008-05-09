@@ -5,12 +5,11 @@ Ext.onReady(function(){
 		{	name: 'id' },
 		{ name: 'email' },
 		{ name: 'active'},
-		{ name: 'admin'},
 		{ name: 'created_at' }
 	]
 
 	var js = new Ext.data.JsonStore({
-		url: '<%= formatted_list_backend_accounts_path(:json) %>',                                       
+		url: 'accounts.json',                                       
 		root: 'accounts',
 		id: 'id',                                            
 		fields: items
@@ -59,13 +58,6 @@ Ext.onReady(function(){
 					align: 'center',
 					sortable: true, 
 					dataIndex: 'active',
-					renderer: Ext.util.Format.boolRenderer
-				},{ 
-					header: "Admin", 
-					width: 30,
-					align: 'center',
-					sortable: true, 
-					dataIndex: 'admin',
 					renderer: Ext.util.Format.boolRenderer
 				},{
 					header: "Created At", 
@@ -129,11 +121,11 @@ Ext.onReady(function(){
 		grid.getBottomToolbar().on('render', function(){ 	grid.getBottomToolbar().loading.hide(); });
 
 		function add(){
-			window.location = 'new'
+			window.location = 'accounts/new'
 		}
 
 		function edit(){
-			window.location = selections.getSelected().id+'/edit'
+			window.location = 'accounts/'+selections.getSelected().id+'/edit'
 		}
 
 		function remove(){
@@ -142,7 +134,7 @@ Ext.onReady(function(){
 					selections.each(function(r){
 						Lipsiadmin.app.mask();
 						Ext.Ajax.request({
-							url: r.id,
+							url: 'accounts/'+r.id,
 							method: 'DELETE',
 							success: function(result, request){
 								Lipsiadmin.app.unmask();

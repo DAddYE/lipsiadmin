@@ -156,7 +156,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
     end
 
     def scaffold_views
-      %w(list new edit)
+      %w(index new edit)
     end
 
     def scaffold_actions

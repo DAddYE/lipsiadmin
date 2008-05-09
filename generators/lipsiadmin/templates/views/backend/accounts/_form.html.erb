@@ -1,5 +1,11 @@
 <%= ext_error_messages_for :account %>
-<div class="label">Email:</div><div><%= text_field :account, :email %></div>
-<div class="label">Password:</div><div><%= password_field :account, :password %></div>
-<div class="label">Password Confirm:</div><div><%= password_field :account, :password_confirmation %></div>
-<div class="label"><%= check_box :account, :admin %> <%= label :account, :admin, "Is an admin account" %></div>
+<div class="label">Email:</div><div><%= text_field :account, :email, :style => "width:100%" %></div>
+<div class="label">Password:</div><div><%= password_field :account, :password, :style => "width:100%" %></div>
+<div class="label">Password Confirmation:</div><div><%= password_field :account, :password_confirmation, :style => "width:100%" %></div>
+<div class="label">Group <%= select :account, :role, @roles %></div>
+
+<div class="label" id="project_modules">
+	<%= render :partial => 'project_modules' %>
+</div>
+
+<%= observe_field :account_role, :on => :change, :url => { :action => :refresh_project_modules }, :with => "'role='+value+'&id=#{@account.id}'" %>

@@ -1,6 +1,7 @@
 module LipsiaSoft
   module AuthenticatedSystem
     protected
+    
       def logged_in?
         current_account != :false
       end
@@ -13,28 +14,25 @@ module LipsiaSoft
         session[:account] = (new_account.nil? || new_account.is_a?(Symbol)) ? nil : new_account.id
         @current_account = new_account
       end
-
+      
+      # If the current actions are in our access rule will be verifyed
+      def allowed?
+        return AccessControl.allowed_controllers(current_account.role, current_account.modules).include?(params[:controller])
+      end
+      
       def authorized?
-        logged_in? && current_account.active?
+        logged_in? && current_account.active? && allowed?
       end
       
-      def admin_authorized?
-        logged_in? && current_account.active? && current_account.admin
-      end
-
-      def frontend_login_required
+      def login_required
         authorized? || access_denied
-      end
-      
-      def backend_login_required
-        admin_authorized? || access_denied
       end
 
       def access_denied
         respond_to do |accepts|
           accepts.html do
-            store_location
-            redirect_to :controller => :sessions, :action => :new
+            #store_location
+            redirect_to :controller => "backend/sessions", :action => :new
           end
           accepts.xml do
             headers["Status"]           = "Unauthorized"

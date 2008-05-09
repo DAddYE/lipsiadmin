@@ -1,36 +1,30 @@
-<% content_for :head do %>
+<%% content_for :head do %>
 <script type="text/javascript" charset="utf-8">
 Ext.onReady(function(){
 	var items = [
-		{ name: 'name' },
-		{ name: 'url' },
-		{ name: 'admin'},
-		{ name: 'menu' },
-		{ name: 'position' },
-		{ name: 'style' },
-		{ name: 'created_at' },
-		{ name: 'updated_at' }
+		<%= model_instance.class.content_columns.collect{ |column| "{ name: '#{column.name}' }" }.join(",\n") %>
 	]
 	
 	var js = new Ext.data.JsonStore({
-		url: '<%= formatted_list_backend_menuitems_path(:json) %>',                                       
-		root: 'menus',
+		url: '<%= plural_name %>.json',                                       
+		root: '<%= plural_name %>',
 		id: 'id',                                            
 		fields: items
 	});
 	
 	js.on('load', function() {
-		var menus = Ext.data.Record.create(items);
+		var <%= plural_name %> = Ext.data.Record.create(items);
 
 		var selections = new Ext.grid.CheckboxSelectionModel();
 
-		var ds = new Ext.data.GroupingStore({
+		var ds = new Ext.data.Store({
 			proxy: new Ext.ux.data.PagingMemoryProxy(js.reader.jsonData),
 			reader: js.reader,
-			remoteSort: true,
-			sortInfo:{ field: 'position', direction: "ASC" },
-			groupField:'menu'
+			remoteSort: true
 		});
+		
+		//Uncomment this whit your default sort
+		//ds.setDefaultSort('created_at', 'desc');
 
 		var grid = new Ext.grid.GridPanel({
 			store: ds,
@@ -41,58 +35,18 @@ Ext.onReady(function(){
 			border:false,
 			bodyBorder:false,
 			cls:'grid',
-			title: Lipsiadmin.locale.labels.all + 'Menus',
+			title: Lipsiadmin.locale.labels.all + '<%= plural_name.capitalize %>',
 			iconCls:'icon-show-all',
 			region:'center',
 			sm: selections,
 			columns: [
 				selections,
-				{
-						id: 'name',
-						header: 'Name',
+				<%= model_instance.class.content_columns.collect{ |column| "{
+						id: '#{column.name}',
+						header: '#{column.human_name}',
 						sortable: true,
-						dataIndex: 'name'
-					},{
-						id: 'url',
-						header: 'url',
-						sortable: true,
-						dataIndex: 'url'
-					},{
-						id: 'menu',
-						header: 'Menu',
-						sortable: true,
-						dataIndex: 'menu' 
-					},{
-						id: 'style',
-						header: 'Style',
-						sortable: true,
-						dataIndex: 'style'
-					},{
-						id: 'admin',
-						header: 'Admin',
-						sortable: true,
-						align:'center',
-						dataIndex: 'admin',
-						renderer: Ext.util.Format.boolRenderer
-					},{
-						id: 'position',
-						header: 'Position',
-						sortable: true,
-						align:'center',
-						dataIndex: 'position'
-					},{
-						id: 'created_at',
-						header: 'Created at',
-						sortable: true,
-						dataIndex: 'created_at',
-						renderer: Ext.util.Format.dateRenderer(Lipsiadmin.locale.dateFormat) 
-					},{
-						id: 'updated_at',
-						header: 'Updated at',
-						sortable: true,
-						dataIndex: 'updated_at',
-						renderer: Ext.util.Format.dateRenderer(Lipsiadmin.locale.dateFormat) 
-					}   
+						dataIndex: '#{column.name}' 
+					}" }.join(",") %>   
 			],
 			tbar: [
 				{
@@ -126,11 +80,7 @@ Ext.onReady(function(){
 				pageSize: Ext.util.pageSize,
 				store: ds,
 				displayInfo: true
-			}),
-			view: new Ext.grid.GroupingView({
-	        forceFit:true,
-	        groupTextTpl: '{text}'
-	    })
+			})
 		});
 
 		selections.on('selectionchange', function(){
@@ -151,20 +101,20 @@ Ext.onReady(function(){
 		grid.getBottomToolbar().on('render', function(){ 	grid.getBottomToolbar().loading.hide(); });
 		
 		function add(){
-			window.location = 'new'
+			window.location = '<%= plural_name %>/new'
 		}
 
 		function edit(){
-			window.location = selections.getSelected().id+'/edit'
+			window.location = '<%= plural_name %>/'+selections.getSelected().id+'/edit'
 		}
 
 		function remove(){
 			Ext.Msg.confirm(Lipsiadmin.locale.confirm.title, Lipsiadmin.locale.confirm.msg_1 + selections.getCount() + Lipsiadmin.locale.confirm.msg_2, function(btn, text){
 				if (btn == 'yes'){
 					selections.each(function(r){
-						Lipsiadmin.app.mask;
+						Lipsiadmin.app.mask();
 						Ext.Ajax.request({
-							url: r.id,
+							url: '<%= plural_name %>/'+r.id,
 							method: 'DELETE',
 							success: function(result, request){
 								Lipsiadmin.app.unmask();
@@ -194,4 +144,4 @@ Ext.onReady(function(){
 	js.load();
 });
 </script>
-<% end %>
+<%% end %>
