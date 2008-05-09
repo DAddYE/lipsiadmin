@@ -1,0 +1,9 @@
+2008-05-09.
+  * Added ext-all-debug.js (Was autodetect if env == development)
+  * Removed menuitems table and added new module project 
+  * Improve Auth System with project modules
+  * Initial rdoc documentation
+  * Removed from admin view list to index so we can use cruds
+  * Improve Admin -> Accounts for add project modules
+  * Added new class AccessControl (Documented)
+  * New config file for roles, modules in initializers/access_rules.rb
