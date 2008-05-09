@@ -1,3 +1,4 @@
+require 'access_control'
 require 'controllers_helpers'
 require 'pdf_helper'
 require 'prince'
