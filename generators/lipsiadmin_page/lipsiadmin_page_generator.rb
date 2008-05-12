@@ -136,7 +136,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
                             controller_class_path,
                             "#{controller_file_name}_helper.rb")
                           
-      m.readme "../REMEMBER"
+      m.puts finishing_message
     end
   end
 
@@ -199,4 +199,22 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
       end
       class_name.constantize.new
     end
+    
+    def finishing_message
+      attachments = @images
+      attachments.concat(@files).compact!
+      <<-MESSAGE
+        
+==============================================================================================
+
+  Please remember to add in routes.rb some like:
+
+  	backend.resources :#{singular_name} #{ ", :member => { " + attachments.collect { |e| "destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }
+
+  Remember to add Project Module in config/initializers/access_rule.rb
+  and restart the server for see the changes
+
+==============================================================================================
+      MESSAGE
+    end    
 end

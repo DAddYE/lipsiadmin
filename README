@@ -47,7 +47,8 @@ See our wiki for more examples and docs
 
 http://rails.lipsiasoft.com/wiki/lipsiadmin
 
-LAST CHANGES on 2008-05-09.
+LAST CHANGES on 2008-05-12.
+  * Added a manifest that show the current routes that are necessary to add
   * Added ext-all-debug.js (Was autodetect if env == development)
   * Removed menuitems table and added new module project 
   * Improve Auth System with project modules
