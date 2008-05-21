@@ -1,3 +1,6 @@
+2008-05-21
+  * Added a new PDF generator, we don't need the expensive PRINCEXML, we can use pd4ml
+
 2008-05-12.
   * Added a manifest that show the current routes that are necessary to add
 

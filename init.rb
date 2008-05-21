@@ -13,6 +13,7 @@ require 'lipsiadmin_helper'
 require 'serializo'
 require 'lipsiadmin'
 require 'paperclip'
+require 'pdf_builder'
 
 ActiveRecord::Base.class_eval do
   include LipsiaSoft::Acts::NestedSet
@@ -28,6 +29,7 @@ end
 ActionController::Base.class_eval do
   include LipsiaSoft::ControllersHelpers
   include LipsiaSoft::AuthenticatedSystem
+  include LipsiaSoft::PdfBuilder
 end
 
 ActiveRecord::Base.extend( Paperclip::ClassMethods )
