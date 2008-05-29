@@ -22,7 +22,7 @@
     <span></span>
     <div id="header">
       <div id="logo"><%= link_to image_tag("backend/logo.png"), backend_path %></div>
-      <div id="logout"><div id="logout-text"><%= link_to "Debug", "#", :onclick => "Ext.log('Hello from the Ext console.'); return false" %> <%= link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete %></div></div>
+      <div id="logout"><div id="logout-text"><%= link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete %></div></div>
     </div>
     <% for project_module in current_account.project_modules %>
       <ul id="backend-<%= project_module.uid %>">
