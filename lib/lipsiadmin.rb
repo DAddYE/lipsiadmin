@@ -9,33 +9,49 @@ module Lipsiadmin
   end
   
   module VERSION #:nodoc:
-    MAJOR = 0
-    MINOR = 9
-
-    def self.revision
-      revision = nil
-      entries_path = "#{RAILS_ROOT}/vendor/plugins/lipsiadmin/.svn/entries"
-      if File.readable?(entries_path)
-        begin
-          f = File.open(entries_path, 'r')
-          entries = f.read
-          f.close
-     	  if entries.match(%r{^\d+})
-     	    revision = $1.to_i if entries.match(%r{^\d+\s+dir\s+(\d+)\s})
-     	  else
-   	        xml = REXML::Document.new(entries)
-   	        revision = xml.elements['wc-entries'].elements[1].attributes['revision'].to_i
-   	      end
-   	    rescue
-   	      # Could not find the current revision
-   	    end
- 	  end
- 	  revision
+    module_function
+  
+    REPOSITORY_ROOT = "#{RAILS_ROOT}/vendor/plugins/lipsiadmin"
+     
+    def branches
+      %x(cd #{REPOSITORY_ROOT}; git-branch).map { |branch| extract_branch_name(branch) }
     end
-
-    REVISION = self.revision
-    STRING = [MAJOR, MINOR, REVISION].compact.join('.')
+ 
+    def extract_branch_name(branch_name)
+      branch_name.gsub!("\s.+", "")
+      branch_name.gsub!("\*", "")
+      branch_name.strip
+    end
     
-    def self.to_s; STRING end    
+    def tag_list
+      %x(cd #{REPOSITORY_ROOT}; git-tag --)
+    end
+ 
+    def rev_list(branch_name)
+      %x(cd #{REPOSITORY_ROOT}; git-rev-list #{branch_name} --)
+    end
+ 
+    def rev_list_all_branches
+      %x(cd #{REPOSITORY_ROOT}; git-rev-list #{branches.join(" ")} --)
+    end
+ 
+    def find_commits(branch_name=nil)
+      branch_name ?  rev_list(branch_name) : rev_list_all_branches
+    end
+ 
+    def commits(branch_name=nil)
+      commits = branch_name ? find_commits(branch_name) : find_commits
+      @commits = commits.split.reverse
+    end
+    
+    def to_s 
+      if File.exist?(REPOSITORY_ROOT+"/.git")
+        version  = [tag_list.split.last]
+        version << commits.size if RAILS_ENV == "development"
+        return version.join(".")
+      else
+         return "0.9"
+      end
+    end
   end
 end

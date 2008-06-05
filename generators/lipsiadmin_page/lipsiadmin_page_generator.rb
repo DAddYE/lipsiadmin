@@ -209,7 +209,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
 
   Please remember to add in routes.rb some like:
 
-  	backend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| "destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }
+  	backend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| ":destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }
 
   Remember to add Project Module in config/initializers/access_rule.rb
   and restart the server for see the changes

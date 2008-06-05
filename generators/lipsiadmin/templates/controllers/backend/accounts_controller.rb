@@ -60,7 +60,7 @@ class Backend::AccountsController < BackendController
       current_account.activate
       flash[:notice] = "Activation Completed!"
     end
-    redirect_to :action => :new
+    redirect_to :controller => :sessions, :action => :new
   end
   
   def refresh_project_modules

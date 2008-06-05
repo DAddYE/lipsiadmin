@@ -1,5 +1,5 @@
 module LipsiaSoft
-  module LipsiAdminHelper
+  module LipsiadminHelper
     def page(options={}, &block)
       head = options[:text] ? true : false 
       tabs = (options[:tabs] && options[:tabs][:id]) ? true : false
