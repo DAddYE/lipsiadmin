@@ -1,0 +1,5 @@
+.label Modules
+-@project_modules.each do |project_module|
+  .padding-left
+    =check_box_tag "account[modules][]",  project_module.name, @account.project_modules.include?(project_module) || nil
+    =project_module.human_name

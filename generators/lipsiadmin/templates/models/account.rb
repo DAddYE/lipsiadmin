@@ -119,6 +119,14 @@ class Account < ActiveRecord::Base
   def project_modules
     modules.collect { |m| LipsiaSoft::AccessControl.project_module(role, m) }.uniq.compact rescue []
   end
+
+  # Generate Methods takes from AccessControl rules
+  # Example:
+  #
+  #   def administrator?
+  #     role == :administrator
+  #   end
+  LipsiaSoft::AccessControl.roles.each { |r| define_method("#{r.to_s.downcase.to_sym}?") { role.to_s.downcase.to_sym == r.to_s.downcase.to_sym } }
   
   protected
     # before filter 

@@ -15,7 +15,11 @@ class ScaffoldingSandbox
   end
   
   def default_input_block
-    Proc.new { |record, column| "<div class=\"label\">#{column.human_name}</div><div>#{input(record, column.name)}</div>"}
+    Proc.new do |record, column|
+"    %li
+      %label #{column.human_name}
+      #{input(record, column.name)}"
+    end
   end
   
   def is_valid?(column)
@@ -26,23 +30,23 @@ end
 class ActionView::Helpers::InstanceTag
   def to_input_field_tag(field_type, options={})
     field_meth = "#{field_type}_field"
-    "<%= #{field_meth} :#{@object_name}, :#{@method_name}, :style => \"width:100%\" #{options.empty? ? '' : ', '+options.inspect} %>"
+    "=#{field_meth} :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+options.inspect}"
   end
 
   def to_text_area_tag(options = {})
-    "<%= text_area :#{@object_name}, :#{@method_name}, :rows => 5, :style => \"width:100%\" #{options.empty? ? '' : ', '+ options.inspect} %>"
+    "=text_area :#{@object_name}, :#{@method_name}, :rows => 5#{options.empty? ? '' : ', '+ options.inspect}"
   end
 
   def to_date_select_tag(options = {})
-    "<%= date_select :#{@object_name}, :#{@method_name} #{options.empty? ? '' : ', '+ options.inspect} %>"
+    "=date_select :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+ options.inspect}"
   end
 
   def to_datetime_select_tag(options = {})
-    "<%= datetime_select :#{@object_name}, :#{@method_name} #{options.empty? ? '' : ', '+ options.inspect} %>"
+    "=datetime_select :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+ options.inspect}"
   end
   
   def to_time_select_tag(options = {})
-    "<%= time_select :#{@object_name}, :#{@method_name} #{options.empty? ? '' : ', '+ options.inspect} %>"
+    "=time_select :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+ options.inspect}"
   end
 end
 
@@ -88,9 +92,26 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
       # Check for class naming collisions.
       m.class_collisions controller_class_path, "#{controller_class_name}Controller", "#{controller_class_name}ControllerTest", "#{controller_class_name}Helper"
 
+      attachments = [] 
+      attachments.concat(@images).compact!
+      attachments.concat(@files).compact!
+      
+      # Adding new permissions
+      permissions = <<-CODE
+
+  map.project_module :#{@controller_name}, "backend/#{@controller_name}" do |project|
+    project.menu :list, { :action => :index }, :class => "icon-no-group"
+    project.menu :new,  { :action => :new }, :class => "icon-new"
+  end      
+      CODE
+     
+      routes = "\t\tbackend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| ":destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }"
+      # Adding a new permission
+      m.append("config/initializers/access_rules.rb", permissions, "# Please don't remove this comment! It's used for auto adding project modules")
+      # Adding a new route
+      m.append("config/routes.rb", routes, "map.namespace(:backend, :path_prefix => :admin) do |backend|")
       # Controller, helper, views, and test directories.
       m.directory File.join('app/controllers/backend', controller_class_path)
-      m.directory File.join('app/helpers/backend', controller_class_path)
       m.directory File.join('app/views/backend', controller_class_path, controller_file_name)
       m.directory File.join('test/functional/backend', controller_class_path)
 
@@ -98,28 +119,31 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
       m.dependency 'model', [singular_name], :collision => :skip, :skip_migration => true
 
       # Scaffolded forms.
-      m.complex_template "form.html.erb",
+      m.complex_template "form.html.haml",
         File.join('app/views/backend',
                   controller_class_path,
                   controller_file_name,
-                  "_form.html.erb"),
-        :insert => 'form_scaffolding.html.erb',
-        :sandbox => lambda { create_sandbox },
-        :begin_mark => 'Lipsiasoft s.r.l.',
-        :end_mark => 'Lipsiasoft s.r.l.',
-        :mark_id => singular_name
+                  "_form.html.haml"),
+        :insert => 'form_scaffolding.html.haml',
+        :sandbox => lambda { create_sandbox }
 
 
       # Scaffolded views.
       scaffold_views.each do |action|
-        m.template "view_#{action}.html.erb",
+        m.template "view_#{action}.html.haml",
                    File.join('app/views/backend',
                              controller_class_path,
                              controller_file_name,
-                             "#{action}.html.erb"),
+                             "_#{action}.html.haml"),
                    :assigns => { :action => action }
       end
-
+      # Scaffolded Index Javascript
+      m.template "view_index.js.erb",
+                 File.join('app/views/backend',
+                           controller_class_path,
+                           controller_file_name,
+                           "index.js.erb")
+      
       # Controller class, functional test, helper, and views.
       m.template 'controller.rb',
                   File.join('app/controllers/backend',
@@ -130,13 +154,8 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
                   File.join('test/functional/backend',
                             controller_class_path,
                             "#{controller_file_name}_controller_test.rb")
-
-      m.template 'helper.rb',
-                  File.join('app/helpers/backend',
-                            controller_class_path,
-                            "#{controller_file_name}_helper.rb")
                           
-      m.puts finishing_message
+      m.puts finish_message
     end
   end
 
@@ -156,7 +175,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
     end
 
     def scaffold_views
-      %w(index new edit)
+      %w(new edit)
     end
 
     def scaffold_actions
@@ -200,19 +219,15 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
       class_name.constantize.new
     end
     
-    def finishing_message
-      attachments = @images
-      attachments.concat(@files).compact!
+    def finish_message
       <<-MESSAGE
         
 ==============================================================================================
 
-  Please remember to add in routes.rb some like:
-
-  	backend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| ":destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }
-
-  Remember to add Project Module in config/initializers/access_rule.rb
-  and restart the server for see the changes
+  Added a new module to config/initializers/access_rule.rb
+  Added a new route to config/routes.rb
+  
+  REMEMBER TO RESTART THE WEB SERVER!
 
 ==============================================================================================
       MESSAGE

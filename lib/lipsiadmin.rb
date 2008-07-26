@@ -50,7 +50,7 @@ module Lipsiadmin
         version << commits.size if RAILS_ENV == "development"
         return version.join(".")
       else
-         return "0.9"
+         return "2.0"
       end
     end
   end

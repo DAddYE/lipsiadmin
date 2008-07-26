@@ -1,0 +1,2 @@
+-form_page(backend_<%= plural_name %>_path, :title => "New <%= plural_name.capitalize %>"<% if with_attachments -%>, :multipart => true<% end -%>) do
+  =render :partial => "form"

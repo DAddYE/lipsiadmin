@@ -1,0 +1,19 @@
+-simple_error_messages_for :account
+
+%ul.form
+  %li
+    %label Email:
+    =text_field :account, :email
+  %li
+    %label Password:
+    =password_field :account, :password
+  %li
+    %label Password Confirmation
+    =password_field :account, :password_confirmation
+  %li
+    %label Group:
+    =select :account, :role, @roles
+  %li
+    #project_modules.padding-top=render :partial => 'project_modules'
+    = observe_field :account_role, :on => :change, :url => { :action => :refresh_project_modules }, :with => "'role='+value+'&id=#{@account.id}'"
+    .padding-top Remember if you are change yours permission to refresh this page after update.

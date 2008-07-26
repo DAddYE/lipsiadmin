@@ -1,5 +1,0 @@
-<% page :text => "Edit Account n. #{@account.id}" do %>
-	<% form_tag(backend_account_path(@account), :id => "adminForm", :method => :put) do %>
-		<%= render :partial => "form" %>
-	<% end %>
-<% end %>

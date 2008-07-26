@@ -11,7 +11,8 @@ Ext.namespace('Lipsiadmin');
 Lipsiadmin.locale = { 'buttons': { 'add': 'Add',
  																	 'edit': 'Edit',
 																	 'remove': 'Delete' },
-											'labels': { 'search': 'Search: ', 'all': 'All ' },
+											'labels': { 'search': 'Search: ', 'all': 'All ', 'compliments': 'Compliments', 'compliments_msg':'Your data are correctly saved.'  },
+											'wait' : { 'title': 'Sending Data', 'msg' : 'Sending data to the server ...' },
 											'confirm': { 'title': 'Are you sure?', 'msg_1': 'Do you want destroy ', 'msg_2': ' element/s?' },
 											'alert': { 'title': 'Warning', 'msg': 'There wose a server side problem.<br />Please contact the support.' },
 											'dateFormat': 'm/d/Y G:i'

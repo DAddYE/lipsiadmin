@@ -1,11 +1,8 @@
 require 'access_control'
 require 'controllers_helpers'
-require 'pdf_helper'
-require 'prince'
 require 'authenticated_system'
 require 'better_errors'
 require 'better_nested_set'
-require 'better_nested_set_helper'
 require 'better_tag_helper'
 require 'better_error_messages_for'
 require 'without_table'
@@ -14,6 +11,13 @@ require 'serializo'
 require 'lipsiadmin'
 require 'paperclip'
 require 'pdf_builder'
+require 'prototype_helper'
+require 'responds_to_parent'
+require 'localization_simplified'
+require 'haml'
+require 'commands'
+
+Haml.init_rails(binding)
 
 ActiveRecord::Base.class_eval do
   include LipsiaSoft::Acts::NestedSet
@@ -21,18 +25,22 @@ ActiveRecord::Base.class_eval do
 end
 
 ActionView::Base.class_eval do
-  include LipsiaSoft::Acts::BetterNestedSetHelper
   include LipsiaSoft::BetterTagHelper
   include LipsiaSoft::BetterErrorMessagesFor
+end
+
+ActionView::Helpers::PrototypeHelper::JavaScriptGenerator::GeneratorMethods.class_eval do
+  include LipsiaSoft::PrototypeHelper
 end
 
 ActionController::Base.class_eval do
   include LipsiaSoft::ControllersHelpers
   include LipsiaSoft::AuthenticatedSystem
   include LipsiaSoft::PdfBuilder
+  include LipsiaSoft::RespondsToParent
 end
 
-ActiveRecord::Base.extend( Paperclip::ClassMethods )
+ActiveRecord::Base.extend(Paperclip::ClassMethods)
 File.send :include, Paperclip::Upfile
 
 ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
@@ -46,3 +54,6 @@ ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
   end
   html_tag
 end
+
+# Custom Haml Template Generator
+Rails::Generator::Commands::Create.send :include, Lipsiadmin::Commands::Create

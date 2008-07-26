@@ -7,7 +7,8 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 <% end -%>
   def index
     respond_to do |format|
-      format.html
+      format.html { render_javascript(formatted_backend_<%= controller_underscore_name %>_path(:js)) }
+      format.js 
       format.json do
         <%= plural_name %> = <%= model_name %>.find(:all)
         return_data = Hash.new()      
@@ -20,28 +21,30 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 
   def new<%= suffix %>
     @<%= singular_name %> = <%= model_name %>.new
+    render :partial => "new"
   end
 
   def create<%= suffix %>
     @<%= singular_name %> = <%= model_name %>.new(params[:<%= singular_name %>])
     if @<%= singular_name %>.save
-      redirect_to :action => :index
+      redirect_to_parent(:action => "edit", :id => @<%= singular_name %>)
     else
-      render :action => :new
+      render_to_parent(@<%= singular_name %>, :partial => "new")
     end
   end
 
   def edit<%= suffix %>
     @<%= singular_name %> = <%= model_name %>.find(params[:id])
+    render :partial => "edit"
   end
 
   def update
     @<%= singular_name %> = <%= model_name %>.find(params[:id])    
     if @<%= singular_name %>.update_attributes(params[:<%= singular_name %>])
-      redirect_to :action => :index
+      redirect_to_parent(:action => "edit", :id => @<%= singular_name %>)
     else
-      render :action => :edit
-    end
+      render_to_parent(@<%= singular_name %>, :partial => "edit")
+    end 
   end
   
   # Add in your model before_destroy and if the callback returns false, 
@@ -56,13 +59,13 @@ class Backend::<%= controller_class_name %>Controller < BackendController
 <% for image in images -%>  
   def destroy_<%= image.downcase %>
     <%= model_name %>.find(params[:id]).<%= image.downcase %>.destroy
-    redirect_to :action => :edit
+    remove_element(:<%= image.downcase %>)
   end
 <% end -%>
 <% for file in files -%>  
   def destroy_<%= file.downcase %>
     <%= model_name %>.find(params[:id]).<%= file.downcase %>.destroy
-    redirect_to :action => :edit, :id => params[:id]
+    remove_element(:<%= file.downcase %>)
   end
 <% end -%>
 end

@@ -4,6 +4,10 @@
 Please remember to:
 
 	- Edit config/config.yml (If you want receive the activation code)
-	- Remove protect_from_forgery from app/application.rb
+	- Edit Account Migration (setting your username and password)
+	- Run rake db:create && rake db:migrate
+	- Set your language in app/config/enviroment.rb like:
+	RAILS_GEM_VERSION = '2.1.0' unless defined? RAILS_GEM_VERSION
+=>	LANG = :it
 
 ================================================================

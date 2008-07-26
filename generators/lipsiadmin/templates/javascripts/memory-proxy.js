@@ -70,12 +70,13 @@ if (!Array.prototype.filter){
 /* Paging Memory Proxy, allows to use paging grid with in memory dataset */
 Ext.ux.data.PagingMemoryProxy = function(data, config) {
 	Ext.ux.data.PagingMemoryProxy.superclass.constructor.call(this);
-	this.data = data;
+	this.data = data || [];
 	Ext.apply(this, config);
 };
 
 Ext.extend(Ext.ux.data.PagingMemoryProxy, Ext.data.MemoryProxy, {
 	customFilter: null,
+	reload : function(data){ this.data = data; },
 	load : function(params, reader, callback, scope, arg) {
 		params = params || {};
 		var result;

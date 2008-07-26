@@ -91,11 +91,10 @@ module LipsiaSoft
         @controllers = []
       end
       
-      def project_module(name, controller)
+      def project_module(name, controller=nil)
         project_module = ProjectModule.new(name, controller)
         yield project_module
         @project_modules << project_module
-        #@controllers << controller
       end
       
       def permission(controller)
@@ -122,6 +121,10 @@ module LipsiaSoft
           url[:controller].nil? ? url[:controller] = @controllers.first : @controllers << url[:controller]
         end
         @menus << Menu.new(name, url, options)
+      end
+      
+      def permission(controllers)
+        controllers.is_a?(Hash) ? @controllers.concat(controllers) : @controllers << controllers
       end
       
       def human_name

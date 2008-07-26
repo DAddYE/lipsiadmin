@@ -1,7 +1,8 @@
 class Backend::AccountsController < BackendController
   def index
     respond_to do |format|
-      format.html
+      format.html { render_javascript(formatted_backend_accounts_path(:js)) }
+      format.js 
       format.json do 
         accounts = Account.find(:all)
         return_data = Hash.new 
@@ -13,37 +14,41 @@ class Backend::AccountsController < BackendController
       end
     end
   end
+
+  def new
+    @account = Account.new
+    roles
+    project_modules LipsiaSoft::AccessControl.roles.first
+    render :partial => "new"
+  end
   
   def create
     @account = Account.new(params[:account])
     roles
     project_modules @account.role
-    @account.save!
-    redirect_to :action => :index
-  rescue ActiveRecord::RecordInvalid
-    render :action => :new
-  end
-  
-  def new
-    @account = Account.new
-    roles
-    project_modules LipsiaSoft::AccessControl.roles.first
+    if @account.save
+      redirect_to_parent(:action => "edit", :id => @account)
+    else
+      render_to_parent(@account, :partial => "new")
+    end
   end
   
   def edit
     @account = Account.find(params[:id])
     roles
     project_modules @account.role
+    render :partial => "edit"
   end
   
   def update
     @account = Account.find(params[:id])
     roles
     project_modules @account.role
-    @account.update_attributes!(params[:account])
-    redirect_to :action => :index
-  rescue ActiveRecord::RecordInvalid
-    render :action => :edit
+    if @account.update_attributes(params[:account])
+      redirect_to_parent(:action => "edit", :id => @account)
+    else
+      render_to_parent(@account, :partial => "edit")
+    end 
   end
   
   def destroy

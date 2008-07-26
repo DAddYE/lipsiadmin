@@ -1,0 +1,52 @@
+/*
+ * Lipsiasadmin
+ * Copyright(c) 2007-2008, LipsiaSoft s.r.l.
+ * info@lipsiasoft.com
+ * 
+ * http://www.lipsiasoft.com
+ */
+body 													{ font-size:0.8em; font-family: Arial, sans-serif; padding:0; margin:0; color:#222; }
+a															{ text-decoration:none; color:#663900; }
+a:hover												{ text-decoration:none; color:#CC6600; }
+a.black  											{ text-decoration:none; color:#222; }
+a:hover.black	  							{ text-decoration:none; color:#663900; }
+a.white		  									{ text-decoration:none; color:#FFF; }
+a:hover.white 								{ text-decoration:none; color:#663900; }
+img														{ border:none; }
+form													{ display: inline; }
+.fixed 												{ width:150px; line-height:25px; }
+.full													{ width:100%; }
+.half												 	{ width:50%; }
+.left													{ float:left; }
+.right												{ float:right; }
+.clear 												{ clear:both; }
+.align-center									{ text-align:center; }
+.align-left										{ text-align:left; }
+.align-right									{ text-align:right; }
+.align-top										{ vertical-align:top; }
+.through											{ text-decoration: line-through;}
+.small												{ font-size:0.9em; }
+.super-small									{ font-size:0.8em; }
+.big													{ font-size:1.1em; }
+.bold													{ font-weight:bold; }
+.italic												{ font-style: italic; }
+.red													{ color:#eb5723; }
+.padding-left                 { padding-left:5px; }
+.padding-right                { padding-right:5px; }
+.padding-top                  { padding-top:5px; }
+.padding-bottom               { padding-bottom:5px; }
+.padding                      { padding:5px; }
+.bordered											{ border:1px solid #FF8D35; }
+.border-top			  						{ border-top:1px solid #FF8D35; }
+.border-bottom		 						{ border-bottom:1px solid #FF8D35; }
+.no-space											{ font-size:0em; }
+.no-margin-top								{ margin-top:0px; }
+.no-margin-bottom							{ margin-bottom:0px; }
+.margin-top										{ margin-top:10px; }
+.margin-bottom								{ margin-bottom:10px; }
+.margin-left									{ margin-left:10px; }
+.margin-right 								{ margin-right:10px; }
+.text-input, .text-area       { border:1px solid #92B3DE; color: #333; padding:4px 3px; font-size:13px; width:100%; }
+.text-input-hover, 
+.text-area-hover              { border:1px solid #F4A019; background-color:#E6EFFA; color: #000; padding:4px 3px; font-size:13px; width:100%;}
+.fieldWithErrors 							{ background-color: #fcffb2; }

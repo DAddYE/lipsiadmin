@@ -6,7 +6,7 @@
 #
 # Author:: Jon Yurek
 # Copyright:: Copyright (c) 2008 thoughtbot, inc.
-# License:: Distrbutes under the same terms as Ruby
+# License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
 #
 # Paperclip defines an attachment as any file, though it makes special considerations
 # for image files. You can declare that a model has an attached file with the
@@ -33,8 +33,12 @@ require 'paperclip/thumbnail'
 require 'paperclip/storage'
 require 'paperclip/attachment'
 
-# The base module that gets included in ActiveRecord::Base.
+# The base module that gets included in ActiveRecord::Base. See the
+# documentation for Paperclip::ClassMethods for more useful information.
 module Paperclip
+
+  VERSION = "2.1.2"
+
   class << self
     # Provides configurability to Paperclip. There are a number of options available, such as:
     # * whiny_thumbnails: Will raise an error if Paperclip cannot process thumbnails of 
@@ -62,9 +66,10 @@ module Paperclip
   class PaperclipError < StandardError #:nodoc:
   end
 
-  module ClassMethods
-    attr_reader :attachment_definitions
+  class NotIdentifiedByImageMagickError < PaperclipError #:nodoc:
+  end
 
+  module ClassMethods
     # +has_attached_file+ gives the class it is called on an attribute that maps to a file. This
     # is typically a file stored somewhere on the filesystem and has been uploaded by a user. 
     # The attribute returns a Paperclip::Attachment object which handles the management of
@@ -98,28 +103,23 @@ module Paperclip
     #     has_attached_file :avatar, :styles => { :normal => "100x100#" },
     #                       :default_style => :normal
     #     user.avatar.url # => "/avatars/23/normal_me.png"
-    # * +path+: The location of the repository of attachments on disk. This can be coordinated
-    #   with the value of the +url+ option to allow files to be saved into a place where Apache
-    #   can serve them without hitting your app. Defaults to 
-    #   ":rails_root/public/:class/:attachment/:id/:style_:filename". 
-    #   By default this places the files in the app's public directory which can be served 
-    #   directly. If you are using capistrano for deployment, a good idea would be to 
-    #   make a symlink to the capistrano-created system directory from inside your app's 
-    #   public directory.
-    #   See Paperclip::Attachment#interpolate for more information on variable interpolaton.
-    #     :path => "/var/app/attachments/:class/:id/:style/:filename"
     # * +whiny_thumbnails+: Will raise an error if Paperclip cannot process thumbnails of an
     #   uploaded image. This will ovrride the global setting for this attachment. 
     #   Defaults to true. 
+    # * +storage+: Chooses the storage backend where the files will be stored. The current
+    #   choices are :filesystem and :s3. The default is :filesystem. Make sure you read the
+    #   documentation for Paperclip::Storage::Filesystem and Paperclip::Storage::S3
+    #   for backend-specific options.
     def has_attached_file name, options = {}
       include InstanceMethods
 
-      @attachment_definitions ||= {} 
-      @attachment_definitions[name] = {:validations => []}.merge(options)
+      write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
+      attachment_definitions[name] = {:validations => []}.merge(options)
 
       after_save :save_attached_files
       before_destroy :destroy_attached_files
-
+      after_validation :reload_attached_files
+      
       define_method name do |*args|
         a = attachment_for(name)
         (args.length > 0) ? a.to_s(args.first) : a
@@ -130,12 +130,64 @@ module Paperclip
       end
 
       define_method "#{name}?" do
-        ! attachment_for(name).file.nil?
+        ! attachment_for(name).original_filename.blank?
       end
 
       validates_each(name) do |record, attr, value|
-        value.send(:flush_errors)
+        value.send(:flush_errors) # Attachment.flush_errors
       end
+    end
+    
+    def has_one_attached_file name, options = {}
+      has_one name, options
+      before_save "before_save_for_#{name}"
+      attr_accessor "#{name}_attributes"
+      
+      define_method "before_save_for_#{name}" do
+        attributes = send("#{name}_attributes")
+        attributes ||= {}
+        
+        return if attributes.blank?
+        
+        attached_column = self.send(name)
+        attributes.delete(:attached) if attributes[:attached].blank? && !options.delete(:required)
+        
+        if attached_column
+          attached_column.update_attributes(attributes)
+        else
+          attached_column = name.to_s.camelize.constantize.new(attributes)
+          self.send("#{name}=", attached_column)
+        end
+
+        attached_column.errors.each { |n,e| errors.add(n,e) } if attached_column && !attached_column.valid?
+      end      
+    end
+    
+    def has_many_attached_file name, options = {}
+      required = options.delete(:required)
+      
+      has_many name, options
+      before_save "before_save_for_#{name}"
+      
+      attr_accessor "#{name}_attributes"
+      
+      define_method "before_save_for_#{name}" do
+        attributes = send("#{name}_attributes")
+        attributes ||= {}
+        
+        attached_column = nil
+        
+        for attribute in attributes
+          if attribute[:attached].blank? && required
+            errors.add(name.singularize.humanize.titleize, ActiveRecord::Errors.default_error_messages[:blank])
+          elsif !attribute[:attached].blank?
+            attached_column = name.to_s.singularize.camelize.constantize.new(attribute)
+            self.send("#{name}").concat(attached_column)
+          end
+        end
+
+        attached_column.errors.each { |n,e| errors.add(n,e) } if attached_column && !attached_column.valid?
+      end      
     end
 
     # Places ActiveRecord-style validations on the size of the file assigned. The
@@ -143,27 +195,64 @@ module Paperclip
     # * +in+: a Range of bytes (i.e. +1..1.megabyte+),
     # * +less_than+: equivalent to :in => 0..options[:less_than]
     # * +greater_than+: equivalent to :in => options[:greater_than]..Infinity
+    # * +message+: error message to display, use :min and :max as replacements
     def validates_attachment_size name, options = {}
-      @attachment_definitions[name][:validations] << lambda do |attachment, instance|
+      attachment_definitions[name][:validations] << lambda do |attachment, instance|
         unless options[:greater_than].nil?
           options[:in] = (options[:greater_than]..(1/0)) # 1/0 => Infinity
         end
         unless options[:less_than].nil?
           options[:in] = (0..options[:less_than])
         end
-        unless options[:in].include? instance[:"#{name}_file_size"].to_i
-          "file size is not between #{options[:in].first} and #{options[:in].last} bytes."
+        unless attachment.original_filename.blank? || options[:in].include?(instance[:"#{name}_file_size"].to_i)
+          min = options[:in].first
+          max = options[:in].last
+          
+          if options[:message]
+            options[:message].gsub(/:min/, min.to_s).gsub(/:max/, max.to_s)
+          else
+            "file size is not between #{min} and #{max} bytes."
+          end
         end
       end
     end
 
+    # Adds errors if thumbnail creation fails. The same as specifying :whiny_thumbnails => true.
+    def validates_attachment_thumbnails name, options = {}
+      attachment_definitions[name][:whiny_thumbnails] = true
+    end
+
     # Places ActiveRecord-style validations on the presence of a file.
-    def validates_attachment_presence name
-      @attachment_definitions[name][:validations] << lambda do |attachment, instance|
-        if attachment.file.nil? || !File.exist?(attachment.file.path)
-          "must be set."
+    def validates_attachment_presence name, options = {}
+      attachment_definitions[name][:validations] << lambda do |attachment, instance|
+        if attachment.original_filename.blank?
+          options[:message] || ActiveRecord::Errors.default_error_messages[:blank]
         end
       end
+    end
+    
+    # Places ActiveRecord-style validations on the content type of the file assigned. The
+    # possible options are:
+    # * +content_type+: Allowed content types.  Can be a single content type or an array.  Allows all by default.
+    # * +message+: The message to display when the uploaded file has an invalid content type.
+    def validates_attachment_content_type name, options = {}
+      attachment_definitions[name][:validations] << lambda do |attachment, instance|
+        valid_types = [options[:content_type]].flatten
+        
+        unless attachment.original_filename.nil?
+          unless options[:content_type].blank?
+            content_type = instance[:"#{name}_content_type"]
+            unless valid_types.any?{|t| t === content_type }
+              options[:message] || ActiveRecord::Errors.default_error_messages[:inclusion]
+            end
+          end
+        end
+      end
+    end
+
+    # Returns the attachment definitions defined by each call to has_attached_file.
+    def attachment_definitions
+      read_inheritable_attribute(:attachment_definitions)
     end
 
   end
@@ -192,6 +281,11 @@ module Paperclip
         attachment.send(:flush_deletes)
       end
     end
+    
+    def reload_attached_files
+      each_attachment do |name, attachment|
+        attachment.send(:flush_reload) if !self.errors.blank? || !attachment.errors.blank?
+      end
+    end
   end
-
 end

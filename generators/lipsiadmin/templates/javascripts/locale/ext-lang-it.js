@@ -9,7 +9,8 @@ Ext.namespace('Lipsiadmin');
 Lipsiadmin.locale = { 'buttons': { 'add': 'Aggiungi',
  																	 'edit': 'Modifica',
 																	 'remove': 'Elimina' },
-											'labels': { 'search': 'Cerca: ', 'all': 'Elenco ' },
+											'labels': { 'search': 'Cerca: ', 'all': 'Elenco ', 'compliments': 'Complimenti', 'compliments_msg':'I tuoi dati sono stati correttamente salvati.' },
+											'wait' : { 'title': 'Invio dati', 'msg' : 'Invio dei dati al server in corso ...' },
 											'confirm': { 'title': 'Sei sicuro?', 'msg_1': 'Vuoi veramente eliminare ', 'msg_2': ' elemento/i?' },
 											'alert': { 'title': 'Attenzione', 'msg': 'Si è verificato un problema di connessione.<br />Contatta il supporto tecnico.' },
 											'dateFormat': 'd/m/Y G:i'

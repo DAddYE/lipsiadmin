@@ -1,70 +1,43 @@
 module LipsiaSoft
   module BetterTagHelper
-    include ActionView::Helpers
+    include ActionView::Helpers::FormHelper
+    include ActionView::Helpers::FormTagHelper
     
-    def password_field(object_name, method, options = {})
-      options[:class] ||= "password_field"
-      options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='password_field_sel'") 
-      InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_input_field_tag("password", options)
+    def text_area_with_style(name, value = nil, options = {})
+      options[:class] ||= "text-area"
+      text_area_without_style(name, value, options)
     end
+    alias_method_chain :text_area, :style
     
-    def password_field_tag(name = "password", value = nil, options = {})
-      options[:class] ||= "password_field"
-      options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='password_field_sel'") 
-      text_field_tag(name, value, options.update("type" => "password"))
+    def text_area_tag_with_style(name, value = nil, options = {})
+      options[:class] ||= "text-area"
+      text_area_tag_without_style(name, value, options)
     end
+    alias_method_chain :text_area_tag, :style
     
-    def text_area(object_name, method, options = {})
-      options[:class] ||= "text_area"
-      options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='text_area_sel'") 
-      InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_text_area_tag(options)
+    def text_field_with_style(name, method, options = {})
+      options[:class] ||= "text-input"
+      text_field_without_style(name, method, options)
     end
-    
-    def text_area_tag(name, content = nil, options = {})
-      options[:class] ||= "text_area"
-      options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='text_area_sel'") 
-      options.stringify_keys!
+    alias_method_chain :text_field, :style
 
-      if size = options.delete("size")
-        options["cols"], options["rows"] = size.split("x")
-      end
-
-      content_tag :textarea, content, { "name" => name, "id" => name }.update(options.stringify_keys)
+    def text_field_tag_with_style(name, value = nil, options = {})
+      options[:class] ||= "text-input"
+      text_field_tag_without_style(name, value, options)
     end
-    
-    def text_field(object_name, method, options = {})
-      options[:class] ||= "text_field" 
-      if options[:onclick] == :clear_value
-        options.delete(:onclick)
-        options.merge!(:onblur => "if(this.value=='')this.value=this.defaultValue;this.className=this.oldClassName", 
-                       :onfocus => "if(this.value==this.defaultValue)this.value='';this.oldClassName=this.className;this.className='text_field_sel'")
-      else
-        options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='text_field_sel'") 
-      end
-      InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_input_field_tag("text", options)
-    end
+    alias_method_chain :text_field_tag, :style
 
-    def text_field_tag(name, value = nil, options = {})
-      options[:class] ||= "text_field" 
-      if options[:onclick] == :clear_value
-        options.delete(:onclick)
-        options.merge!(:onblur => "if(this.value=='')this.value=this.defaultValue;this.className=this.oldClassName", 
-                       :onfocus => "if(this.value==this.defaultValue)this.value='';this.oldClassName=this.className;this.className='text_field_sel'")
-      else
-        options.merge!(:onblur => "this.className=this.oldClassName", :onfocus => "this.oldClassName=this.className;this.className='text_field_sel'") 
-      end
-      tag :input, { "type" => "text", "name" => name, "id" => name, "value" => value }.update(options.stringify_keys)
+    def password_field_with_style(name, method, options = {})
+      options[:class] ||= "text-input"
+      password_field_without_style(name, method, options)
     end
-    
-    def submit_tag(value = "Save changes", options = {})
-      options[:class] ||= "submit_tag" 
-      options.stringify_keys!
+    alias_method_chain :password_field, :style
 
-      if disable_with = options.delete("disable_with")
-        options["onclick"] = "this.disabled=true;this.value='#{disable_with}';this.form.submit();#{options["onclick"]}"
-      end
-
-      tag :input, {"type" => "submit", "name" => "commit", "value" => value }.update(options.stringify_keys)
+    def password_field_tag_with_style(name, value = nil, options = {})
+      options[:class] ||= "text-input"
+      password_field_tag_without_style(name, value, options)
     end
+    alias_method_chain :password_field_tag, :style
+
   end
 end

@@ -42,7 +42,7 @@
 LipsiaSoft::AccessControl.map :require => [ :administrator, :manager, :customer ]  do |map|
   # Shared Permission
   map.permission "backend/base"
-  # Module Permission
+  # Please don't remove this comment! It's used for auto adding project modules
   map.project_module :accounts, "backend/accounts" do |project|
     project.menu :list, { :action => :index }, :class => "icon-no-group"
     project.menu :new,  { :action => :new }, :class => "icon-new"

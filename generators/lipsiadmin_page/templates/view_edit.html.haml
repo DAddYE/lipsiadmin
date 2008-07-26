@@ -1,0 +1,2 @@
+-form_page(backend_<%= singular_name %>_path(@<%= singular_name %>), :title => "Edit <%= singular_name.capitalize %> n. #{@<%= singular_name %>.id}", :method => :put<% if with_attachments -%>, :multipart => true<% end -%>) do
+  =render :partial => "form"

@@ -70,11 +70,6 @@ module LipsiaSoft
           include LipsiaSoft::Acts::NestedSet::InstanceMethods
           extend LipsiaSoft::Acts::NestedSet::ClassMethods
           
-          # adds the helper for the class
-#          ActionView::Base.send(:define_method, "#{Inflector.underscore(self.class)}_options_for_select") { special=nil
-#              "#{acts_as_nested_set_options[:text_column]} || "#{self.class} id #{id}"
-#            }
-          
         end
         
         
@@ -127,6 +122,12 @@ module LipsiaSoft
           return "1 != 1" if items.empty? # PostgreSQL didn't like '0', and SQLite3 didn't like 'FALSE'
           items.map! {|e| "(#{acts_as_nested_set_options[:left_column]} BETWEEN #{e[acts_as_nested_set_options[:left_column]]} AND #{e[acts_as_nested_set_options[:right_column]]})" }
           "(#{items.join(' OR ')})"
+        end
+
+        
+        # Return children for the given node
+        def find_children(start_id = nil)
+          start_id.to_i == 0 ? roots : find(start_id).children
         end
         
       end
@@ -255,6 +256,11 @@ module LipsiaSoft
           base_set_class.find(:all, :conditions => "#{scope_condition} #{exclude_str} AND (#{left_col_name} BETWEEN #{self[left_col_name]} AND #{self[right_col_name]})", :order => left_col_name)
         end
         
+        # Return this record has children (useful for ext tree)
+        def leaf
+          children.blank?
+        end
+        
         # Returns all children and nested children.
         # Pass :exclude => item, or id, or [items or id] to exclude one or more items *and* all of their descendants.
         def all_children(special=nil)
@@ -265,7 +271,7 @@ module LipsiaSoft
         def children
           base_set_class.find(:all, :conditions => "#{scope_condition} AND #{parent_col_name} = #{self.id}", :order => left_col_name)
         end
-        
+                
         # Deprecated
         alias direct_children children
         

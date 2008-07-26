@@ -1,0 +1,48 @@
+-simple_error_messages_for :<%= singular_name %>
+-tab "General" do
+  %ul.form
+<%= template_for_inclusion %>
+
+<%- if with_images -%>
+-tab "Images" do
+  <%- images.each_with_index do |image, index| -%>
+ 
+  -if @<%= singular_name %>.<%= image.downcase %>?
+    #image<%= "#{index+1}" %>.box-image
+      .title Image <%= index + 1 %>
+      / Please use a thumb image like <%= image.downcase %>.url(:thumb)
+      .image=image_tag(@<%= singular_name %>.<%= image.downcase %>.url, :size => "128x110") 
+      .align-center=link_to_remote "Destroy", :url => {:action => :destroy_<%= image.downcase %>, :id => @<%= singular_name %>}, :confirm => "Are you sure to destroy this image?", :method => :delete
+  <%- end -%>
+  
+  .clear
+  
+  <%- images.each_with_index do |image, index| -%>
+  .label-image
+    %h3 Image <%= index+1 %>
+    .browse 
+      Browse:
+      =file_field :<%= singular_name %>, :<%= image.downcase %>  
+    .description Select your image no <%= index+1 %>
+  <%- end -%>
+<%- end -%>
+
+<%- if with_files -%>
+-tab "Files" do
+  <%- files.each_with_index do |file, index| -%>
+  -if @<%= singular_name %>.<%= file.downcase %>?
+    #file<%= "#{index+1}" %>.file
+      File <%= index+1 %>:
+      =link_to @<%= singular_name %>.<%= file.downcase %>.original_filename, @<%= singular_name %>.<%= file.downcase %>.url
+      =number_to_human_size @question.<%= file.downcase %>_file_size
+      =link_to_remote image_tag("backend/delete.gif"), :url => {:action => :destroy_<%= file.downcase %>, :id => @<%= singular_name %>}, :confirm => "Are you sure to destroy this image?", :method => :delete
+  <%- end -%>
+  <%- files.each_with_index do |files, index| -%>
+  .label-image
+    %h3 File <%= index+1 %>
+    .browse
+      Browse:
+      =file_field :<%= singular_name %>, :<%= files.downcase %>
+    .description Select your file <%= index+1 %>
+  <%- end -%>
+<%- end -%>

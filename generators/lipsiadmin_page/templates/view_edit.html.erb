@@ -1,5 +1,0 @@
-<%% page :text => "Edit <%= singular_name.capitalize %> n. #{@<%= singular_name %>.id}" do %>
-	<%% form_tag(backend_<%= singular_name %>_path(@<%= singular_name %>), :id => "adminForm", :method => :put<% if with_attachments -%>, :multipart => true<% end -%>) do %>
-		<%%= render :partial => "form" %>
-	<%% end %>
-<%% end %>

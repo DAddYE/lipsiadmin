@@ -1,4 +1,5 @@
 common:
+  name: Lipsiadmin
   email_from: info@lipsiasoft.com
   email_cc: info@lipsiasoft.com
   email_object: Admin

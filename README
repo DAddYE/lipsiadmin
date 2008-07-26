@@ -8,9 +8,9 @@ Lipsiadmin
 
 Lipsiadmin is a new revolutionary admin for your projects.
 
-Is developped by http://www.lipsiasoft.com that use it from 1 year in production enviroments.
+Is developped by http://www.lipsiasoft.com that use it from 1.5 year in production enviroments.
 
-Lipsiadmin is based on Ext Js 2.1 framework (with prototype adapter) and is ready for Rails 2.0.
+Lipsiadmin is based on Ext Js 2.1 framework (with prototype adapter) works with Rails 2.0.
 
 This admin is for newbie developper but also for experts, is not entirely written in javascript because the aim of developper wose build in a agile way web/site apps so we use extjs in a new intelligent way a mixin of “old” html and new ajax functions, for example ext manage the layout of page, grids, tree and errors, but form are in html code.
 
@@ -18,14 +18,14 @@ Prerequisites
 =============
 
 Rails 2.0
-
+Haml 2.0
 
 Installation
 ============
 
 git clone git://github.com/Lipsiasoft/lipsiadmin.git vendor/plugins/lipsiadmin
 
-or if you are on edge rails
+or
 
 script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
 
@@ -42,12 +42,22 @@ Options:
     -i, --with-images=image1,image2  Add images to the templates for this model
     -l, --with-files=file1,file2     Add files to the templates for this model
 
-
 See our wiki for more examples and docs
 
 http://rails.lipsiasoft.com/wiki/lipsiadmin
 
-LAST CHANGES on 2008-05-21
+LAST CHANGES on 2008-07-26
+  * Now lispiadmin is totaly ajax and can manage file uploads
+  * Added a full localization in the following language (ca, cf, cn, cs, da, de, en, es, fr, it, nl, no, pt, pt, ru, se)
+  * We do a big refactoring code in ruby code, javascripts, css, views
+  * Now when you create pages we make routes for you
+  * Now when you create module project (for permission) for you
+  * Now lipsiadmin is in haml
+  * Now is not necessary remove protect_from_forgery
+  * Refactored login page
+  * Refactored entire admin, now for example there isn't a lipspiadmin logo ;)
+
+OLD CHANGES
   * Added a new PDF generator, we don't need the expensive PRINCEXML, we can use pd4ml
   * Added a manifest that show the current routes that are necessary to add
   * Added ext-all-debug.js (Was autodetect if env == development)
@@ -59,17 +69,12 @@ LAST CHANGES on 2008-05-21
   * Added new class AccessControl (Documented)
   * New config file for roles, modules in initializers/access_rules.rb
 
-WARNING
-=======
-If you have a table named Items and generate an admin page, search does not work. 
-Guess it has something to do with the item object in the extjs code.
-
 REMEMBER
 ========
 Edit config/config.yml
-Edit routes after a script/generate lipsiadmin_page
-Remove protect_from_forgery from app/application.rb
 
 THANKS
 ======
 Many thanks to: Gabrio, Philippe and many others that help me in find/fix bugs.
+
+Please feel free to fork and make your changes!

@@ -1,0 +1,19 @@
+%html
+  %head
+    %title=Lipsiadmin::versioned_name
+    =stylesheet_link_tag "/javascripts/resources/css/ext-all"
+    =stylesheet_link_tag "standard", "backend"
+    =javascript_include_tag :defaults, :cache => "Prototype"
+    =javascript_include_tag "ext-prototype-adapter", (RAILS_ENV == "production"  ? "ext-all" : "ext-all-debug"), "search-field", "memory-proxy", "locale/ext-lang-#{LANG}", "date-time", :cache => "Lipsiadmin"
+    =javascript_include_tag "backend", "forms"
+  %body
+    #header
+      #logo=link_to AppConfig.name, backend_path
+      #logout=link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete
+    -current_account.project_modules.each do |project_module|
+      %ul{:id => "backend-#{project_module.uid}"}
+        -project_module.menus.each do |menu|
+          %li
+            =image_tag("/javascripts/resources/images/default/s.gif", :class=> "#{menu.options[:class]}", :alt => menu.human_name)
+            =link_to_function menu.human_name, "Lipsiadmin.app.loadMenu('#{menu.url[:controller]}/#{menu.url[:action]}')"
+    %iframe{ :id => "ajax-frame", :name => "ajax-frame" }
