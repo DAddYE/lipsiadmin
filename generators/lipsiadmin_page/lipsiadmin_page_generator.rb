@@ -105,7 +105,7 @@ class LipsiadminPageGenerator < Rails::Generator::NamedBase
   end      
       CODE
      
-      routes = "\t\tbackend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| ":destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }"
+      routes = "    backend.resources :#{singular_name.pluralize} #{ ", :member => { " + attachments.collect { |e| ":destroy_#{e} => :delete" }.join(", ") + " }" unless attachments.blank? }"
       # Adding a new permission
       m.append("config/initializers/access_rules.rb", permissions, "# Please don't remove this comment! It's used for auto adding project modules")
       # Adding a new route
