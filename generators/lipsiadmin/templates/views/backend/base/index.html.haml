@@ -15,5 +15,5 @@
         -project_module.menus.each do |menu|
           %li
             =image_tag("/javascripts/resources/images/default/s.gif", :class=> "#{menu.options[:class]}", :alt => menu.human_name)
-            =link_to_function menu.human_name, "Lipsiadmin.app.loadMenu('#{menu.url[:controller]}/#{menu.url[:action]}')"
+            =link_to_function menu.human_name, "Lipsiadmin.app.loadMenu('#{url_for(menu.url)}')"
     %iframe{ :id => "ajax-frame", :name => "ajax-frame" }

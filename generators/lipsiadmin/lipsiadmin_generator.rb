@@ -7,10 +7,11 @@ class LipsiadminGenerator < Rails::Generator::Base
     backend.resources :sessions
   end
 
-  map.backend     '/admin', :controller => 'backend/base', :action => 'index'
-  map.welcome     '/admin/welcome', :controller => 'backend/base', :action => 'welcome'
-  map.activation  '/admin/accounts/activate/:activation_code', :controller => 'backend/accounts', :action=>'activate'
-  map.connect     '/javascripts/:action.:format', :controller => 'javascripts'
+  map.backend                 '/admin', :controller => 'backend/base', :action => 'index'
+  map.welcome                 '/admin/welcome', :controller => 'backend/base', :action => 'welcome'
+  map.activation              '/admin/accounts/activate/:activation_code', :controller => 'backend/accounts', :action=>'activate'
+  map.refresh_project_modules '/admin/accounts/refresh_project_modules', :controller => 'backend/accounts', :action=>'refresh_project_modules'
+  map.connect                 '/javascripts/:action.:format', :controller => 'javascripts'
   ROUTES
     
     record do |m|
