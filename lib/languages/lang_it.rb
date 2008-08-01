@@ -97,7 +97,7 @@ module LocalizationSimplified
     # CurrencyOptions are used as default for +Number#to_currency()+
     # http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html#M000449
     CurrencyOptions = {
-      :unit      => "€",
+      :unit      => "&euro;",
       :separator => ",",             #unit separator (between integer part and fraction part)
       :delimiter => ".",             #delimiter between each group of thousands. Example: 1.234.567 
       :order     => [:unit, :number] #order is at present unsupported in Rails

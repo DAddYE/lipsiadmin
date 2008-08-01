@@ -34,7 +34,7 @@
     #file<%= "#{index+1}" %>.file
       File <%= index+1 %>:
       =link_to @<%= singular_name %>.<%= file.downcase %>.original_filename, @<%= singular_name %>.<%= file.downcase %>.url
-      =number_to_human_size @question.<%= file.downcase %>_file_size
+      =number_to_human_size @<%= singular_name %>.<%= file.downcase %>_file_size
       =link_to_remote image_tag("backend/delete.gif"), :url => {:action => :destroy_<%= file.downcase %>, :id => @<%= singular_name %>}, :confirm => "Are you sure to destroy this image?", :method => :delete
   <%- end -%>
   <%- files.each_with_index do |files, index| -%>
