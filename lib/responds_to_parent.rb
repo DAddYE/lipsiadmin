@@ -19,6 +19,8 @@ module LipsiaSoft
     end
     
     def redirect_to_parent(options={})
+      title = options.delete(:title)
+      message = options.delete(:message)
       case options
         when :back
           options = request.env["HTTP_REFERER"]
@@ -30,7 +32,7 @@ module LipsiaSoft
       responds_to_parent do
         render :update do |page|
           page.load_menu options
-          page.show_message options[:title], options[:message]
+          page.show_message title, message
         end
       end
     end

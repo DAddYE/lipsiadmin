@@ -30,7 +30,7 @@ module LipsiaSoft
       end
     end
     
-    def show_message(title, message)
+    def show_message(title=nil, message=nil)
       title   = title.blank? ? "Lipsiadmin.locale.labels.compliments" : "'#{escape_javascript(title)}'"
       message = message.blank? ? "Lipsiadmin.locale.labels.compliments_msg" : "'#{escape_javascript(message)}'"
       record "Ext.Msg.alert(#{title},#{message})"
