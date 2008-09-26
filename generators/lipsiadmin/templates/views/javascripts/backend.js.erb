@@ -22,9 +22,6 @@ Ext.util.Format.boolRenderer = function(v){
 	}
 }
 
-Ext.util.pageSize = 50; // Used in Ext.PagingToolbar
-Ext.util.Pagination = { params:{start:0, limit:Ext.util.pageSize} }; // Used in ds.load();
-
 function showMessages(transport){
 	Ext.Msg.alert('Attention', transport.responseText);
 }

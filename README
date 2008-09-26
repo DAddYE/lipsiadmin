@@ -52,7 +52,8 @@ http://gallery.me.com/daddye/100013
 or
 http://www.flickr.com/photos/daddye/sets/72157606377641164/
 
-LAST CHANGES on 2008-07-26
+LAST CHANGES on 2008-09-26
+  * Fixed some bug in the main javascript
   * Now lispiadmin is totaly ajax and can manage file uploads
   * Added a full localization in the following language (ca, cf, cn, cs, da, de, en, es, fr, it, nl, no, pt, pt, ru, se)
   * We do a big refactoring code in ruby code, javascripts, css, views

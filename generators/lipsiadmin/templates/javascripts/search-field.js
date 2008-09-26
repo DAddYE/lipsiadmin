@@ -6,8 +6,6 @@
 Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 	initComponent : function(){
 		Ext.app.SearchField.superclass.initComponent.call(this);
-		this.store.baseParams = this.store.baseParams || {};
-    this.store.baseParams[this.paramName] = '';
 		this.on('keypress', function(f, e){
 			this.onTrigger2Click();
 			}, this);
@@ -35,7 +33,7 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 			this.el.dom.value = '';
 			this.store.baseParams = this.store.baseParams || {};
       this.store.baseParams[this.paramName] = '';
-			this.store.load(Ext.util.Pagination);
+			this.store.load();
 			this.hasSearch = false;
 		}
 	},
