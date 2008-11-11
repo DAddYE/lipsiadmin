@@ -47,7 +47,7 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 		this.store.baseParams = this.store.baseParams || {};
     this.store.baseParams[this.paramName] = v;
 		this.store.baseParams['items'] = this.items;
-		this.store.load(Ext.util.Pagination);
+		this.store.load();
 		this.hasSearch = true;	
 	}
 });

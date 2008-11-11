@@ -1,3 +1,6 @@
+2008-11-11
+  * Fixed some bugs
+  
 2008-05-21
   * Added a new PDF generator, we don't need the expensive PRINCEXML, we can use pd4ml
 

@@ -64,14 +64,14 @@ var grid = new Ext.grid.GridPanel({
 		},'->',
 			 Lipsiadmin.locale.labels.search, ' ',
 			 new Ext.app.SearchField({
-				pageSize: Ext.util.pageSize,
+				pageSize: 50,
 				store: ds,
 				items: items,
 				width:320
 			 })
 	],
 	bbar: new Ext.PagingToolbar({
-		pageSize: Ext.util.pageSize,
+		pageSize: 50,
 		store: ds,
 		displayInfo: true
 	})
@@ -133,7 +133,7 @@ function remove(){
 
 function loadData(){ 
 	proxy.reload(js.reader.jsonData);
-	ds.load(Ext.util.Pagination);
+	ds.load();
 	Lipsiadmin.app.unmask();
 }
 
