@@ -35,10 +35,11 @@ class BackendGenerator < Rails::Generator::Base
       m.create_all("config", "config")
       
       # Using this for prevent raising errors
-      if m.migration_exists?("create_accounts")
-        logger.exists "db/migrate/create_accounts.rb"
-      else
+      migration = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_accounts.rb$/)
+      if migration.empty?
         m.migration_template("migrations/create_accounts.rb", "db/migrate", :migration_file_name => "create_accounts")
+      else
+        logger.exists migration.first
       end
       
       %w(404 422 500).each do |page|
