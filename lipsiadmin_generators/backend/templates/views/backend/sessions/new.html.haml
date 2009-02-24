@@ -1,0 +1,12 @@
+-form_tag backend_sessions_path do
+  %h2 Login in to Admin Panel
+  .field 
+    Email:
+    %br=text_field_tag :email, nil, :style => "width:250px"
+  .field
+    Password:
+    %br=password_field_tag :password, nil, :style => "width:250px"
+  .align-right.bottom.borderd
+    .left=flash[:notice]
+    .right=image_submit_tag("/images/backend/btn-login.png")
+    .clear

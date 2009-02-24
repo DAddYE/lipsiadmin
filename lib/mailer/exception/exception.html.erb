@@ -1,0 +1,11 @@
+A <%= @exception.class %> occurred in <%= @controller.controller_name %>#<%= @controller.action_name %>:
+
+<%=h @exception.message %>
+<%=h @backtrace.join("\n") %>
+  
+* URL       : <%= @request.protocol %><%= @host %><%= @request.request_uri %>
+* IP address: <%= @request.env["HTTP_X_FORWARDED_FOR"] || @request.env["REMOTE_ADDR"] %>
+* Parameters: <%= @request.parameters.inspect %>
+* Rails root: <%= RAILS_ROOT %>
+
+<%= @extra_options.collect { |k,v| "#{k.to_s.capitalize}: #{v}" }.join("\n") %>

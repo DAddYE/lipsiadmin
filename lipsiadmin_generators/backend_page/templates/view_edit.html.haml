@@ -1,0 +1,3 @@
+=title "Edit <%= model_instance.class.human_name %> n. #{@<%= singular_name %>.id}"
+-form_tag({:action => :update, :id => @<%= singular_name %>}, :method => :put) do
+  =render :partial => "form"

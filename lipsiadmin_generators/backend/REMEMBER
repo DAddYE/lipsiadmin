@@ -1,0 +1,18 @@
+
+================================================================
+
+Please remember to:
+  
+  - Edit config/config.yml
+  - Edit inizializers/exception_notifier.rb
+  - Edit Account Migration (setting your username and password)
+  - Run rake db:create && rake db:migrate
+  - Set your default locale I18n in environment.rb (IT||EN)
+
+Extra:
+  in config/environment.rb
+  
+  - config.active_record.timestamped_migrations = false
+  - comment config.time_zone = 'UTC'
+  
+================================================================

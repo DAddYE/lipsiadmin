@@ -1,0 +1,51 @@
+<%= @var %>.getSelectionModel().on('selectionchange', function(){
+  var n = <%= @var %>.getSelectionModel().getSelected();
+  var btns = <%= @var %>.getTopToolbar().items.map;
+
+   if(!n){
+    btns.remove.disable();
+    btns.edit.disable();
+     return;
+  } else {
+    btns.remove.enable();
+    btns.edit.enable();
+    return;
+   }
+});
+
+function add(){
+  Backend.app.load('<%= @base_path %>/new');
+}
+
+function edit(){
+  Backend.app.load('<%= @base_path %>/'+<%= @var %>.getSelectionModel().getSelected().id+'/edit');
+}
+
+function remove(){
+  Ext.Msg.confirm(Backend.locale.messages.confirm.title, String.format(Backend.locale.messages.confirm.message, <%= @var %>.getSelectionModel().getCount()), function(btn, text){
+    if (btn == 'yes'){
+      <%= @var %>.getSelectionModel().each(function(r){
+        Backend.app.mask();
+        Ext.Ajax.request({
+          url: '<%= @base_path %>/'+r.id,
+          method: 'DELETE',
+          params: {<%= @forgery_protection_token %>: '<%= @authenticity_token %>'},
+          success: function(result, request){
+            Backend.app.unmask();
+            var resultValue = Ext.decode(result.responseText); 
+            if (resultValue.success == true){
+              <%= @store %>.remove(r);
+            } else { 
+              Ext.MessageBox.alert(Backend.locale.messages.alert.title, resultValue.msg);
+              return;
+            }
+          },                
+          failure: function(result, request) {
+            Backend.app.unmask();
+            Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
+          }
+        });
+      })
+    }
+  });
+}

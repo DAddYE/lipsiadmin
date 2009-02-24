@@ -1,57 +1,74 @@
-require 'rexml/document'
+require 'utils/html_entities'
+require 'utils/literal'
+require 'access_control/authentication'
+require 'access_control/base'
+require 'mailer/pdf_builder'
+require 'mailer/exception_notifier'
+require 'view/helpers/active_record_helper'
+require 'view/helpers/backend_helper'
+require 'view/helpers/country_select_helper'
+require 'view/helpers/date_helper'
+require 'view/helpers/ext_helper'
+require 'view/helpers/tag_helper'
+require 'controller/ext'
+require 'controller/pdf_builder'
+require 'controller/responds_to_parent'
+require 'controller/lipsiadmin_controller'
+require 'controller/ext'
+require 'controller/rescue'
+require 'data_base/without_table'
+require 'data_base/translate_attributes'
+require 'data_base/attachment'
+require 'data_base/attachment_table'
+require 'data_base/utility_scopes'
+require 'haml'
+require 'version'
+require 'generator'
 
-module Lipsiadmin
-  class << self
-    def app_name; 'Lipsiadmin' end
-    def url; 'http://rails.lipsiasoft.com/projects/show/lipsiadmin' end
-    def help_url; 'http://rails.lipsiasoft.com/wiki/lipsiadmin' end
-    def versioned_name; "#{app_name} v#{VERSION}" end
-  end
-  
-  module VERSION #:nodoc:
-    module_function
-  
-    REPOSITORY_ROOT = "#{RAILS_ROOT}/vendor/plugins/lipsiadmin"
-     
-    def branches
-      %x(cd #{REPOSITORY_ROOT}; git-branch).map { |branch| extract_branch_name(branch) }
-    end
- 
-    def extract_branch_name(branch_name)
-      branch_name.gsub!("\s.+", "")
-      branch_name.gsub!("\*", "")
-      branch_name.strip
-    end
-    
-    def tag_list
-      %x(cd #{REPOSITORY_ROOT}; git-tag --)
-    end
- 
-    def rev_list(branch_name)
-      %x(cd #{REPOSITORY_ROOT}; git-rev-list #{branch_name} --)
-    end
- 
-    def rev_list_all_branches
-      %x(cd #{REPOSITORY_ROOT}; git-rev-list #{branches.join(" ")} --)
-    end
- 
-    def find_commits(branch_name=nil)
-      branch_name ?  rev_list(branch_name) : rev_list_all_branches
-    end
- 
-    def commits(branch_name=nil)
-      commits = branch_name ? find_commits(branch_name) : find_commits
-      @commits = commits.split.reverse
-    end
-    
-    def to_s 
-      if File.exist?(REPOSITORY_ROOT+"/.git")
-        version  = [tag_list.split.last]
-        version << commits.size if RAILS_ENV == "development"
-        return version.join(".")
-      else
-         return "2.0"
-      end
-    end
-  end
+Haml.init_rails(binding)
+Haml::Template.options[:attr_wrapper] = "\""
+
+# Global Extension
+
+ActiveRecord::Base.class_eval do
+  include Lipsiadmin::DataBase::TranslateAttributes
+  include Lipsiadmin::DataBase::Attachment
+  include Lipsiadmin::DataBase::UtilityScopes
 end
+
+ActionView::Base.class_eval do
+  include Lipsiadmin::View::Helpers::TagHelper
+end
+
+ActionView::Helpers::PrototypeHelper::JavaScriptGenerator::GeneratorMethods.class_eval do
+  include Lipsiadmin::View::Helpers::ExtHelper
+end
+
+ActionController::Base.class_eval do
+  include Lipsiadmin::Controller::Rescue
+  include Lipsiadmin::Controller::PdfBuilder
+  include Lipsiadmin::Controller::RespondsToParent
+  include Lipsiadmin::Controller::Ext
+  include Lipsiadmin::AccessControl::Authentication
+end
+
+# For Attachments
+File.send(:include, Lipsiadmin::Attachment::Upfile)
+
+# For javascript objects
+Object.send(:include, Lipsiadmin::Utils::Literal)
+
+# Custom CSS and JS
+ActionView::Helpers::AssetTagHelper.register_stylesheet_expansion :backend => ["ext", "standard", "backend"], :backend_slate => ["ext", "ext-slate", "standard", "backend-slate"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :backend => ["ext", "locale", "backend"]
+
+# Add a better organization of locales
+I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'backend',  '*.{rb,yml}')]
+I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'frontend', '*.{rb,yml}')]
+I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'menu',     '*.{rb,yml}')]
+I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'models',   '*.{rb,yml}')]
+I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'rails',    '*.{rb,yml}')]
+
+# Load generator languages
+I18n.load_path << File.dirname(__FILE__) + '/locale/it.yml'
+I18n.load_path << File.dirname(__FILE__) + '/locale/en.yml'

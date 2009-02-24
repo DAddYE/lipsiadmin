@@ -1,0 +1,12 @@
+it:
+  lipsiadmin:
+    exceptions:
+      "404":
+        title: "La pagina che cerchi non esiste"
+        description: "E' possibile che abbia digitato un indirizzo errato o che la pagina sia stata rimossa."
+      "422":
+        title: "La modifica è stata rifiutata"
+        description: "Hai tentato di modificare qualcosa che non ti è permesso."
+      "500":
+        title: "Si è verificato un problema"
+        description: "Le nostre scimmie stanno già provvedendo a risolvere il problema."

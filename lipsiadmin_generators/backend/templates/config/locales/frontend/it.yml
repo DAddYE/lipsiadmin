@@ -1,0 +1,5 @@
+# Questo file è generalmente utilizzato per tradurre il frontend
+# Ti ricordiamo che in Backend è stato introdotto un metodo semplice in stile gibberish per le traduzioni
+# Infatti puoi scrivere "Translate Me in Italian"[] e verrà convertito in I18n.t("translate_me_in_italian", :default => "Translate Me in Italian")
+it:
+  translate_me_in_italian: Traducimi in Italiano

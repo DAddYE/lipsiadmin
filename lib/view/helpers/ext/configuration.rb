@@ -1,0 +1,33 @@
+module Lipsiadmin
+  module Ext
+    # Ext configuration of used by components
+    # 
+    #   Generates: { name: 'name', handler: function(){ alert('Hello World') } }
+    #
+    class Configuration < Hash
+      
+      def initialize(hash)
+        hash.each { |k,v| self[k] = v }
+      end
+      
+      def to_s(indent=1)
+        i = ("  "*indent)
+        s = self.size > 0 ? "\n" : "  "
+        "{#{s}" + self.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i}}"
+      end
+      
+      private
+        def javascript_object_for(object)
+          case object
+            when Configuration
+              object.to_s(2)
+            when Array
+              "[" + object.collect { |o| s(o) }.join(",") + "]"
+            else
+              object.respond_to?(:to_json) ? object.to_json : object.inspect
+          end
+        end
+        alias_method :s, :javascript_object_for
+    end
+  end
+end

@@ -1,0 +1,17 @@
+page.grid do |grid|
+  grid.id "grid-<%= plural_name %>"
+  grid.var :finocchio
+  grid.title "List all <%= model_instance.class.human_name %>"
+  grid.base_path "/backend/<%= plural_name %>"
+  grid.forgery_protection_token request_forgery_protection_token
+  grid.authenticity_token form_authenticity_token
+  grid.tbar  :default
+  grid.store do |store|
+    store.url "/backend/<%= plural_name %>.json"
+    store.fields @column_store.store_fields
+  end
+  grid.columns do |columns|
+    columns.fields @column_store.column_fields
+  end
+  grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
+end

@@ -1,0 +1,23 @@
+# Questo file è utizzato per tradurre il nome dei modell/tabelle e dei suoi attributi/colonne
+it:
+  activerecord:
+    # Esempio:
+    # 
+    # models:
+    #   account: "Anagrafica"
+    #   attachment: "Allegato"
+    #   client: "Operatore"
+    #   debtor: "Debitore"
+    #   debtor_status: "Stato Debitore"
+    #   dossier: "Pratica"
+    #   member: "Membro"
+    #   officeaddress: "Indirizzo Ufficio"
+    #   procedure: "Procedura"
+    #   recovery_commission: "Recupero Commissione"
+    #   subscription: "Abbonamento"
+    # attributes:
+    #   account: 
+    #     company: "Azienda"
+    #     password_confirmation: "Conferma Password"
+    #   debtor:
+    #     company: "Azienda"    

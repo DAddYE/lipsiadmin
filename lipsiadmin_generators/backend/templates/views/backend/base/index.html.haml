@@ -1,0 +1,17 @@
+%html
+  %head
+    %title="#{AppConfig.project} v.#{Lipsiadmin::VERSION::STRING}"
+    =stylesheet_link_tag :backend#_slate
+  %body
+    #loading-mask
+    #loading
+      .loading-indicator
+        =image_tag("backend/logo-loader.png") + "Loading..."
+    // include everything after the loading indicator
+    =javascript_include_tag :defaults, :backend
+    -unless params[:small]
+      #header
+        #logo=link_to AppConfig.project, backend_path
+        #logout=link_to "Logout #{current_account.email}", backend_session_path(1), :method => :delete
+              
+    %iframe{ :id => "ajax-iframe", :name => "ajax-iframe" }

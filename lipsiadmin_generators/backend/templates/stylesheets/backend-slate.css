@@ -1,0 +1,105 @@
+/*
+* Lipsiasadmin
+* Copyright(c) 2007-2008, LipsiaSoft s.r.l.
+* info@lipsiasoft.com
+* 
+* http://www.lipsiasoft.com
+*/
+a{text-decoration:none;color:#273445;}
+a:hover{text-decoration:none;color:#6B869F;}
+h3{padding-bottom:5px;color:#3764A0;}
+/*Custom CSS Form*/
+ul.form li{padding:5px 10px 5px 10px}
+/*Override some ext styles*/
+#preloader{position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
+#preloader .msg{position:relative;top:50%;margin:0 auto;text-align:center;z-index:20001}
+.x-grid3-dirty-cell{background:transparent;}
+.x-panel-trans{background:transparent;}
+.x-layout-split-west{background-color:#AEBBC7;cursor:move;}
+.x-air #action-panel .x-plain-body{padding-left:3px;}
+ul.x-tab-strip-top{background:#AEBBC7 none;}
+#action-panel .x-panel-body li a{text-decoration:none;color:#3A485A;}
+#action-panel .x-plain-body{padding:3px 0 0 5px;background-color:#AEBBC7;}
+#action-panel .x-panel{margin-bottom:3px;margin-right:0;}
+#action-panel .x-panel-body{border:0 none;}
+#action-panel .x-panel-body li{margin:3px;}
+#action-panel .x-panel-body li img{width:16px;height:16px;vertical-align:middle;margin-right:2px;margin-bottom:2px;}
+/*Some Icons for our admin*/
+.x-btn-text-icon .x-btn-center .x-btn-text{padding:2px 0 2px 18px}
+.preview .x-btn-text{background-image:url(/images/backend/preview.gif);}
+.print .x-btn-text{background-image:url(/images/backend/print.gif);}
+.remove .x-btn-text{background-image:url(/images/backend/delete.gif);}
+.add .x-btn-text{background-image:url(/images/backend/new.gif);}
+.edit .x-btn-text{background-image:url(/images/backend/edit.gif);}
+.save .x-btn-text{background-image:url(/images/backend/save.gif);}
+.duplicate .x-btn-text{background-image:url(/images/backend/plugin.gif);}
+.back .x-btn-text{background-image:url(/images/backend/back.gif);}
+.x-toolbar-menu{background-image:url(/images/backend/bg-menu-slate.png);}
+.x-panel-header{background-image:url(/images/backend/bg-hd-slate.png);background-color:#6f839a; text-align:center; color:#343f4b;}
+/*Main Site*/
+.content{background-color:#FFF;}
+.label-title{padding:5px 0px 3px 0px;color:#3764A0;border-bottom:1px dotted #C4D2E5;margin:5px 10px 0px 10px;font-size:1.2em;font-weight:bold;}
+.label-image{padding:5px 5px 5px 5px;background-color:#DFE8F6;margin:10px 10px 0px 10px;border:1px solid #99BBE8;}
+.description{font-style:italic;margin:0px 10px 5px 10px;}
+.label-it{padding:5px 0px 5px 20px;background-image:url(/images/backend/it.gif);background-position:left center;background-repeat:no-repeat;}
+.label-en{padding:5px 0px 5px 20px;background-image:url(/images/backend/us.gif);background-position:left center;background-repeat:no-repeat;}
+.list{list-style:decimal;padding-left:10px;margin-left:20px;}
+.list li{list-style:decimal;padding:0;margin:0;}
+.column{float:left;width:150px;padding-right:10px;}
+#ajax-iframe{display:none;}
+#header{height:39px;border:0 none;background:#1E4176 url(/images/backend/hd-bg-slate.gif) repeat-x 0 0;}
+#header a{text-decoration:none;color:#FFF;}
+#header a:hover{color:#AEBBC7;}
+#content-header{background-color:#AEBBC7;padding:5px;color:#3A485A;}
+#content-header-left{float:left;padding-top:5px;font-size:1.2em;}
+#content-header-right{float:right;}
+#logo{float:left;line-height:35px;padding-left:10px;color:#FFF;font-size:1.3em;}
+#logo img{border:none;}
+#logout{float:right;line-height:35px;padding-right:10px;}
+/*Manage Images*/
+.box-image{padding:5px;border:1px solid #aebfd5;background-color:#DAE7F6;float:left;margin:10px;}
+.box-image .title{background-color:#C4D2E5;text-align:center;color:#3764A0;margin-bottom:5px;padding:2px 0px 2px 0px;}
+.file{padding:3px;border:1px solid #aebfd5;background-color:#DAE7F6;margin:5px 10px 5px 10px;}
+.file img{vertical-align:bottom;}
+.pointer{cursor:pointer;color:#2d537a;}
+#images{margin:0px;padding:0px;list-style-type:none;}
+#images li{margin:5px;float:left;text-align:center;cursor:move;}
+/*Manage Tables*/
+table.items{border:1px solid #99BBE8;border-bottom:none;text-align:center;}
+table.items th{font-weight:bold;background-color:#BFCFE6;color:#15428B;padding:3px;border-bottom:1px solid #99BBE8;text-align:center;}
+table.items tr.odd td{background-color:#FFF;padding:3px;border-bottom:1px solid #99BBE8}
+table.items tr.even td{background-color:#FFF;padding:3px;border-bottom:1px solid #99BBE8}
+/*Custom Style Here*/
+ul.form li{padding:5px 10px 5px 10px}
+.field1{width:200px;line-height:25px;padding-left:5px;}
+.field2{width:100px;}
+.field3{width:100px;margin-left:10px;}
+.field4{width:110px;line-height:25px;}
+.field5{padding-top:2px;margin-left:10px;}
+.field6{width:200px;line-height:25px;}
+.line{margin-bottom:5px;}
+tr.colored-1 {background-color:#AEBBC7;}
+tr.colored-1 td{padding:3px;}
+tr.colored-1 th{padding:5px 3px 5px 4px;}
+tr.colored-2 {background-color:#dfe8f6;}
+tr.colored-2 td{padding:3px;}
+tr.colored-2 th{padding:5px 3px 5px 4px;}
+.imgButton{vertical-align:text-bottom;}
+.hide{display:none;}
+.checkbox{line-height:20px;}
+.partial_form_without_margin{background-color:#fcfccf}
+.partial_form{background-color:#fcfccf;margin:10px;}
+.address_box_tag{padding-top:25px;padding-left:10px;}
+.row{border-bottom:1px solid #dfe8f6;padding:10px;}
+.indent{padding-left:30px;padding-top:10px;}
+.re-indent{padding-left:30px;}
+#member_link{padding:10px;}
+#event_log_link{padding:10px;}
+#address_office{background-color:#fcfccf;margin:10px;}
+#event_logs{width:100%;}
+#event_logs td{border-bottom:1px solid #AABBCC;padding:10px;}
+.event-table{width:100%;padding:0;margin:0;}
+.event-table td{vertical-align:top;border:none;}
+.event-details{width:350px;padding:0px 10px 10px 10px;}
+.event-details h1{font-size:1.2em;color:#3A485A;margin-top:10px;}
+.button-right{text-align:right; padding:10px;}

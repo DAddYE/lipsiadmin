@@ -1,0 +1,12 @@
+!!!
+%html
+  %head
+    %title="#{AppConfig.project} v.#{Lipsiadmin::VERSION::STRING}"
+    =stylesheet_link_tag "standard", "login"
+  %body
+    #wrapper
+      #login-box
+        #content
+          =yield
+      #copyright
+        Copyright &copy; 2009 LipsiaSoft s.r.l. All rights reserved

@@ -1,0 +1,21 @@
+
+================================================================
+
+Please remember to:
+
+  - Edit (if necessary) the migration
+  - Run rake db:migrate;
+  - Edit app/models/attachment.rb
+  - Add in your models that need images/files one of this:
+  
+      - has_one_attachment :myfile
+      - has_many_attachments :myfiles
+      
+  You can add some validations/processor in your models like:
+  
+  * attachment_styles_for :myfiles, :normal, "128x128!"
+  * validates_attachment_presence_for :myfiles
+  * validates_attachment_size_for :myfiles, :greater_than => 10.megabytes
+  * validates_attachment_content_type_for :myfiles, "image/png"
+
+================================================================

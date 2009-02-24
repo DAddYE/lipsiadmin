@@ -1,0 +1,3 @@
+=title "Modifica Account n. #{@account.id}"
+-form_tag({:action => :update, :id => @account}, :method => :put) do
+  =render :partial => "form"

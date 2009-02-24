@@ -1,0 +1,21 @@
+=simple_error_messages_for :account
+-tab "General" do
+  %table
+    %tr
+      %td Name
+      %td=text_field :account, :name
+    %tr
+      %td Surname
+      %td=text_field :account, :surname
+    %tr
+      %td Email
+      %td=text_field :account, :email
+    %tr
+      %td Password
+      %td=password_field :account, :password
+    %tr
+      %td Password Confirmation
+      %td=password_field :account, :password_confirmation
+    %tr
+      %td Role
+      %td=select :account, :role, AccountAccess.roles
