@@ -3,10 +3,10 @@ Copyright 2009 Lipsiasoft s.r.l. All rights reserved.
 
 Released under the MIT license
 
-==Backend
+==Lipsiadmin
 
 
-Backend is a new revolutionary admin for your projects.
+Lipsiadmin is a new revolutionary admin for your projects.
 
 Is developped by http://www.lipsiasoft.com that use it from 2 years in production enviroments.
 
@@ -24,14 +24,9 @@ Haml 2.0
 
 ==Installation
 
-add in environment of your app: config.gem "lipsiadmin"
-then do: rake gems:install
-
-The version 2.9 version is an alpha relase and the gem will be aviable from 3.0
-so for now if you want to use edge Lipsiadmin
-
 script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
 
+The version 2.9 version is an alpha relase and the gem will be aviable from 3.0
 
 ==Examples
 
@@ -44,7 +39,7 @@ Installed Generators
 script/generate backend # Generate the base admin
 script/generate backend_page yourmodel # Generate a "scaffold" for your model
 script/generate attachment # Generate the an attachments
-script/generate pdf # Generate a new pdf document
+script/generate pdf PdfName # Generate a new pdf document
 
 ==Remember
 
