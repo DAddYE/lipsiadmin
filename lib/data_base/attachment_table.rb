@@ -1,8 +1,19 @@
 module Lipsiadmin
   module DataBase
+    # This is the table that handle the attachments. 
+    # You can define some global info like:
+    # 
+    #   attachment_styles :thumb, "128x128"
+    # 
+    # In this way all models that use <tt>has_one_attachment</tt> or 
+    # <tt>has_many_attachments</tt> handle a default style called *thumb*
+    # 
+    # Remember that any model that use <tt>has_one_attachment</tt> or 
+    # <tt>has_many_attachments</tt> can override/add styles/validations etc...
+    # 
     class AttachmentTable < ActiveRecord::Base
       
-      def self.inherited(subclass)
+      def self.inherited(subclass)#:nodoc:
         super
         subclass.write_inheritable_attribute(:attachment_definitions, {}) if subclass.attachment_definitions.nil?
         subclass.attachment_definitions[subclass.name] = {:validations => {}}.merge(Lipsiadmin::Attachment.options)
@@ -19,28 +30,32 @@ module Lipsiadmin
       
       #validates_presence_of :filename
       
+      # Returns the url of the attachment, optionally you can pass the style like url(:thumb)
       def url(style=nil)
         file.to_s(style)
       end
-    
+      
+      # Returns a <tt>Lipsiadmin::Attachment::Attach</tt> instance
       def file
         @_file ||= Lipsiadmin::Attachment::Attach.new(:attached, self, attachment_definitions)
       end
-    
+      
+      # Assign a <tt>Lipsiadmin::Attachment::Attach</tt> instance to the current file
       def file=(tempfile)
         file.assign(tempfile)
       end
-    
+      
+      # Returns true if the file exist
       def file?
         file.exist?
       end
       
-      def attachment_definitions=(options)
+      def attachment_definitions=(options)#:nodoc:
         attachment_definitions.merge!(options.symbolize_keys)
       end
       
       # This is the custom instance attachment_definition
-      def attachment_definitions
+      def attachment_definitions#:nodoc:
         @instance_attachment_definitions ||= self.class.attachment_definitions[self.class.name].clone
         return @instance_attachment_definitions
       end
@@ -49,12 +64,14 @@ module Lipsiadmin
         attachment = record.file
         attachment.send(:flush_errors) unless attachment.valid?
       end
-    
+      
+      # Perform <tt>file</tt>.save
       def save_attached_files
         logger.info("[Attachment] Saving attachments.")
         file.save
       end
-    
+      
+      # Perform <tt>file</tt>.destroy
       def destroy_attached_files
         logger.info("[Attachment] Deleting attachments.")
         file.queue_existing_for_delete
@@ -62,7 +79,7 @@ module Lipsiadmin
       end
     end
     
-    module ClassMethods
+    module ClassMethods#:nodoc:
 
       def attachment_url(url)
         attachment_attachment_url_for(self.name, url)
@@ -112,7 +129,6 @@ module Lipsiadmin
         validates_attachment_thumbnails_for(self.name, options)
       end
 
-      # Places ActiveRecord-style validations on the presence of a file.
       def validates_attachment_presence(options = {})
         validates_attachment_presence_for(self.name, options)
       end

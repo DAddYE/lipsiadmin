@@ -1,8 +1,11 @@
 module Lipsiadmin
   module Controller
     # This module are raised when an exception fire up in controllers.
-    # Now you can personalize exception and simplify the layout using templates
-    # in app/views/exception
+    # 
+    # Now you can personalize exception and simplify the layout using templates in:
+    # 
+    #   app/views/exception
+    # 
     # when an exception is raised it try to send an email, and for send an email 
     # you need to configure in enviroment or in an initializer some like this:
     #
@@ -14,7 +17,7 @@ module Lipsiadmin
     # 
     module Rescue
       
-      def self.included(base)
+      def self.included(base)#:nodoc:
         base.class_eval do
           alias_method_chain :rescue_action_in_public, :notifier
         end

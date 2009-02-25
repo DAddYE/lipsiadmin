@@ -2,6 +2,7 @@ module Lipsiadmin
   module View
     module Helpers
       module BackendHelper
+        # This method work like builtin Rails error_message_for but use an Ext.Message.        
         def simple_error_messages_for(*params)
           options = params.last.is_a?(Hash) ? params.pop.symbolize_keys : {}
           objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
@@ -18,38 +19,71 @@ module Lipsiadmin
             ''
           end
         end
-    
+        
+        # This method add tab for in your view
         def tab(name, padding=true, options={}, &block)
           options[:style] = "padding:10px;#{options[:style]}" if padding
           options[:id] ||= name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/-+$/, '').gsub(/^-+$/, '')
           concat content_tag(:div, capture(&block), { :id => options[:id], :class => "x-hide-display", :style => options[:style], :tabbed => true, :title => name })
         end
         
+        # Set the title of the page
         def title(title)
           content_tag(:script, "Backend.app.setTitle(#{title.to_json})", :type => Mime::JS)
         end
         
+        # Store the location to come back from for example an extjs grid
         def back_to(location)
           content_tag(:script, "Backend.app.backTo(#{url_for(location)})", :type => Mime::JS)
         end
         
+        # Generate the menu from the Lispiadmin::AccessControl
         def backend_menu
           config = current_account.maps.collect(&:project_modules)[0].collect(&:config)
           config << { :text => "Backend.locale.buttons.help".to_l, :handler => "function() { Backend.app.openHelp() }".to_l }
           return config.to_json
         end
+        
+        # Open a new windows that can contain a form that you can reuse
+        # 
+        #   Example:
+        #     
+        #     # in app/views/dossiers/_form.html.haml
 
+        #         %tr
+        #           %td{:style=>"width:100px"} 
+        #             %b Customer:
+        #           %td
+        #             %span{:id => :account_name}=@dossier.account ? @dossier.account.full_name : "None" 
+        #             =hidden_field :dossier, :account_id
+        #             =open_window "/backend/accounts.js", :id, :name, :dossier_account_id, :account_name
+        # 
         def open_window(url, value, display, render_value_to, render_display_to)
           link_to_function(image_tag("backend/new.gif", :style=>"vertical-align:bottom"), 
             "Backend.window.open({url:'#{url}', display:'#{display}', value:'#{value}', displayField:'#{render_display_to}', valueField:'#{render_value_to}'})")
         end
-
+        
+        # This method call a remote_function and in the same time do a 
+        # 
+        #   Backend.app.mask()
+        #
+        # and when the function is complete 
+        # 
+        #   Backend.app.unmask()
+        # 
         def link_to_remote_with_wait(name, options={}, html_options={})
           options[:complete] = "Backend.app.unmask();"
           options[:before]  = "Backend.app.mask('#{I18n.t('backend.messages.wait.message')}')";
           link_to_function(name, remote_function(options), html_options || options.delete(:html))
         end
-
+        
+        # This method generates a new ExtJs BoxComponent.
+        # 
+        #   Examples:
+        # 
+        #     =box "My Title", "My Subtitle", :submit => true, :collapsible => true do
+        #       my content
+        # 
         def box(title=nil, subtitle=nil, options={}, &block)
           return <<-HTML
             <div class="x-box" style="width:99%">

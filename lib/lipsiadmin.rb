@@ -6,10 +6,8 @@ require 'mailer/pdf_builder'
 require 'mailer/exception_notifier'
 require 'view/helpers/active_record_helper'
 require 'view/helpers/backend_helper'
-require 'view/helpers/country_select_helper'
-require 'view/helpers/date_helper'
+require 'view/helpers/view_helper'
 require 'view/helpers/ext_helper'
-require 'view/helpers/tag_helper'
 require 'controller/ext'
 require 'controller/pdf_builder'
 require 'controller/responds_to_parent'
@@ -37,8 +35,13 @@ ActiveRecord::Base.class_eval do
 end
 
 ActionView::Base.class_eval do
-  include Lipsiadmin::View::Helpers::TagHelper
+  include Lipsiadmin::View::Helpers::FormHelper
+  include Lipsiadmin::View::Helpers::FormTagHelper
+  include Lipsiadmin::View::Helpers::DateHelper
+  include Lipsiadmin::View::Helpers::CountrySelectHelper
 end
+
+ActionView::Helpers::FormBuilder.send(:include, Lipsiadmin::View::Helpers::FormBuilder)
 
 ActionView::Helpers::PrototypeHelper::JavaScriptGenerator::GeneratorMethods.class_eval do
   include Lipsiadmin::View::Helpers::ExtHelper

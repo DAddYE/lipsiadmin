@@ -1,15 +1,17 @@
 module Lipsiadmin
   module Ext
-    # Ext configuration of used by components
+    # Ext configuration used by components
     # 
     #   Generates: { name: 'name', handler: function(){ alert('Hello World') } }
     #
     class Configuration < Hash
       
-      def initialize(hash)
+      def initialize(hash)#:nodoc:
         hash.each { |k,v| self[k] = v }
       end
       
+      # Returns the configuration as a string.
+      # Optionally you can specify the indentation spaces.
       def to_s(indent=1)
         i = ("  "*indent)
         s = self.size > 0 ? "\n" : "  "

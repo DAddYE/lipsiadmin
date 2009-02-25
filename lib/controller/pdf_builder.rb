@@ -1,6 +1,19 @@
 module Lipsiadmin
   module Controller
-    # This module convert a string/controller to 
+    # This module convert a string/controller to a pdf through Pd4ml java library (included in this plugin)
+    # 
+    # For generate a pdf you can simply do
+    #   
+    #     script/generate pdf invoice
+    # 
+    # then edit your template /app/views/pdf/invoice.html.haml
+    # 
+    # Then in any of your controllers add some like this:
+    # 
+    #   def generate_pdf_invoice
+    #     render_pdf :invoice, 'invoice_file.pdf'
+    #   end
+    #   
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
       
@@ -34,7 +47,8 @@ module Lipsiadmin
       end
 
       # Errors For PDF
-      class PdfError < StandardError; end
+      class PdfError < StandardError#:nodoc:
+      end
     end
   end
 end

@@ -32,7 +32,7 @@ module Lipsiadmin
   end
 
   if defined? StringIO
-    class StringIO
+    class StringIO#:nodoc:
       attr_accessor :original_filename, :content_type
       def original_filename
         @original_filename ||= "stringio.txt"

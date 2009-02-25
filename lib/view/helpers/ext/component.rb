@@ -6,7 +6,7 @@ module Lipsiadmin#:nodoc:
     # This is the base class of ext components
     class Component      
 
-      def initialize(options={}, &block)
+      def initialize(options={}, &block)#:nodoc:
         @config = Configuration.new(options)
         @before, @after = [], []
         if block_given?
@@ -58,26 +58,26 @@ module Lipsiadmin#:nodoc:
         end
       end
       
-      # Return the array JavaScript to add before component.
+      # Returns an array of javascripts to add before component is rendered.
       #      
       def before
         @before
       end
 
-      # Return the raw JavaScript to add before component.
-      #      
+      # Returns the javascript to add before component is rendered.
+      #
       def before_js
         @before.uniq.compact.join("\n\n") + "\n\n"
       end
       
-      # Return the array JavaScript to add after component.
-      #      
+      # Returns an array of javascripts to add afters component is rendered.
+      #
       def after
         @after
       end
       
-      # Return the raw JavaScript to add after component.
-      #      
+      # Returns the javascript to add after component is rendered.
+      #   
       def after_js
         "\n\n" + @after.uniq.compact.join("\n\n")
       end

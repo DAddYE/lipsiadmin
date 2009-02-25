@@ -1,3 +1,9 @@
+2008-02-25
+  * Improved documentation now is online here http://api.lipsiasoft.com
+  * Refactored text_field, text_area, password_field helpers
+  * Refactored country_select helper
+  * Refactored ext_date_select, ext_datetime_select helpers
+  
 2008-02-24
   * Rename Js app from Lipsiadmin.app to Backend.app
   * Added the possibility to reuse pages/froms/grids in windows.
@@ -19,7 +25,7 @@
   * Added a pdf builder for actionmailer
   * Added method missing in ActiveRecord to intercept calls to non-localized methods (eg. name instead of name_cz)
   * Added utility scopes for paginate, include, search
-  * Added a new literal method for prevent json to "strignify" javascripts funtctions (eg. "function() { alert('me')}".to_lt)
+  * Added a new literal method for prevent json to "strignify" javascripts funtctions (eg. "function() { alert('me')}".to_l)
   * Added a new module for escape utf8 chars for servers that don't have java with utf8 fonts (it's used by pdf builder)
   
 2008-05-21

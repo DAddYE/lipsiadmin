@@ -1,5 +1,7 @@
 module Lipsiadmin
   module Mailer
+    # This class send notification through mail if an exception
+    # occour in a controller.
     class ExceptionNotifier < ActionMailer::Base
 
       @@sender_address = %("Exception Notifier" <exception.notifier@default.com>)
@@ -17,8 +19,11 @@ module Lipsiadmin
       self.mailer_name = "exception"
       self.template_root = "#{File.dirname(__FILE__)}"
 
-      def self.reloadable?() false end
-
+      def self.reloadable?#:nodoc:
+        false 
+      end
+      
+      # This method deliver the exception for the given controller and request
       def exception(exception, controller, request)
         content_type "text/plain"
 

@@ -1,24 +1,3 @@
-# Attachment allows file attachments that are stored in the filesystem. All graphical
-# transformations are done using the Graphics/ImageMagick command line utilities and
-# are stored in Tempfiles until the record is saved. Attachment does not require a
-# separate model for storing the attachment's information, instead adding a few simple
-# columns to your table.
-#
-# Author:: Jon Yurek
-# Copyright:: Copyright (c) 2008 thoughtbot, inc.
-# License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
-#
-# Attachment defines an attachment as any file, though it makes special considerations
-# for image files. You can declare that a model has an attached file with the
-# +has_one_attachment+ method:
-#
-#   class User < ActiveRecord::Base
-#     has_one_attachment
-#     or
-#     has_many_attachments 
-#   end
-#
-# See the +has_one_attachment+ or +has_many_attachments+ documentation for more details.
 require 'tempfile'
 require 'data_base/attachment/upfile'
 require 'data_base/attachment/iostream'
@@ -36,18 +15,30 @@ end
 
 module Lipsiadmin
   module DataBase
-    # The base module that gets included in ActiveRecord::Base. See the
-    # documentation for Attachment::ClassMethods for more useful information.
     module Attachment
 
-      class << self
+      class << self#:nodoc:
         def included(base) #:nodoc:
           base.extend(ClassMethods)
         end
       end
 
       module ClassMethods
-
+        
+        # Attach a single file/image to your model.
+        # 
+        #   Examples:
+        #     
+        #     has_one_attachment                    :image
+        #     attachment_styles_for                 :image, :normal, "128x128!"
+        #     validates_attachment_presence_for     :image
+        #     validates_attachment_size_for         :image, :greater_than => 10.megabytes
+        #     validates_attachment_content_type_for :image, "image/png"
+        # 
+        # Then in your form (with multipart) you can simply add:
+        # 
+        #   =file_field :mymodel, :image_attributes
+        # 
         def has_one_attachment(name, options={})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"
@@ -88,6 +79,21 @@ module Lipsiadmin
           end
         end
 
+        # Attach a many files/images to your model.
+        # 
+        #   Examples:
+        #     
+        #     has_one_attachment                    :images
+        #     attachment_styles_for                 :images, :normal, "128x128!"
+        #     validates_attachment_presence_for     :images
+        #     validates_attachment_size_for         :images, :greater_than => 10.megabytes
+        #     validates_attachment_content_type_for :images, "image/png"
+        # 
+        # Then in your form (with multipart) you can simply add:
+        #   
+        #   =fields_for "yourmodel[attachments_attributes][]", @yourmodel.images.build do |image|
+        #     =image.file_field :file
+        # 
         def has_many_attachments(name, options = {})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"

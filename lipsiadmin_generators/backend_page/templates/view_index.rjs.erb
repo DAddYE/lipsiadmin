@@ -1,6 +1,5 @@
 page.grid do |grid|
   grid.id "grid-<%= plural_name %>"
-  grid.var :finocchio
   grid.title "List all <%= model_instance.class.human_name %>"
   grid.base_path "/backend/<%= plural_name %>"
   grid.forgery_protection_token request_forgery_protection_token

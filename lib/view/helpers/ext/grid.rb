@@ -1,7 +1,26 @@
 module Lipsiadmin
   module Ext
-    
-    # Generate a new Ext.grid.GridPanel 
+    # Generate a full customizable Ext.GridPanel
+    #
+    # Examples:
+    #
+    #   page.grid do |grid|
+    #     grid.id "grid-posts"
+    #     grid.title "List all Post"
+    #     grid.base_path "/backend/posts"
+    #     grid.forgery_protection_token request_forgery_protection_token
+    #     grid.authenticity_token form_authenticity_token
+    #     grid.tbar  :default
+    #     grid.store do |store|
+    #       store.url "/backend/posts.json"
+    #       store.fields @column_store.store_fields
+    #     end
+    #     grid.columns do |columns|
+    #       columns.fields @column_store.column_fields
+    #     end
+    #     grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
+    #   end
+    # 
     class Grid < Component
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
@@ -18,6 +37,17 @@ module Lipsiadmin
         view                  :default                      if  config[:view].blank?
       end
       
+      # Define the selection model of this grid.
+      # You can pass: 
+      #   
+      # * :checkbox
+      # * :default (alias for checkbox)
+      # * :row
+      # 
+      # It generate some like:
+      # 
+      #   new Ext.grid.CheckboxSelectionModel()
+      # 
       def sm(value)
         case value
         when :checkbox || :default
@@ -29,14 +59,17 @@ module Lipsiadmin
         end
       end
       
+      # Define the title of the grid
       def title(title)
         before << "Backend.app.setTitle(#{title.to_json});"
       end
       
+      # Assign plugins for the current grid
       def plugins(plugins)
         config[:plugins] = plugins
       end
-
+      
+      # Add a single plugin to the grid plugins
       def add_plugin(plugins)
         config[:plugins] << plugins
       end

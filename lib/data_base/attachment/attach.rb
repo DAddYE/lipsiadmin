@@ -1,4 +1,33 @@
 module Lipsiadmin
+  # Attachment allows file attachments that are stored in the filesystem. All graphical
+  # transformations are done using the Graphics/ImageMagick command line utilities and
+  # are stored in Tempfiles until the record is saved. Attachment does not require a
+  # separate model for storing the attachment's information, instead adding a few simple
+  # columns to your table.
+  #
+  # Author:: Jon Yurek
+  # Copyright:: Copyright (c) 2008 thoughtbot, inc.
+  # License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
+  #
+  # Attachment defines an attachment as any file, though it makes special considerations
+  # for image files. You can declare that a model has an attached file with the
+  # +has_one_attachment+ method:
+  # 
+  # From your console:
+  #   script/generate attachment
+  # 
+  # Then in any model you can do:
+  #
+  #   class User < ActiveRecord::Base
+  #     has_many_attachments                  :attachments, :dependent => :destroy
+  #     has_one_attachment                    :image
+  #     attachment_styles_for                 :attachments, :normal, "128x128!"
+  #     validates_attachment_presence_for     :attachments
+  #     validates_attachment_size_for         :attachments, :greater_than => 10.megabytes
+  #     validates_attachment_content_type_for :attachments, "image/png"
+  #   end
+  #
+  # See the <tt>Lipsiadmin::DataBase::Attachment::ClassMethods</tt> documentation for more details.
   module Attachment
     
     class << self
@@ -30,7 +59,7 @@ module Lipsiadmin
         processor
       end
       
-      def interpolates(key, &block)
+      def interpolates(key, &block) #:nodoc:
         Lipsiadmin::Attachment.interpolations[key] = block
       end
       
@@ -418,12 +447,12 @@ module Lipsiadmin
         end
       end
 
-      def fire_events(which)
+      def fire_events(which) #:nodoc:
         return true if callback(:"#{which}_post_process") == false
         return true if callback(:"#{which}_#{name}_post_process") == false
       end
 
-      def post_process_styles
+      def post_process_styles #:nodoc:
         log("Post-processing #{name}")
         @styles.each do |name, args|
           begin

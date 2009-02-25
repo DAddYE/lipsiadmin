@@ -1,11 +1,36 @@
 module Lipsiadmin
   module Mailer
+    # This module convert a string/controller to a pdf through Pd4ml java library (included in this plugin)
+    # 
+    # For generate a pdf you can simply do
+    #   
+    #     script/generate pdf invoice
+    # 
+    # then edit your template /app/views/pdf/invoice.html.haml
+    # 
+    # Then in any of your mailers add some like this:
+    # 
+    #   def order_invoiced(order)
+    #     recipients my@mail.com
+    #     from       my@server.com
+    #     subject    Your Invoice
+    #
+    #     attachment "application/pdf" do |a|
+    #       a.body = render_pdf(:invoice, :invoice => order.invoice, :other => order.invoice.other)
+    #     end
+    #
+    #     part "text/plain" do |a|
+    #       a.body = render_message("order_invoiced", :order => order, :body_template => @body_template)
+    #     end       
+    #   end
+    #
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
       
       # Path to the pd4ml jarfile        
       JARPATH = "../../resources"
       
+      # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
       def render_pdf(template, body)
         # set the landescape
         landescape = (body[:landescape].delete || false)
@@ -35,6 +60,7 @@ module Lipsiadmin
     end
 
     # Errors For PDF
-    class PdfError < StandardError; end
+    class PdfError < StandardError#:nodoc:
+    end
   end
 end

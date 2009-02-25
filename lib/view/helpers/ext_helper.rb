@@ -13,7 +13,7 @@ module Lipsiadmin
       # Module containing the methods useful for ext/prototype
       module ExtHelper
       
-        def self.included(base)
+        def self.included(base)#:nodoc:
           base.class_eval do
             alias_method_chain :to_s, :refactoring
           end
@@ -104,85 +104,27 @@ module Lipsiadmin
           end
         end
       
-        # Generate a full customizable Ext.Grid
+        # Generate a full customizable Ext.GridPanel
         #
         # Examples:
         #
         #   page.grid do |grid|
-        #
-        #     #Some standard config
-        #     grid.title "List of all Account"
-        #     grid.selection :checkbox
-        #
-        #     # TopBar & Buttons
-        #     grid.ttbar do |bar|
-        #       bar.add "Add",  :handler => grid.l("Backend.app.loadHtml('/backend/accounts/new')"), :icon => "...", :other => "..."
-        #       bar.add "Edit", :handler => grid.l("Backend.app.loadHtml('/backend/accounts/'+accounts_grid.getSelected().id+'/edit')"), :other => "..."
-        #       bar.add "Print" do |submenu|
-        #         submenu.add "Print Invoice", :foo => "..."
-        #         submenu.add "Print Account", :bar => "..."
-        #       end
+        #     grid.id "grid-posts"
+        #     grid.title "List all Post"
+        #     grid.base_path "/backend/posts"
+        #     grid.forgery_protection_token request_forgery_protection_token
+        #     grid.authenticity_token form_authenticity_token
+        #     grid.tbar  :default
+        #     grid.store do |store|
+        #       store.url "/backend/posts.json"
+        #       store.fields @column_store.store_fields
         #     end
-        #
-        #     or simply:
-        #
-        #     grid.ttbar :default do |ttbar|
-        #       ttbar.path "/backend/accounts"
-        #       ttbar.forgery_protection_token request_forgery_protection_token
-        #       ttbar.authenticity_token form_authenticity_token
-        #     end      
-        #   
-        #     # Columns
-        #     grid.columns do |col|
-        #       col.add "Name",          "accounts.name",          :searchable => false,  :sortable => true
-        #       col.add "Category Name", "accounts.category.name", :sortable => :false
-        #       col.add "Created At",    "accounts.created_at",    :type => "date", :format => "c", :renderer => Ext.call("Ext.Util.DateRenderer", "m/d/y")
+        #     grid.columns do |columns|
+        #       columns.fields @column_store.column_fields
         #     end
-        #   
-        #     # alternative you can simply do 
-        #     # 
-        #     # grid.columns :defaults, Account 
-        #     # and they add all columns of Account Model.
-        #     # 
-        #     # or
-        #     #
-        #     # grid.coumns :default do |col|
-        #     #   col.add "Projects",      "accounts.projects.collect(&:name).join(", ")", :searchable => false,  :sortable => true  
-        #     #   col.add "Category Name", "accounts.category.name", :sortable => :false
-        #     #   ...
-        #     # end
-        #     # In this way add other than accounts columns "Projects" and "Category Name"!    
-        #   
-        #     # Extra Examples
-        #     # 
-        #     # Render:
-        #     # 
-        #     # grid.on('dblclick', function(){
-        #     #   Ext.Msg.alert('Title', 'Content');
-        #     # });
-        #     #
-        #
-        #     grid.on "dblclick" do
-        #       Ext.call("Ext.Msg.alert", "Title", "Content")
-        #     end
-        #   
-        #     grid.on "dblclick" do 
-        #       Ext.call "Ext.Msg.alert", "Selected the row", "with name: #{Ext.grid.selected.name}"
-        #     end
-        #   
-        #     grid.columns.first.on("dblclick") do
-        #       Ext.call("Ext.Msg.alert", "Some", "One")
-        #     end
-        #   
-        #     button = grid.buttons.get_by(:title, "Add")
-        #     button = grid.buttons.get_by(:id, "add")
-        #     col    = grid.columns.get_by(:id, "category_name")
-        #   
-        #     button.on("dblclick", Ext.fn("Ext.Msg.alert", "Hello World"))
-        #   
-        #     grid.append "/backend/accounts/grid_fn.js" # or :controller => :accounts, :action => :grid_fn, :format => :js
+        #     grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
         #   end
-        #
+        # 
         def grid(&block)
           self << Lipsiadmin::Ext::Grid.new(&block)
         end

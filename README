@@ -1,10 +1,4 @@
-Created by Davide D'Agostino on 2008-01-11.
-Copyright 2009 Lipsiasoft s.r.l. All rights reserved.
-
-Released under the MIT license
-
 ==Lipsiadmin
-
 
 Lipsiadmin is a new revolutionary admin for your projects.
 
@@ -17,6 +11,11 @@ because the aim of developper wose build in a agile way web/site apps so we use 
 intelligent way a mixin of <tt>old</tt> html and new ajax functions, 
 for example ext manage the layout of page, grids, tree and errors, but form are in html code.
 
+Author:: Davide D'Agostino
+Copyright:: Copyright (c) 2009 Lipsiasoft s.r.l. (http://www.lipsiasoft.com)
+License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
+Api Documentation:: http://api.lipsiasoft.com
+
 ==Requirements
 
 Rails 2.0
@@ -24,27 +23,37 @@ Haml 2.0
 
 ==Installation
 
-script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
+  script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
 
 The version 2.9 version is an alpha relase and the gem will be aviable from 3.0
 
+In future you can simply do:
+
+  in config/environments.rb
+  config.gem "lipsiadmin"
+  
+then (if you don't have it already)
+  
+  $ rake gems:install
+  
 ==Examples
 
 now run script/generate and you can see some like:
 
-Installed Generators
-  Builtin: controller, integration_test, mailer, migration, model, observer, performance_test, plugin, resource, scaffold, session_migration
-  Lipsiadmin: attachment, backend, backend_page, pdf
+  Installed Generators
+    Builtin: controller, integration_test, mailer, migration, model, etc..
+    Lipsiadmin: attachment, backend, backend_page, pdf
 
-script/generate backend # Generate the base admin
-script/generate backend_page yourmodel # Generate a "scaffold" for your model
-script/generate attachment # Generate the an attachments
-script/generate pdf PdfName # Generate a new pdf document
+So you can do:
 
-==Remember
-
-That now Lipsiadmin use your current locale of environment for generate localized pages
+  $ script/generate backend # Generate the base admin
+  $ script/generate backend_page yourmodel # Generate a "scaffold" for your model
+  $ script/generate attachment # Generate the an attachments
+  $ script/generate pdf PdfName # Generate a new pdf document
 
 ==Contribute
 
-Please contribute in coding, patch, and submitting translation.
+Please contribute in coding, patch, and submitting translation api documentation etc...
+
+* Community can be found here:: http://groups.google.com/group/lipsiadmin
+* Api documentation can be found here:: http://api.lipsiasoft.com

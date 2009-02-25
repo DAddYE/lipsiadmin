@@ -1,6 +1,5 @@
 page.grid do |grid|
   grid.id "grid-accounts"
-  grid.var :finocchio
   grid.title "Elenco Accounts"
   grid.base_path "/backend/accounts"
   grid.forgery_protection_token request_forgery_protection_token

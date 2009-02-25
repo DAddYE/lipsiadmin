@@ -1,6 +1,7 @@
 module Lipsiadmin
   module Controller
     # Executes the response body as JavaScript in the context of the parent window.
+    # 
     # Use this method of you are posting a form to a hidden IFRAME or if you would like
     # to use IFRAME base RPC.
     module RespondsToParent

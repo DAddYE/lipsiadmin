@@ -95,22 +95,22 @@ module Lipsiadmin
         @project_modules << ProjectModule.new(name, controller, &block)
       end
       
-      # Globally but for current role allow an action
+      # Globally allow an action of a controller for the current role
       def allow_action(path)
         @allowed << recognize_path(path)
       end
       
-      # Globally but for current role deny an action
+      # Globally deny an action of a controllerfor the current role
       def deny_action(path)
         @denied << recognize_path(path)
       end
       
-      # Globally but for current role allow an action
+      # Globally allow all actions from a controller for the current role
       def allow_all_actions(path)
         @allowed << { :controller => recognize_path(path)[:controller] }
       end
       
-      # Globally but for current role deny an action
+      # Globally denty all actions from a controller for the current role
       def deny_all_actions(path)
         @denied << { :controller => recognize_path(path)[:controller] }
       end
@@ -144,6 +144,7 @@ module Lipsiadmin
         yield self
       end
       
+      # Build a new menu and automaitcally add the action on the allowed actions.
       def menu(name, path=nil, options={}, &block)
         @menus << Menu.new(name, path, options, &block)
       end
@@ -220,6 +221,7 @@ module Lipsiadmin
       end
     end
     
-    class AccessControlError < StandardError; end;
+    class AccessControlError < StandardError#:nodoc:
+    end
   end
 end
