@@ -10,7 +10,7 @@ Lipsiadmin is a new revolutionary admin for your projects.
 
 Is developped by http://www.lipsiasoft.com that use it from 2 years in production enviroments.
 
-Backend is based on Ext Js 2.2 framework (with prototype adapter) works with Rails 2+
+Lipsiadmin is based on Ext Js 2.2 framework (with prototype adapter) works with Rails 2+
 
 This admin is for newbie developper but also for experts, is not entirely written in javascript 
 because the aim of developper wose build in a agile way web/site apps so we use extjs in a new 
