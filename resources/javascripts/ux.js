@@ -229,6 +229,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
           this.setValue(this.el.dom.value);
         } else {
           this.setValue(new Date());
+          this.updateHidden();
         }
     } // eo function onRender
     // }}}

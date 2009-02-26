@@ -82,6 +82,39 @@ module Lipsiadmin#:nodoc:
         "\n\n" + @after.uniq.compact.join("\n\n")
       end
       
+      
+      # Generates a new handler for the given component
+      # 
+      #   Examples:
+      #     
+      #     # Generates:
+      #     #     grid.on("dblclick", function() { 
+      #     #       edit();
+      #     #       new();
+      #     #       Ext.Msg.alert("Hello", "world");
+      #     #     });
+      # 
+      #     grid.on :dblclick do |p|
+      #       p.call "edit"
+      #       p.call "new"
+      #       p.ext_alert "Hello", "world"
+      #     end
+      def on(event, function=nil, &block)
+        # Remove old handlers
+        @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
+        
+        if function
+          after << "#{get_var}.on(#{event.to_json}, #{function});"
+        else
+          generator = ActionView::Helpers::PrototypeHelper::JavaScriptGenerator.new(self, &block)
+          after << "#{get_var}.on(#{event.to_json}, function() { \n  #{generator.to_s.gsub("\n", "\n  ")}\n});"
+        end
+      end
+      
+      def with_output_buffer(buf = '')#:nodoc:
+        yield
+      end
+      
       # Returns an object whose <tt>to_json</tt> evaluates to +code+. Use this to pass a literal JavaScript 
       # expression as an argument to another JavaScriptGenerator method.
       #

@@ -71,7 +71,7 @@ module Lipsiadmin#:nodoc:
       def add(name=nil, options={})#:nodoc:
         options[:name] = name if name
         case options[:type]
-          when :date     then options.merge!({ :type => "date", :dateFormat => "c" })
+          when :date     then options.merge!({ :type => "date", :dateFormat => "Y-m-d" })
           when :datetime then options.merge!({ :type => "date", :dateFormat => "c" })
         end
         raise ComponentError, "You must provide a Name for all fields" if options[:name].blank?

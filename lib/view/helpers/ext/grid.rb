@@ -35,6 +35,7 @@ module Lipsiadmin
         sm                    :checkbox                     if  config[:sm].blank?
         add_plugin            l("new Ext.grid.Search()")    if !config[:tbar].blank?
         view                  :default                      if  config[:view].blank?
+        on                    :dblclick, :edit              if !@after.find { |s| s.start_with?("#{get_var}.on(\"dblclick\"") if s.is_a?(String) }
       end
       
       # Define the selection model of this grid.
@@ -203,6 +204,24 @@ module Lipsiadmin
       # The authenticity_token used for ToolBar
       def authenticity_token(value)
         @authenticity_token = value
+      end
+      
+      # Returns getSelectionModel().getSelected()
+      # 
+      #   Examples:
+      # 
+      #     # Generates: grid.getSelectionModel().getSelected().id
+      #     grid.get_selected
+      #     
+      #     # Generates: getSelectionModel().getSelected().data['name']
+      #     grid.get_selected(:name)
+      # 
+      def get_selected(data=:id)
+        if data.to_sym == :id
+          l("#{get_var}.getSelectionModel().getSelected().id")
+        else
+          l("#{get_var}.getSelectionModel().getSelected().data[#{data.to_json}]")
+        end
       end
       
       # Return the javascript for create a new Ext.grid.GridPanel

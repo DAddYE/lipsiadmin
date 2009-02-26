@@ -1,4 +1,9 @@
 2008-02-26
+  * Added a new method to grid for getSelection
+  * Added a as default grid.on("dblclick", edit)
+  * Added a component handler (eg. grid.on(:dblclick, ...))
+  * Fixed a litte error in date renderer
+  * Fixed a litte error in Ext.form.DateTimeField
   * Added a padding for exceptions in standard.css
   * Fixed a litte error in backend.js
   * Fixed update, for force text/html header
@@ -16,7 +21,7 @@
   * Little reformat to Lipsiadmin::Controller::Ext::ColumnStore
   * Added new renderer in column model (boolean, eur_money, us_money)
   * Updated the remember file of script/generate backend_page
-  * Improved store_data :include etc... see documentation <tt>Lipsiadmin::Controller::Ext::ColumnStore</tt> for more details
+  * Improved store_data :include etc... see documentation Lipsiadmin::Controller::Ext for more details
   * Fixed a dataIndex conditions
   * Imporoved mapping columns for a better search
 
