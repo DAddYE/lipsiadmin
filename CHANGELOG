@@ -1,3 +1,10 @@
+2008-02-26
+  * Added new renderer in column model (boolean, eur_money, us_money)
+  * Updated the remember file of script/generate backend_page
+  * Improved store_data :include etc... see documentation Lipsiadmin::Controller::Ext::ColumnStore for more details
+  * Fixed a dataIndex conditions
+  * Imporoved mapping columns for a better search
+
 2008-02-25
   * Improved documentation now is online here http://api.lipsiasoft.com
   * Refactored text_field, text_area, password_field helpers

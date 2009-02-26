@@ -64,8 +64,7 @@ module Lipsiadmin
         # Method for add columns to the Column Model
         def add(method, header=nil, options={})
           options[:method]      = method
-          options[:dataIndex] ||= method
-          # Setting hidden and removing query for 
+           # Setting hidden and removing query for 
           # items that don't have headers
           if header.blank?
             options[:hidden]  = true
@@ -73,15 +72,23 @@ module Lipsiadmin
           end
           
           # Reformat query 
-          case options[:dataIndex]
+          case options[:method]
             when Symbol
-              options[:dataIndex] = "#{@model.table_name}.#{options[:dataIndex]}"
+              options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"
             when Array
-              options[:dataIndex] = options[:dataIndex].collect do |f| 
+              options[:dataIndex] ||= options[:method].collect do |f| 
                 f.is_a?(Symbol) ? "#{@model.table_name}.#{f}" : f 
               end.join(",")
             else
-              options[:dataIndex] = "#{@model.table_name}.#{options[:dataIndex]}"
+              # if we have eg. prodcedure.category.name we need to build
+              # a sql finder action so we need to generate
+              # procedures.categories.name
+              columns = options[:method].split(".")
+              if columns.empty?
+                options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"
+              else
+                options[:dataIndex] ||= columns[0..columns.length-2].collect(&:pluralize).join(".") + "." + columns.at(columns.size-1)
+              end
           end
           
           # Reformat dataIndex
@@ -130,11 +137,20 @@ module Lipsiadmin
         end
         
         # Return a searched and paginated data collection for the ExtJS Ext.data.GroupingStore() json
-        def store_data(params)
-          collection           = @model.search(params)
-          collection_count     = collection.size
-          collection_paginated = collection.paginate(params)
-          { :results => store_data_from(collection_paginated), :count => collection_count }
+        # You can pass options like:
+        # 
+        #   Examples
+        #   
+        #     store_data(params, :conditions => "found = 1")
+        #     store_data(params, :include => :posts)
+        # 
+        def store_data(params, options={})
+          @model.send(:with_scope, :find => options) do
+            collection           = @model.search(params)
+            collection_count     = collection.size
+            collection_paginated = collection.paginate(params)
+            { :results => store_data_from(collection_paginated), :count => collection_count }
+          end
         end
 
         # Returns an object whose <tt>to_json</tt> evaluates to +code+. Use this to pass a literal JavaScript 

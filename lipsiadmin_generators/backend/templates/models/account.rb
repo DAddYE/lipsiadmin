@@ -93,7 +93,15 @@ class Account < ActiveRecord::Base
       return maps unless maps.blank?
     end
   end
-    
+  
+  # Generate Methods takes from AccessControl rules
+  # Example:
+  #
+  #   def administrator?
+  #     role == "administrator"
+  #   end
+  Lipsiadmin::AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase.gsub(" ","_").to_sym == r.to_s.downcase.gsub(" ","_").to_sym } }
+  
   protected
     # before filter 
     def encrypt_password

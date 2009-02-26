@@ -155,7 +155,7 @@ class BackendPageGenerator < Rails::Generator::NamedBase
                             controller_class_path,
                             "#{controller_file_name}_controller_test.rb")
                           
-      m.puts finish_message
+      m.readme "../REMEMBER"
     end
   end
 
@@ -209,16 +209,4 @@ class BackendPageGenerator < Rails::Generator::NamedBase
       end
       class_name.constantize.new
     end
-    
-    def finish_message
-      <<-MESSAGE
-        
-==============================================================================================
-
-  Added a new module to config/initializers/access_rule.rb
-  Added a new route to config/routes.rb
-
-==============================================================================================
-      MESSAGE
-    end    
 end

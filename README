@@ -15,11 +15,12 @@ Author:: Davide D'Agostino
 Copyright:: Copyright (c) 2009 Lipsiasoft s.r.l. (http://www.lipsiasoft.com)
 License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
 Api Documentation:: http://api.lipsiasoft.com
+Community:: http://groups.google.com/group/lipsiadmin
 
 ==Requirements
 
-Rails 2.0
-Haml 2.0
+Rails 2+
+Haml 2+
 
 ==Installation
 
@@ -55,5 +56,5 @@ So you can do:
 
 Please contribute in coding, patch, and submitting translation api documentation etc...
 
-* Community can be found here:: http://groups.google.com/group/lipsiadmin
-* Api documentation can be found here:: http://api.lipsiasoft.com
+Community can be found here:: http://groups.google.com/group/lipsiadmin
+Api documentation can be found here:: http://api.lipsiasoft.com
