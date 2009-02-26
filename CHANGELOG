@@ -1,4 +1,6 @@
 2008-02-26
+  * Added in grid builder (edit, new, destroy) path for toolbar
+  * Little reformat to Lipsiadmin::Controller::Ext::ColumnStore
   * Added new renderer in column model (boolean, eur_money, us_money)
   * Updated the remember file of script/generate backend_page
   * Improved store_data :include etc... see documentation Lipsiadmin::Controller::Ext::ColumnStore for more details

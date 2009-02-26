@@ -71,24 +71,26 @@ module Lipsiadmin
             options[:query]   = false
           end
           
-          # Reformat query 
-          case options[:method]
-            when Symbol
+          # Reforma DataIndex
+          if options[:dataIndex].is_a?(Array)
+            options[:dataIndex] = options[:dataIndex].collect do |f| 
+              f.is_a?(Symbol) ? "#{@model.table_name}.#{f}" : f 
+            end.join(",")
+          end
+          
+          # Reformat query
+          if options[:method].is_a?(Symbol)
+            options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"
+          else
+            # if we have eg. prodcedure.category.name we need to build
+            # a sql finder action so we need to generate
+            # procedures.categories.name
+            columns = options[:method].split(".")
+            if columns.empty?
               options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"
-            when Array
-              options[:dataIndex] ||= options[:method].collect do |f| 
-                f.is_a?(Symbol) ? "#{@model.table_name}.#{f}" : f 
-              end.join(",")
             else
-              # if we have eg. prodcedure.category.name we need to build
-              # a sql finder action so we need to generate
-              # procedures.categories.name
-              columns = options[:method].split(".")
-              if columns.empty?
-                options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"
-              else
-                options[:dataIndex] ||= columns[0..columns.length-2].collect(&:pluralize).join(".") + "." + columns.at(columns.size-1)
-              end
+              options[:dataIndex] ||= columns[0..columns.length-2].collect(&:pluralize).join(".") + "." + columns.at(columns.size-1)
+            end
           end
           
           # Reformat dataIndex

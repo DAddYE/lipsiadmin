@@ -180,6 +180,21 @@ module Lipsiadmin
         @base_path = value
       end
       
+      # The path for ToolBar New Button, if none given we use the base_path
+      def new_path(value)
+        @new_path = value
+      end
+      
+      # The path for ToolBar Edit Button, if none given we use the base_path
+      def edit_path(value)
+        @edit_path = value
+      end
+      
+      # The path for ToolBar Delete Button, if none given we use the base_path
+      def destroy_path(value)
+        @destroy_path = value
+      end
+      
       # The forgery_protection_token used for ToolBar
       def forgery_protection_token(value)
         @forgery_protection_token = value
@@ -192,19 +207,25 @@ module Lipsiadmin
       
       # Return the javascript for create a new Ext.grid.GridPanel
       def to_s
-        raise ComponentError, "You must provide the base_path for autobuild toolbar."                if @default_tbar && @base_path.blank?
-        raise ComponentError, "You must provide the forgery_protection_token for autobuild toolbar." if @default_tbar && @forgery_protection_token.blank?
-        raise ComponentError, "You must provide the authenticity_token for autobuild toolbar."       if @default_tbar && @authenticity_token.blank?
-        raise ComponentError, "You must provide the grid for autobuild toolbar."                     if @default_tbar && get_var.blank?
-        raise ComponentError, "You must provide the store."                                          if @default_tbar && config[:store].blank?
+        raise ComponentError, "You must provide the base_path for autobuild toolbar."                       if @default_tbar && @base_path.blank? && @new_path.blank? && @edit_path.blank? && @destroy_path.blank?
+        raise ComponentError, "You must provide the new_path for autobuild button new of toolbar."          if @default_tbar && @base_path.blank? && @new_path.blank?
+        raise ComponentError, "You must provide the edit_path for autobuild button edit of toolbar."        if @default_tbar && @base_path.blank? && @edit_path.blank?
+        raise ComponentError, "You must provide the destroy_path for autobuild button destroy of toolbar."  if @default_tbar && @base_path.blank? && @destroy_path.blank?
+        raise ComponentError, "You must provide the forgery_protection_token for autobuild toolbar."        if @default_tbar && @forgery_protection_token.blank?
+        raise ComponentError, "You must provide the authenticity_token for autobuild toolbar."              if @default_tbar && @authenticity_token.blank?
+        raise ComponentError, "You must provide the grid for autobuild toolbar."                            if @default_tbar && get_var.blank?
+        raise ComponentError, "You must provide the store."                                                 if @default_tbar && config[:store].blank?
+        
         if @default_tbar
           after << render_javascript("grid", :var => get_var, :store => config[:store])
         end
+        
         if config[:store]
           after << "#{config[:store]}.on('beforeload', function(){ Backend.app.mask(); });"
           after << "#{config[:store]}.on('load', function(){ Backend.app.unmask(); });"
           after << "#{config[:store]}.load();"
         end
+        
         after << "Backend.app.addItem(#{get_var})"
         "#{before_js}var #{get_var} = new Ext.grid.GridPanel(#{config.to_s});#{after_js}"
       end

@@ -14,11 +14,11 @@
 });
 
 function add(){
-  Backend.app.load('<%= @base_path %>/new');
+  Backend.app.load('<%= @new_path.blank? ? "#{@base_path}/new" : @new_path %>');
 }
 
 function edit(){
-  Backend.app.load('<%= @base_path %>/'+<%= @var %>.getSelectionModel().getSelected().id+'/edit');
+  Backend.app.load('<%= @edit_path || @base_path %>/'+<%= @var %>.getSelectionModel().getSelected().id+'/edit');
 }
 
 function remove(){
@@ -27,7 +27,7 @@ function remove(){
       <%= @var %>.getSelectionModel().each(function(r){
         Backend.app.mask();
         Ext.Ajax.request({
-          url: '<%= @base_path %>/'+r.id,
+          url: '<%= @destroy_path || @base_path %>/'+r.id,
           method: 'DELETE',
           params: {<%= @forgery_protection_token %>: '<%= @authenticity_token %>'},
           success: function(result, request){
