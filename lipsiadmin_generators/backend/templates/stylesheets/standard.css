@@ -53,6 +53,7 @@ form                          { display: inline; }
 .margin-bottom                { margin-bottom:10px; }
 .margin-left                  { margin-left:10px; }
 .margin-right                 { margin-right:10px; }
+.exception                    { padding:10px; }
 /* Default Style for inputs */
 .x-form-field{margin:0;font:normal 12px tahoma,arial,helvetica,sans-serif;}
 .x-form-text,textarea.x-form-field{padding:1px 3px;background:#fff url(../images/ext/default/form/text-bg.gif) repeat-x 0 0;border:1px solid #B5B8C8;}

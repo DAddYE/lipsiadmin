@@ -81,12 +81,20 @@ module Lipsiadmin
         # 
         #   Examples:
         # 
-        #     =box "My Title", "My Subtitle", :submit => true, :collapsible => true do
+        #     =box "My Title", "My Subtitle", :submit => true, :collapsible => true, :style => "padding:none", :start => :close do
         #       my content
         # 
+        # Defaults:
+        # 
+        # * :submit => false
+        # * :collapsible => false
+        # * :start => :close
+        # 
         def box(title=nil, subtitle=nil, options={}, &block)
+          options[:style] ||= "width:99%;"
+          options[:start] ||= :open
           return <<-HTML
-            <div class="x-box" style="width:99%">
+            <div class="x-box" style="#{options[:style]}">
               <div class="x-box-tl">
                 <div class="x-box-tr">
                   <div class="x-box-tc">&nbsp;</div>
@@ -101,10 +109,10 @@ module Lipsiadmin
                       #{"<br class=\"clear\" />" if !title.blank? || !subtitle.blank?}
                       #{"<div style=\"font-size:0px\">&nbsp;</div>" if !title.blank? || !subtitle.blank?}
                     </div>
-                    <div class="#{"x-box-collapsible" if options[:collapsible]}" style="width:99%;#{"display:none" if options[:collapsible]}">
+                    <div class="#{"x-box-collapsible" if options[:collapsible]}" style="width:99%;#{"display:none" if options[:collapsible] && options[:start] == :close}">
                       #{"<div style=\"font-size:10px\">&nbsp;</div>" if !title.blank? || !subtitle.blank?}
                       #{capture(&block)}
-                      #{"<div style=\"text-align:right;margin-top:10px\">#{submit_tag("Salva", :onclick=>"Backend.app.submitForm()")}</div>" if options[:submit]}
+                      #{"<div style=\"text-align:right;margin-top:10px\">#{submit_tag(I18n.t("lipsiadmin.buttons.save"), :onclick=>"Backend.app.submitForm()")}</div>" if options[:submit]}
                     </div>
                   </div>
                 </div>

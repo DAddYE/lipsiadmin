@@ -44,7 +44,6 @@ module Lipsiadmin
           # Eval in parent scope and replace document location of this frame 
           # so back button doesn't replay action on targeted forms
           # loc = document.location to be set after parent is updated for IE
-          # with(window.parent) - pull in variables from parent window
           # setTimeout - scope the execution in the windows parent for safari
           # window.eval - legal eval for Opera
           render :text => "<html><body><script type='text/javascript' charset='utf-8'>

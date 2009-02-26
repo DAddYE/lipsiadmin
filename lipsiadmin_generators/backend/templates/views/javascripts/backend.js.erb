@@ -81,7 +81,7 @@ Backend.app = function(){
           } 
         });
       } else if (ext == 'html'){
-        this.contentDynamic.getUpdater().update({ url: url });
+        this.contentDynamic.getUpdater().update({ url: url, headers: { 'Accept': 'text/html, text/javascript, application/xml, text/xml, */*' } });
       } else {
         Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
       }
@@ -239,7 +239,7 @@ Backend.app = function(){
     }, // openHelp
     
     doLayout : function(){
-      this.contentPanel.doLayout();
+      this.contentDynamic.doLayout();
     }, //doLayout
 
     mask : function(text){

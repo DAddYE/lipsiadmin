@@ -29,9 +29,32 @@ module Lipsiadmin
         response_code = response_code_for_rescue(exception)
         status        = interpret_status(response_code)[0,3]
         respond_to do |format|
-          format.html { render :template => "/exceptions/#{status}", :status => status }
-          format.all  { render :nothing => true, :status => true }
-          #format.js   { render(:update) { |page| page.call "alert", interpret_status(response_code)  } }
+          # Personalize rescue rules for backend
+          if controller_path =~ /^backend\//
+            # Usually when we made a post we submit the form
+            # to a target iframe, so we need to respond to the parent.
+            if request.post?
+              responds_to_parent do
+                render :update do |page| 
+                  page.unmask
+                  page.ext_alert I18n.t("lipsiadmin.exceptions.#{status}.title"), I18n.t("lipsiadmin.exceptions.#{status}.description")
+                end
+              end
+            else
+              # We can't use status, because Backend.app.load don't permit load 500, 404 pages
+              format.html { render :template => "/exceptions/#{status}" }
+              format.js do 
+                render :update do |page| 
+                  page.unmask
+                  page.ext_alert I18n.t("lipsiadmin.exceptions.#{status}.title"), I18n.t("lipsiadmin.exceptions.#{status}.description")
+                end
+              end
+              format.all  { render :nothing => true, :status => status }
+            end
+          else
+            format.html { render :template => "/exceptions/#{status}", :status => status }
+            format.all  { render :nothing => true, :status => status }
+          end
         end
       rescue Exception => e
         logger.error e.message

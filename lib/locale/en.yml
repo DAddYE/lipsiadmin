@@ -1,5 +1,9 @@
 en:
   lipsiadmin:
+    labels:
+      not_found: "Not found"
+    buttons:
+      save: "Save"
     exceptions:
       404:
         title: "The page you were looking for doesn't exist"

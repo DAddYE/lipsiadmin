@@ -176,7 +176,7 @@ module Lipsiadmin
         include CountrySelectHelper
         
         def to_ext_date_select_tag(options = {}, html_options = {})
-          to_datetime_select_tag({ :hideTime => true.to_l }.merge(options), html_options)
+          to_ext_datetime_select_tag({ :hideTime => true.to_l }.merge(options), html_options)
         end
 
         def to_ext_datetime_select_tag(options = {}, html_options = {})

@@ -131,7 +131,7 @@ module Lipsiadmin
         def store_data_from(collection)
           collection.inject([]) do |store, c|
             store << @data.inject({ :id => c.id }) do |options, data|
-              options[data[:mapping]] = c.instance_eval(data[:method].to_s)
+              options[data[:mapping]] = (c.instance_eval(data[:method].to_s) rescue I18n.t("lipsiadmin.labels.not_found"))
               options
             end
             store

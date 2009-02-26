@@ -86,8 +86,26 @@ module Lipsiadmin
         #   ext_alert('Hey!', 'Hello World')
         #
         def ext_alert(title, message)
-          call title, message
+          call "Ext.Msg.alert", title, message
         end
+
+        # Unmask the Backend App
+        # 
+        #   # Generates: Backend.app.unmask()
+        #   unmask
+        #
+        def unmask
+          call "Backend.app.unmask"
+        end
+        
+        # Mask the Backend App
+        # 
+        #   # Generates: Backend.app.mask('Hello World')
+        #   mask("Hello World")
+        #
+        def mask(title=nil)
+          call "Backend.app.mask", title
+        end        
       
         # Create a javascript function
         # 

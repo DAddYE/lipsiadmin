@@ -1,5 +1,9 @@
 it:
   lipsiadmin:
+    labels:
+      not_found: "Nessuno"
+    buttons:
+      save: "Salva"
     exceptions:
       "404":
         title: "La pagina che cerchi non esiste"
