@@ -61,7 +61,7 @@ module Lipsiadmin
         erase_results
         rescue_action_in_public_without_notifier(exception)
       ensure
-        if response_code != :not_found
+        if response_code != :not_found && Lipsiadmin::Mailer::ExceptionNotifier.send_mail
           Lipsiadmin::Mailer::ExceptionNotifier.deliver_exception(exception, self, request)
         end
       end

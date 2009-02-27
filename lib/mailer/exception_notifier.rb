@@ -13,6 +13,9 @@ module Lipsiadmin
       @@extra_options = {}
       cattr_accessor :extra_options
 
+      @@send_mail = true
+      cattr_accessor :send_mail
+
       @@email_prefix = "[ERROR] "
       cattr_accessor :email_prefix
       

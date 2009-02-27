@@ -53,7 +53,7 @@ module Lipsiadmin
         sm                    :checkbox                     
         add_plugin            l("new Ext.grid.Search()")    
         view                  :default                      
-        on(:dblclick, :edit)          
+        on(:dblclick, :edit, l("this"))          
         
         yield self if block_given?
       end

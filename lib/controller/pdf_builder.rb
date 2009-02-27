@@ -13,6 +13,11 @@ module Lipsiadmin
     #   def generate_pdf_invoice
     #     render_pdf :invoice, 'invoice_file.pdf'
     #   end
+    # 
+    # Possible options are:
+    # 
+    # * landescape, default it's false
+    # * send_data,  default it's true
     #   
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
@@ -21,7 +26,10 @@ module Lipsiadmin
       JARPATH = "../../resources"
 
       # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
-      def render_pdf(template, filename, landescape = false)
+      def render_pdf(template, filename=nil, options={})
+
+        options[:landescape] ||= true
+        options[:send_data]  ||= !filename.blank?
         # encode the template
         input = encode_entities(render(:template => "/pdf/#{template}.html.haml", :layout => "print"))
         
@@ -33,17 +41,22 @@ module Lipsiadmin
         input.gsub!('src="/', 'src="' + RAILS_ROOT + '/public/')
         input.gsub!('url(','url('+RAILS_ROOT+'/public')
 
-        cmd = "java -Xmx512m -Djava.awt.headless=true -cp pd4ml.jar:.:#{File.dirname(__FILE__)}/#{JARPATH} Pd4Ruby '#{input}' 950 A4 #{landescape}"
+        cmd = "java -Xmx512m -Djava.awt.headless=true -cp pd4ml.jar:.:#{File.dirname(__FILE__)}/#{JARPATH} Pd4Ruby '#{input}' 950 A4 #{options[:landescape]}"
 
         output = %x[cd #{File.dirname(__FILE__)}/#{JARPATH} \n #{cmd}]
 
         # raise error if process returned false (ie: a java error)
         raise PdfError, "An unknonwn error occurred while generating pdf: cd #{File.dirname(__FILE__)}/#{JARPATH} #{cmd}" if $?.success? === false
-
-        #return raw pdf binary-stream
-        options  = { :filename => filename, :type => 'application/pdf' }
-        options[:disposition] = "inline" if Rails.env == "development"
-        send_data(output, options)
+        
+        # return raw pdf binary-stream
+        if options[:send_data]
+          pdf_options  = { :filename => filename, :type => 'application/pdf' }
+          pdf_options[:disposition] = "inline" if Rails.env == "development"
+          send_data(output, pdf_options) 
+        else
+          erase_results
+          output
+        end
       end
 
       # Errors For PDF

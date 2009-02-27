@@ -1,4 +1,10 @@
 2009-02-27
+  * Added an options for prevent sending email, usefull for test rescue but not email report
+  * Fixed a translation in backend_helper
+  * Fixed a double render action in pdf
+  * Added send_data as an options in pdf builder (for the controller)
+  * Fixed the en locale for backend
+  * Added scope to the component events
   * Added a new task for update javascripts (add require 'lipsiadmin_tasks' if you don't have yet in your RakeFile)
   * Fixed padding in DateTime Field for firefox
   * Removed not necessary frontend images 

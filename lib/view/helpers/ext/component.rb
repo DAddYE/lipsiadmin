@@ -109,15 +109,15 @@ module Lipsiadmin#:nodoc:
       #       p.call "new"
       #       p.ext_alert "Hello", "world"
       #     end
-      def on(event, function=nil, &block)
+      def on(event, function=nil, scope=nil, &block)
         # Remove old handlers
         @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
-        
+        scope = ", #{scope}" unless scope.blank?        
         if function
-          after << "#{get_var}.on(#{event.to_json}, #{function});"
+          after << "#{get_var}.on(#{event.to_json}, #{function}#{scope});"
         else
           generator = ActionView::Helpers::PrototypeHelper::JavaScriptGenerator.new(self, &block)
-          after << "#{get_var}.on(#{event.to_json}, function() { \n  #{generator.to_s.gsub("\n", "\n  ")}\n});"
+          after << "#{get_var}.on(#{event.to_json}, function() { \n  #{generator.to_s.gsub("\n", "\n  ")}\n}#{scope});"
         end
       end
       

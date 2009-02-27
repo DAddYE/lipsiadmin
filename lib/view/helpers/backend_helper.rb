@@ -73,7 +73,7 @@ module Lipsiadmin
         # 
         def link_to_remote_with_wait(name, options={}, html_options={})
           options[:complete] = "Backend.app.unmask();"
-          options[:before]  = "Backend.app.mask('#{I18n.t('backend.messages.wait.message')}')";
+          options[:before]  = "Backend.app.mask('#{I18n.t('backend.javascripts.messages.wait.message')}')";
           link_to_function(name, remote_function(options), html_options || options.delete(:html))
         end
         
