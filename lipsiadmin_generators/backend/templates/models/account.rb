@@ -100,7 +100,7 @@ class Account < ActiveRecord::Base
   #   def administrator?
   #     role == "administrator"
   #   end
-  Lipsiadmin::AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase.gsub(" ","_").to_sym == r.to_s.downcase.gsub(" ","_").to_sym } }
+  AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase.gsub(" ","_").to_sym == r.to_s.downcase.gsub(" ","_").to_sym } }
   
   protected
     # before filter 
