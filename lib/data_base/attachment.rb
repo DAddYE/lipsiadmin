@@ -73,7 +73,7 @@ module Lipsiadmin
             if file_column = self.send(name)
               file_column.update_attributes(attributes)
             else
-              self.send(name).create(attributes)
+              self.send(name).build(attributes)
             end
 
           end
@@ -130,7 +130,7 @@ module Lipsiadmin
             for attribute in attributes
               next if attribute["file"].blank?
               attribute.merge!(:attachment_definitions => self.class.attachment_definitions[name])
-              self.send(name).create(attribute)
+              self.send(name).build(attribute)
             end
 
           end
