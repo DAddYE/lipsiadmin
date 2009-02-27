@@ -182,7 +182,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         var timeStyle = this.hideTime ? 'display:none' : '';
         t = Ext.DomHelper.append(ct, {tag:'table',style:'border-collapse:collapse',children:[
             {tag:'tr',children:[
-                {tag:'td',style:'padding-right:4px', cls:'datetime-date'},{tag:'td', cls:'datetime-time', style: timeStyle}
+                {tag:'td',style:'padding-right:17px', cls:'datetime-date'},{tag:'td', cls:'datetime-time', style: timeStyle}
             ]}
         ]}, true);
         this.tableEl = t;
@@ -193,8 +193,8 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         this.df.render(t.child('td.datetime-date'));
         this.tf.render(t.child('td.datetime-time'));
         
-        this.df.wrap.setStyle({width: this.dateWidth+17});
-        this.tf.wrap.setStyle({width: this.timeWidth+17});
+        this.df.wrap.setStyle({width: this.dateWidth});
+        this.tf.wrap.setStyle({width: this.timeWidth});
         
         // workaround for IE trigger misalignment bug
         if(Ext.isIE && Ext.isStrict) {
