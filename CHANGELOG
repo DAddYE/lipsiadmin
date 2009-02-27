@@ -1,4 +1,5 @@
 2009-02-27
+  * Added as default sm :checkbox
   * Fixed a litte padding in firefox for datetimefield
   * Fixed a typo in account.rb
   * Fixed attachment creation for new records
