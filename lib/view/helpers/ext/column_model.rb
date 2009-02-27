@@ -4,7 +4,8 @@ module Lipsiadmin
     #
     #   Examples:
     # 
-    #     var columnModel = new Ext.grid.ColumnModel([{
+    #     var columnModel = new Ext.grid.ColumnModel({
+    #       columns: [{
     #         header: "Name",
     #         dataIndex: "name"
     #       },{
@@ -17,20 +18,18 @@ module Lipsiadmin
     #       },{
     #         header: "Created At",
     #         dataIndex: "created_at"
-    #     }]);
+    #     }]});
     #     
     #   ColumnModel.new do |columns|
     #     columns.add :name,             "Name"
-    #     columns.add :category_name,    "Category",      :query => "categories.name"
+    #     columns.add :category_name,    "Category",      :dataIndex => "categories.name"
     #     columns.add :date,             "Date"
     #     columns.add :created_at,       "Created At"
     #   end
     #     
-    class ColumnModel < Component
-      attr_accessor :items
-      
+    class ColumnModel < Component      
       def initialize(options={}, &block)#:nodoc:
-        super({ :items => [] }.merge(options), &block)
+        super("Ext.grid.ColumnModel", { :columns => [] }.merge(options), &block)
       end
       
       # This add automatically fields from an array
@@ -67,12 +66,7 @@ module Lipsiadmin
           when :boolean     then options.merge!(:renderer => l("Ext.util.Format.boolRenderer"))
         end
         raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || options[:dataIndex].blank?
-        config[:items] << Configuration.new(options)
-      end
-      
-      # Return the javascript for create a new Ext.grid.ColumnModel
-      def to_s
-        "var #{get_var} = new Ext.grid.ColumnModel([#{config[:items].join(",")}]);"
+        config[:columns] << Configuration.new(options)
       end
     end
   end

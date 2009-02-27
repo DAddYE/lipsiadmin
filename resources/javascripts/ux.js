@@ -193,8 +193,8 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         this.df.render(t.child('td.datetime-date'));
         this.tf.render(t.child('td.datetime-time'));
         
-        this.df.wrap.setStyle({width: this.dateWidth});
-        this.tf.wrap.setStyle({width: this.timeWidth});
+        this.df.wrap.setStyle({width: this.dateWidth+17});
+        this.tf.wrap.setStyle({width: this.timeWidth+17});
         
         // workaround for IE trigger misalignment bug
         if(Ext.isIE && Ext.isStrict) {

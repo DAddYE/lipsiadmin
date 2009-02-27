@@ -13,6 +13,7 @@ module Lipsiadmin
       # Returns the configuration as a string.
       # Optionally you can specify the indentation spaces.
       def to_s(indent=1)
+        return if self.empty?
         i = ("  "*indent)
         s = self.size > 0 ? "\n" : "  "
         "{#{s}" + self.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i}}"

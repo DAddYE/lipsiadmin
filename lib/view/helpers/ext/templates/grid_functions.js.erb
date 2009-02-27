@@ -1,6 +1,6 @@
-<%= @var %>.getSelectionModel().on('selectionchange', function(){
-  var n = <%= @var %>.getSelectionModel().getSelected();
-  var btns = <%= @var %>.getTopToolbar().items.map;
+<%= @sm %>.on('selectionchange', function(){
+  var n = <%= @sm %>.getSelected();
+  var btns = <%= @tbar %>.items.map;
 
    if(!n){
     btns.remove.disable();
@@ -18,13 +18,13 @@ function add(){
 }
 
 function edit(){
-  Backend.app.load('<%= @edit_path || @base_path %>/'+<%= @var %>.getSelectionModel().getSelected().id+'/edit');
+  Backend.app.load('<%= @edit_path || @base_path %>/'+<%= @sm %>.getSelected().id+'/edit');
 }
 
 function remove(){
-  Ext.Msg.confirm(Backend.locale.messages.confirm.title, String.format(Backend.locale.messages.confirm.message, <%= @var %>.getSelectionModel().getCount()), function(btn, text){
+  Ext.Msg.confirm(Backend.locale.messages.confirm.title, String.format(Backend.locale.messages.confirm.message, <%= @sm %>.getCount()), function(btn, text){
     if (btn == 'yes'){
-      <%= @var %>.getSelectionModel().each(function(r){
+      <%= @sm %>.each(function(r){
         Backend.app.mask();
         Ext.Ajax.request({
           url: '<%= @destroy_path || @base_path %>/'+r.id,

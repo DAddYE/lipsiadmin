@@ -4,6 +4,23 @@ module Lipsiadmin
     #
     # Examples:
     #
+    #   # Returns:
+    #   #   var grid = new Ext.grid.GridPanel({
+    #   #     clicksToEdit: 1,
+    #   #     border: false,
+    #   #     bodyBorder: false,
+    #   #     store: store,
+    #   #     view: groupingView,
+    #   #     region: "center",
+    #   #     sm: new Ext.grid.CheckboxSelectionModel(),
+    #   #     bbar: pagingToolbar,
+    #   #     plugins: [new Ext.grid.Search()],
+    #   #     viewConfig: { forceFit: true },
+    #   #     id: "grid-posts",
+    #   #     cm: columnModel,
+    #   #     tbar: toolBar
+    #   #   });
+    #
     #   page.grid do |grid|
     #     grid.id "grid-posts"
     #     grid.title "List all Post"
@@ -24,40 +41,43 @@ module Lipsiadmin
     class Grid < Component
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
-        super(options, &block)
+        super("Ext.grid.GridPanel", options)
+        
         # Write default configuration if not specified
         config[:plugins]      ||= []
-        viewConfig            l("{ forceFit: true }")       if  config[:viewConfig].blank?
-        clicksToEdit          l(1)                          if  config[:clicksToEdit].blank?
-        border                l(false)                      if  config[:border].blank?
-        bodyBorder            l(false)                      if  config[:bodyBorder].blank?
-        region                "center"                      if  config[:region].blank?
-        sm                    :checkbox                     if  config[:sm].blank?
-        add_plugin            l("new Ext.grid.Search()")    if !config[:tbar].blank?
-        view                  :default                      if  config[:view].blank?
-        on                    :dblclick, :edit              if !@after.find { |s| s.start_with?("#{get_var}.on(\"dblclick\"") if s.is_a?(String) }
+        viewConfig            l("{ forceFit: true }")       
+        clicksToEdit          l(1)                          
+        border                l(false)                      
+        bodyBorder            l(false)                      
+        region                "center"                      
+        sm                    :checkbox                     
+        add_plugin            l("new Ext.grid.Search()")    
+        view                  :default                      
+        on(:dblclick, :edit)          
+        
+        yield self if block_given?
       end
       
       # Define the selection model of this grid.
       # You can pass: 
       #   
-      # * :checkbox
-      # * :default (alias for checkbox)
+      # * :checkbox || :default
       # * :row
+      # * custom (eg. Component.new("some"))
       # 
       # It generate some like:
       # 
       #   new Ext.grid.CheckboxSelectionModel()
       # 
       def sm(value)
-        case value
-        when :checkbox || :default
-          config[:sm] = l("new Ext.grid.CheckboxSelectionModel()")
-        when :row
-          config[:sm] = l("new Ext.grid.RowSelectionModel()")
-        else
-          config[:sm] = value
+        selmodel = case value
+          when :default  then Component.new("Ext.grid.CheckboxSelectionModel")
+          when :checkbox then Component.new("Ext.grid.CheckboxSelectionModel")
+          when :row      then Component.new("Ext.grid.RowSelectionModel")
+          when Component then value
         end
+        before << selmodel.to_s
+        config[:sm] = l(selmodel.get_var)
       end
       
       # Define the title of the grid
@@ -129,8 +149,8 @@ module Lipsiadmin
       #     })
       #   bbar :pageSize => params[:limit], :store => store.get_var, displayInfo: true
       # 
-      def bbar(obj=nil, &block)
-        bbar = obj.is_a?(Hash) ? PagingToolbar.new(obj) : obj
+      def bbar(value=nil, &block)
+        bbar = value.is_a?(Hash) ? Component.new("Ext.PagingToolbar", value) : value
         before << bbar.to_s
         after  << bbar.after
         config[:bbar] = l(bbar.get_var)
@@ -146,13 +166,13 @@ module Lipsiadmin
       #     })
       #   view :forceFit => true, :groupTextTpl => "{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Foo" : "Bar"]})"
       # 
-      def view(obj=nil, &block)
-        if obj.is_a?(Symbol) && (obj == :default)
-          view = GroupingView.new({ :forceFit => true })
-        elsif obj.is_a?(Hash)
-          view = GroupingView.new(obj)
+      def view(value=nil, &block)
+        if value.is_a?(Symbol) && (value == :default)
+          view = Component.new("Ext.grid.GroupingView", { :forceFit => true })
+        elsif value.is_a?(Hash)
+          view = Component.new("Ext.grid.GroupingView", { :forceFit => true })
         else
-          view = obj
+          view = value
         end
         
         before << view.to_s
@@ -161,19 +181,23 @@ module Lipsiadmin
       end
       
       # Generate or set a new Ext.data.GroupingStore
-      def store(obj=nil, url=nil, &block)
-        datastore = obj.is_a?(Store) ? obj : Store.new(&block)
+      def store(value=nil, url=nil, &block)
+        datastore = value.is_a?(Store) ? value : Store.new(&block)
         before << datastore.to_s
         after  << datastore.after
         config[:store] = l(datastore.get_var)
       end
       
       # Generate or set new Ext.grid.ColumnModel
-      def columns(obj=nil, &block)
-        columnmodel = obj.is_a?(ColumnModel) ? obj : ColumnModel.new(&block)
+      def columns(value=nil, &block)
+        options = { :columns => [] }
+        if config[:sm] && before.find { |js| js.start_with?("var #{config[:sm]} = new Ext.grid.CheckboxSelectionModel") }
+          options[:columns] << config[:sm]
+        end
+        columnmodel = value.is_a?(ColumnModel) ? value : ColumnModel.new(options, &block)
         before << columnmodel.to_s
         after  << columnmodel.after
-        config[:colModel] = l(columnmodel.get_var)
+        config[:cm] = l(columnmodel.get_var)
       end
       
       # The base_path used for ToolBar, it's used for generate [:new, :edit, :destory] urls
@@ -217,26 +241,30 @@ module Lipsiadmin
       #     grid.get_selected(:name)
       # 
       def get_selected(data=:id)
+        raise_error "No Column Selection Model Defined" if config[:sm].blank?
         if data.to_sym == :id
-          l("#{get_var}.getSelectionModel().getSelected().id")
+          l("#{config[:sm]}.getSelected().id")
         else
-          l("#{get_var}.getSelectionModel().getSelected().data[#{data.to_json}]")
+          l("#{config[:sm]}.getSelected().data[#{data.to_json}]")
         end
       end
       
       # Return the javascript for create a new Ext.grid.GridPanel
       def to_s
-        raise ComponentError, "You must provide the base_path for autobuild toolbar."                       if @default_tbar && @base_path.blank? && @new_path.blank? && @edit_path.blank? && @destroy_path.blank?
-        raise ComponentError, "You must provide the new_path for autobuild button new of toolbar."          if @default_tbar && @base_path.blank? && @new_path.blank?
-        raise ComponentError, "You must provide the edit_path for autobuild button edit of toolbar."        if @default_tbar && @base_path.blank? && @edit_path.blank?
-        raise ComponentError, "You must provide the destroy_path for autobuild button destroy of toolbar."  if @default_tbar && @base_path.blank? && @destroy_path.blank?
-        raise ComponentError, "You must provide the forgery_protection_token for autobuild toolbar."        if @default_tbar && @forgery_protection_token.blank?
-        raise ComponentError, "You must provide the authenticity_token for autobuild toolbar."              if @default_tbar && @authenticity_token.blank?
-        raise ComponentError, "You must provide the grid for autobuild toolbar."                            if @default_tbar && get_var.blank?
-        raise ComponentError, "You must provide the store."                                                 if @default_tbar && config[:store].blank?
+        if @default_tbar
+          raise_error "You must provide the base_path for autobuild toolbar."                      if @base_path.blank? && @new_path.blank? && @edit_path.blank? && @destroy_path.blank?
+          raise_error "You must provide the new_path for autobuild button new of toolbar."         if @base_path.blank? && @new_path.blank?
+          raise_error "You must provide the edit_path for autobuild button edit of toolbar."       if @base_path.blank? && @edit_path.blank?
+          raise_error "You must provide the destroy_path for autobuild button destroy of toolbar." if @base_path.blank? && @destroy_path.blank?
+          raise_error "You must provide the forgery_protection_token for autobuild toolbar."       if @forgery_protection_token.blank?
+          raise_error "You must provide the authenticity_token for autobuild toolbar."             if @authenticity_token.blank?
+          raise_error "You must provide the grid for autobuild toolbar."                           if get_var.blank?
+          raise_error "You must provide the selection model for autobuild toolbar."                if config[:sm].blank?
+          raise_error "You must provide the store."                                                if config[:store].blank?
+        end
         
         if @default_tbar
-          after << render_javascript("grid", :var => get_var, :store => config[:store])
+          after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar])
         end
         
         if config[:store]
@@ -248,7 +276,6 @@ module Lipsiadmin
         after << "Backend.app.addItem(#{get_var})"
         "#{before_js}var #{get_var} = new Ext.grid.GridPanel(#{config.to_s});#{after_js}"
       end
-      alias_method :to_js, :to_s
     end
   end
 end

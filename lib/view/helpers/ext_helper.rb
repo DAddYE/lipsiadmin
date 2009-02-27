@@ -4,8 +4,6 @@ require 'view/helpers/ext/column_model'
 require 'view/helpers/ext/tool_bar'
 require 'view/helpers/ext/configuration'
 require 'view/helpers/ext/store'
-require 'view/helpers/ext/paging_toolbar'
-require 'view/helpers/ext/grouping_view'
 
 module Lipsiadmin
   module View

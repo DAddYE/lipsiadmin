@@ -33,6 +33,7 @@ module Lipsiadmin#:nodoc:
                           "app/helpers/",
                           "app/models/",
                           "config/",
+                          "lib/",
                           "app/views/layouts/",
                           "public/images/",
                           "public/javascripts/",

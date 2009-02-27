@@ -4,14 +4,23 @@ module Lipsiadmin#:nodoc:
     class ComponentError < StandardError; end#:nodoc:
     
     # This is the base class of ext components
+    # 
+    # You can generate your custom ExtJs objects like:
+    # 
+    #   # Generates: 
+    #   #   var groupingView = Ext.grid.GroupingView({
+    #   #     forceFit: true
+    #   #   });
+    # 
+    #   Component.new("Ext.grid.GroupingView", { :forceFit => true });
+    # 
     class Component      
 
-      def initialize(options={}, &block)#:nodoc:
+      def initialize(klass, options={}, &block)#:nodoc:
+        @klass = klass
         @config = Configuration.new(options)
         @before, @after = [], []
-        if block_given?
-          yield self
-        end
+        yield self if block_given?
       end
       
       # The id of the component
@@ -23,6 +32,7 @@ module Lipsiadmin#:nodoc:
       # Set var used by the component
       # 
       #   Generates: var myVar = new Ext.Grid({...});
+      #   store.var "myVar"
       #
       def var(var)
         @var = var
@@ -35,7 +45,7 @@ module Lipsiadmin#:nodoc:
         @var = nil     if @var == ""
         @config[:var]  if @config[:var] == ""
         # Return a correct var
-        @var || @config[:var] || (self.class.name.demodulize.slice(0..0).downcase + self.class.name.demodulize.slice(1..-1))
+        @var || @config[:var] || (@klass.split(".").last.demodulize.slice(0..0).downcase + @klass.split(".").last.demodulize.slice(1..-1))
       end
       
       # Write the the configuration of object from an hash
@@ -113,6 +123,20 @@ module Lipsiadmin#:nodoc:
       
       def with_output_buffer(buf = '')#:nodoc:
         yield
+      end
+      
+      
+      # Returns the javascript example
+      #
+      #   # Generates: var rowSelectionModel = Ext.grid.RowSelectionModel();
+      #   Component.new("Ext.grid.RowSelectionModel")
+      # 
+      def to_s
+        "var #{get_var} = new #{@klass}(#{config.to_s});"
+      end
+      
+      def raise_error(error)#:nodoc:
+         raise ComponentError, error
       end
       
       # Returns an object whose <tt>to_json</tt> evaluates to +code+. Use this to pass a literal JavaScript 

@@ -23,7 +23,7 @@ module Lipsiadmin
     class ToolBar < Component
       attr_accessor :items
       def initialize(options={}, &block)#:nodoc:
-        super({ :items => [] }.merge(options), &block)
+        super("Ext.Toolbar", { :items => [] }.merge(options), &block)
       end
       
       # Add new items to a Ext.Toolbar
@@ -33,12 +33,7 @@ module Lipsiadmin
       # 
       def add(name, options={})
         options[:text] = name
-        config[:items] << Component.new(options).config
-      end
-      
-      # Return the javascript for create a new Ext.Toolbar
-      def to_s
-        "var #{get_var} = new Ext.Toolbar([#{config[:items].join(",")}]);"
+        config[:items] << Configuration.new(options)
       end
     end
   end

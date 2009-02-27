@@ -42,7 +42,7 @@ spec = Gem::Specification.new do |s|
   s.rubyforge_project = "lipsiadmin"
   s.platform          = Gem::Platform::RUBY
   s.summary           = "Lipsiadmin is a new revolutionary admin for your projects.Lipsiadmin is based on Ext Js 2.0. framework (with prototype adapter) and is ready for Rails 2.0. This admin is for newbie developper but also for experts, is not entirely written in javascript because the aim of developper wose build in a agile way web/site apps so we use extjs in a new intelligent way a mixin of “old” html and new ajax functions, for example ext manage the layout of page, grids, tree and errors, but form are in html code."
-  s.files             = FileList["CHANGELOG", "README", "MIT-LICENSE", "Rakefile", "init.rb", "{lipsiadmin_generators,lib,resources}/**/*"].to_a
+  s.files             = FileList["CHANGELOG", "README", "MIT-LICENSE", "Rakefile", "init.rb", "{lipsiadmin_generators,lib,resources,tasks}/**/*"].to_a
   s.has_rdoc          = true
   s.requirements     << 'Haml'
   s.requirements     << 'Rails'

@@ -1,4 +1,12 @@
-2008-02-26
+2009-02-27
+  * Added a new task for update javascripts (add require 'lipsiadmin_tasks' if you don't have yet in your RakeFile)
+  * Fixed padding in DateTime Field for firefox
+  * Removed not necessary frontend images 
+  * Extended Ext Component to be more flexible
+  * Small refactoring of ext components
+
+2009-02-26
+  * Removed a grid unusued var
   * Added a new method to grid for getSelection
   * Added a as default grid.on("dblclick", edit)
   * Added a component handler (eg. grid.on(:dblclick, ...))
@@ -25,7 +33,7 @@
   * Fixed a dataIndex conditions
   * Imporoved mapping columns for a better search
 
-2008-02-25
+2009-02-25
   * Improved documentation now is online here http://api.lipsiasoft.com
   * Refactored text_field, text_area, password_field helpers
   * Refactored country_select helper

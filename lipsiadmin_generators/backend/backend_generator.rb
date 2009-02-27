@@ -23,6 +23,7 @@ class BackendGenerator < Rails::Generator::Base
       
       m.append("config/routes.rb", routes, "ActionController::Routing::Routes.draw do |map|")
       m.append("public/robots.txt", "User-agent: *\nDisallow: /backend")
+      m.append("RakeFile", "require 'lipsiadmin_tasks'")
       
       m.create_all("controllers", "app/controllers")
       m.create_all("helpers", "app/helpers")

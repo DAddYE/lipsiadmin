@@ -40,7 +40,7 @@ module Lipsiadmin#:nodoc:
       
       def initialize(options={}, &block)#:nodoc:
         @items   = []
-        super(options, &block)
+        super("Ext.data.GroupingStore", options, &block)
         remoteSort l(true)                  if config[:remoteSort].blank?
         baseParams("_method" => "GET")      if config[:baseParams].blank?
       end
@@ -85,7 +85,7 @@ module Lipsiadmin#:nodoc:
         raise ComponentError, "You must provide some fields for get build store." if items.blank?
         config[:proxy]  = default_proxy  if config[:proxy].blank?
         config[:reader] = default_reader if config[:reader].blank?
-        "var #{get_var} = new Ext.data.GroupingStore(#{config.to_s});"
+        super
       end
       
       private
