@@ -76,7 +76,7 @@ module Lipsiadmin
           options[:before]  = "Backend.app.mask('#{I18n.t('backend.javascripts.messages.wait.message')}')";
           link_to_function(name, remote_function(options), html_options || options.delete(:html))
         end
-        
+
         # This method generates a new ExtJs BoxComponent.
         # 
         #   Examples:

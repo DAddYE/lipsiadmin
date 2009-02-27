@@ -1,4 +1,5 @@
 2009-02-27
+  * Fixed a little problem with the generation of the attachment table
   * Added an options for prevent sending email, usefull for test rescue but not email report
   * Fixed a translation in backend_helper
   * Fixed a double render action in pdf
