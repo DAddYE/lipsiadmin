@@ -9,6 +9,6 @@ class CreateAttachment < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :attachment
+    drop_table :attachments
   end
 end
