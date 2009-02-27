@@ -44,10 +44,7 @@ en:
           notSelected: "You must select at least one record"
 
     emails:
-      signup_notification: 
-        object: "Your account has been created"
-        body: "Hello {{name}},\nyour account has been created.\n\nWe remind you that before login you must proceed to activation of your account using the following url: {{url}}"
-      activation: 
+      registration: 
         object: "Your account has been activated"
         body: "Hello {{name}},\nyour account has been activated.\n\nYou can login with the following email/password:\n\n- Email: {{email}}\n- Password: {{password}}\n\nusing the following url: {{url}}"
       support:
