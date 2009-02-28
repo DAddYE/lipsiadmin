@@ -1,4 +1,6 @@
 2009-02-28
+  * Fixed problem with generation of template for boolean cols
+  * Improvement in Backend.js, now mask() when clean()
   * Fixed Attachment for get many styles
   * Added a new method in Ext::Component for generate on the fly extjs objects
   * Small refactoring in Ext::Component

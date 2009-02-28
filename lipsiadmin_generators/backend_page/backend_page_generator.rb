@@ -48,6 +48,10 @@ class ActionView::Helpers::InstanceTag
   def to_time_select_tag(options = {})
     "=time_select :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+ options.inspect}"
   end
+  
+  def to_boolean_select_tag(options = {})
+    "=check_box :#{@object_name}, :#{@method_name}#{options.empty? ? '' : ', '+ options.inspect}"
+  end
 end
 
 class BackendPageGenerator < Rails::Generator::NamedBase

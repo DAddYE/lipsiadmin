@@ -48,7 +48,7 @@ Backend.app = function(){
         items: header ? [header, this.contentDynamic] : [this.contentDynamic]
       });
 
-      this.contentDynamic.getUpdater().on('beforeupdate', function(){ this.clean(); this.mask(); }, this);
+      this.contentDynamic.getUpdater().on('beforeupdate', function(){ this.clean(); }, this);
       this.contentDynamic.getUpdater().on('update', this.inspectContent, this);
       this.load(loadUrl ? loadUrl : '/backend/base/welcome');
       setTimeout(function(){
@@ -104,6 +104,7 @@ Backend.app = function(){
     }, // update
     
     clean : function(){
+      this.mask();
       this.contentDynamic.body.update('');
       this.contentDynamic.removeAll(true);
       this.contentDynamic.doLayout();
