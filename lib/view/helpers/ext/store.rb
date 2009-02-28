@@ -40,9 +40,10 @@ module Lipsiadmin#:nodoc:
       
       def initialize(options={}, &block)#:nodoc:
         @items   = []
-        super("Ext.data.GroupingStore", options, &block)
-        remoteSort l(true)                  if config[:remoteSort].blank?
+        super("Ext.data.GroupingStore", options)
+        remoteSort true                     if config[:remoteSort].blank?
         baseParams("_method" => "GET")      if config[:baseParams].blank?
+        yield self if block_given?
       end
       
       # The url for getting the json data

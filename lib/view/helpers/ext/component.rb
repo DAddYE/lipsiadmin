@@ -20,7 +20,10 @@ module Lipsiadmin#:nodoc:
         @klass = klass
         @config = Configuration.new(options)
         @before, @after = [], []
-        yield self if block_given?
+      
+        if self.class == Component && block_given?
+          yield self 
+        end
       end
       
       # The id of the component
@@ -64,7 +67,7 @@ module Lipsiadmin#:nodoc:
         if method.to_s.start_with?("get_")
           @config[method.to_s.gsub("get_", "").to_sym]
         else
-          @config[method.to_sym] = arg
+          add_object(method, arg)
         end
       end
       
@@ -73,25 +76,12 @@ module Lipsiadmin#:nodoc:
       def before
         @before
       end
-
-      # Returns the javascript to add before component is rendered.
-      #
-      def before_js
-        @before.uniq.compact.join("\n\n") + "\n\n"
-      end
       
       # Returns an array of javascripts to add afters component is rendered.
       #
       def after
         @after
       end
-      
-      # Returns the javascript to add after component is rendered.
-      #   
-      def after_js
-        "\n\n" + @after.uniq.compact.join("\n\n")
-      end
-      
       
       # Generates a new handler for the given component
       # 
@@ -112,7 +102,7 @@ module Lipsiadmin#:nodoc:
       def on(event, function=nil, scope=nil, &block)
         # Remove old handlers
         @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
-        scope = ", #{scope}" unless scope.blank?        
+        scope = ", #{l(scope)}" unless scope.blank?        
         if function
           after << "#{get_var}.on(#{event.to_json}, #{function}#{scope});"
         else
@@ -121,18 +111,37 @@ module Lipsiadmin#:nodoc:
         end
       end
       
+      # Generates a new Component for generate on the fly ExtJs Objects
+      # 
+      #   Examples:
+      # 
+      #     # Generates:
+      #     #   var myComponent = new MyComponent({
+      #     #     default: true
+      #     #   });
+      #     grid.my_component grid.new_component("MyComponent") { |p| p.default true }
+      # 
+      def new_component(klass, options={}, &block)
+        Component.new(klass, options, &block)
+      end
+      
+      # Used by ActionView::Helpers::PrototypeHelper::JavaScriptGenerator
       def with_output_buffer(buf = '')#:nodoc:
         yield
       end
       
       
-      # Returns the javascript example
+      # Returns the javascript for current component
       #
       #   # Generates: var rowSelectionModel = Ext.grid.RowSelectionModel();
       #   Component.new("Ext.grid.RowSelectionModel")
       # 
       def to_s
-        "var #{get_var} = new #{@klass}(#{config.to_s});"
+        script = []
+        script << @before.uniq.compact.join("\n\n")
+        script << "var #{get_var} = new #{@klass}(#{config.to_s});"
+        script << @after.uniq.compact.join("\n\n")
+        script.delete_if { |s| s.blank? }.join("\n\n")
       end
       
       def raise_error(error)#:nodoc:
@@ -157,6 +166,15 @@ module Lipsiadmin#:nodoc:
           assigns.each { |key, value| instance_variable_set("@#{key}", value) }
           template = File.read("#{File.dirname(__FILE__)}/templates/#{template}.js.erb")
           return ERB.new(template).result(binding)
+        end
+        
+        def add_object(name, object)
+          if object.class == Component || object.class.superclass == Component
+            @before << object.to_s
+            @config[name.to_sym] = l(object.get_var)
+          else
+            @config[name.to_sym] = object
+          end
         end
     end
   end

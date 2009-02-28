@@ -29,7 +29,8 @@ module Lipsiadmin
     #     
     class ColumnModel < Component      
       def initialize(options={}, &block)#:nodoc:
-        super("Ext.grid.ColumnModel", { :columns => [] }.merge(options), &block)
+        super("Ext.grid.ColumnModel", { :columns => [] }.merge(options))
+        yield self if block_given?
       end
       
       # This add automatically fields from an array

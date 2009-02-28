@@ -1,3 +1,10 @@
+2009-02-28
+  * Fixed Attachment for get many styles
+  * Added a new method in Ext::Component for generate on the fly extjs objects
+  * Small refactoring in Ext::Component
+  * Small refactoring in Ext::Grid
+  * Fixed a small errror in Ext::Store
+
 2009-02-27
   * Added as default sm :checkbox
   * Fixed a litte padding in firefox for datetimefield

@@ -42,19 +42,19 @@ module Lipsiadmin
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
         super("Ext.grid.GridPanel", options)
-        
+
         # Write default configuration if not specified
         config[:plugins]      ||= []
-        viewConfig            l("{ forceFit: true }")       
-        clicksToEdit          l(1)                          
-        border                l(false)                      
-        bodyBorder            l(false)                      
-        region                "center"                      
-        sm                    :checkbox                     
-        add_plugin            l("new Ext.grid.Search()")    
-        view                  :default                      
-        on(:dblclick, :edit, l("this"))          
-        
+        viewConfig            :forceFit => true
+        clicksToEdit          1
+        border                false
+        bodyBorder            false
+        region                "center"
+        sm                    :checkbox
+        add_plugin            l("new Ext.grid.Search()")
+        view                  :default
+        on(:dblclick, :edit, :this)
+
         yield self if block_given?
       end
       
@@ -69,15 +69,14 @@ module Lipsiadmin
       # 
       #   new Ext.grid.CheckboxSelectionModel()
       # 
-      def sm(value)
-        selmodel = case value
+      def sm(object)
+        selmodel = case object
           when :default  then Component.new("Ext.grid.CheckboxSelectionModel")
           when :checkbox then Component.new("Ext.grid.CheckboxSelectionModel")
           when :row      then Component.new("Ext.grid.RowSelectionModel")
-          when Component then value
+          else object
         end
-        before << selmodel.to_s
-        config[:sm] = l(selmodel.get_var)
+        add_object(:sm, selmodel)
       end
       
       # Define the title of the grid
@@ -125,18 +124,16 @@ module Lipsiadmin
       #
       #   tbar  :default
       # 
-      def tbar(obj=nil, &block)
-        tbar = obj.is_a?(ToolBar) ? obj : ToolBar.new
-        if obj == :default
+      def tbar(object=nil, &block)
+        tbar = object.is_a?(ToolBar) ? object : ToolBar.new
+        if object == :default
           tbar.add l("Backend.locale.buttons.add"),    :id => "add",    :disabled => literal(false), :cls => "x-btn-text-icon add",    :handler => l("add")
           tbar.add l("Backend.locale.buttons.edit"),   :id => "edit",   :disabled => literal(true),  :cls => "x-btn-text-icon edit",   :handler => l("edit")
           tbar.add l("Backend.locale.buttons.remove"), :id => "remove", :disabled => literal(true),  :cls => "x-btn-text-icon remove", :handler => l("remove")
           @default_tbar = true 
         end
         yield tbar if block_given?
-        before << tbar.to_s
-        after  << tbar.after
-        config[:tbar] = l(tbar.get_var)
+        add_object(:tbar, tbar)
       end
       
       # Generate or set a new Ext.Toolbar
@@ -149,11 +146,9 @@ module Lipsiadmin
       #     })
       #   bbar :pageSize => params[:limit], :store => store.get_var, displayInfo: true
       # 
-      def bbar(value=nil, &block)
-        bbar = value.is_a?(Hash) ? Component.new("Ext.PagingToolbar", value) : value
-        before << bbar.to_s
-        after  << bbar.after
-        config[:bbar] = l(bbar.get_var)
+      def bbar(object=nil, &block)
+        bbar = object.is_a?(Hash) ? Component.new("Ext.PagingToolbar", object) : object
+        add_object(:bbar, bbar)
       end
 
       # Generate or set a new Ext.grid.GroupingView
@@ -166,38 +161,31 @@ module Lipsiadmin
       #     })
       #   view :forceFit => true, :groupTextTpl => "{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Foo" : "Bar"]})"
       # 
-      def view(value=nil, &block)
-        if value.is_a?(Symbol) && (value == :default)
+      def view(object=nil, &block)
+        if object == :default
           view = Component.new("Ext.grid.GroupingView", { :forceFit => true })
         elsif value.is_a?(Hash)
-          view = Component.new("Ext.grid.GroupingView", { :forceFit => true })
+          view = Component.new("Ext.grid.GroupingView", { :forceFit => true }.merge(object))
         else
-          view = value
+          view = object
         end
-        
-        before << view.to_s
-        after  << view.after
-        config[:view] = l(view.get_var)
+        add_object(:view, view)
       end
       
       # Generate or set a new Ext.data.GroupingStore
-      def store(value=nil, url=nil, &block)
-        datastore = value.is_a?(Store) ? value : Store.new(&block)
-        before << datastore.to_s
-        after  << datastore.after
-        config[:store] = l(datastore.get_var)
+      def store(object=nil, &block)
+        store = object.is_a?(Store) ? object : Store.new(&block)
+        add_object(:store, store)
       end
       
       # Generate or set new Ext.grid.ColumnModel
-      def columns(value=nil, &block)
+      def columns(object=nil, &block)
         options = { :columns => [] }
         if config[:sm] && before.find { |js| js.start_with?("var #{config[:sm]} = new Ext.grid.CheckboxSelectionModel") }
           options[:columns] << config[:sm]
         end
-        columnmodel = value.is_a?(ColumnModel) ? value : ColumnModel.new(options, &block)
-        before << columnmodel.to_s
-        after  << columnmodel.after
-        config[:cm] = l(columnmodel.get_var)
+        cm = object.is_a?(ColumnModel) ? value : ColumnModel.new(options, &block)
+        add_object(:cm, cm)
       end
       
       # The base_path used for ToolBar, it's used for generate [:new, :edit, :destory] urls
@@ -274,7 +262,8 @@ module Lipsiadmin
         end
         
         after << "Backend.app.addItem(#{get_var})"
-        "#{before_js}var #{get_var} = new Ext.grid.GridPanel(#{config.to_s});#{after_js}"
+        
+        super
       end
     end
   end

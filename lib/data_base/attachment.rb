@@ -174,7 +174,8 @@ module Lipsiadmin
         # inside the dimensions and then crop the rest off (weighted at the center). The 
         # default value is to generate no thumbnails.
         def attachment_styles_for(name, style_name, styles)
-          attachment_definitions[name][:styles] = { style_name => styles }
+          attachment_definitions[name][:styles] ||= {}
+          attachment_definitions[name][:styles].merge!(style_name => styles)
         end
         
         # The thumbnail style that will be used by default URLs. 
@@ -216,7 +217,8 @@ module Lipsiadmin
         #   attachment_convert_options :avatar, :all,      "-strip"
         #   attachment_convert_options :avatar, :negative, "-negate"
         def attachment_convert_options_for(name, convert_name, convert_options)
-          attachment_definitions[name][:convert_options] = { convert_name => convert_options}
+          attachment_definitions[name][:convert_options] ||= {}
+          attachment_definitions[name][:convert_options].merge!(convert_name => convert_options)
         end
         
         # When processing, if the spawn plugin is installed, processing can be done in
@@ -265,7 +267,8 @@ module Lipsiadmin
         # options "{ :quality => :better }". This parameter may not mean anything to one
         # or more or the processors, and they are free to ignore it.        
         def attachment_processors_for(name, processor_name, processors)
-          attachment_definitions[name][:processors] = { processor_name => processor_processors }
+          attachment_definitions[name][:processors] ||= {}
+          attachment_definitions[name][:processors].merge!(processor_name => processor_processors)
         end
 
         # Places ActiveRecord-style validations on the size of the file assigned. The

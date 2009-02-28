@@ -45,7 +45,6 @@ module Lipsiadmin
         # search for images src, append full-path.
         input.gsub!('src="/', 'src="' + RAILS_ROOT + '/public/')
         input.gsub!('url(','url('+RAILS_ROOT+'/public')
-        #RAILS_DEFAULT_LOGGER.debug ('input: ' + input)
 
         cmd = "java -Xmx512m -Djava.awt.headless=true -cp pd4ml.jar:.:#{File.dirname(__FILE__)}/#{JARPATH} Pd4Ruby '#{input}' 950 A4 #{landescape}"
 

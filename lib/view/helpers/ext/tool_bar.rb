@@ -23,7 +23,8 @@ module Lipsiadmin
     class ToolBar < Component
       attr_accessor :items
       def initialize(options={}, &block)#:nodoc:
-        super("Ext.Toolbar", { :items => [] }.merge(options), &block)
+        super("Ext.Toolbar", { :items => [] }.merge(options))
+        yield self if block_given?
       end
       
       # Add new items to a Ext.Toolbar
