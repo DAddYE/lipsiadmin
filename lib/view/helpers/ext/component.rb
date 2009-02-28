@@ -101,14 +101,22 @@ module Lipsiadmin#:nodoc:
       #     end
       def on(event, function=nil, scope=nil, &block)
         # Remove old handlers
-        @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
+        remove_listener(event)
         scope = ", #{l(scope)}" unless scope.blank?        
         if function
           after << "#{get_var}.on(#{event.to_json}, #{function}#{scope});"
         else
           generator = ActionView::Helpers::PrototypeHelper::JavaScriptGenerator.new(self, &block)
-          after << "#{get_var}.on(#{event.to_json}, function() { \n  #{generator.to_s.gsub("\n", "\n  ")}\n}#{scope});"
+          after << "#{get_var}.on(#{event.to_json}, function() { #{generator.to_s.gsub("\n", "\n  ")}\n}#{scope});"
         end
+      end
+      alias_method :add_listener, :on
+      
+      # Remove a listener
+      # 
+      #   Example: grid.remove_listener(:dblclick)
+      def remove_listener(event)
+        @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
       end
       
       # Generates a new Component for generate on the fly ExtJs Objects

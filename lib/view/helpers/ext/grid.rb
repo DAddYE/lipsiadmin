@@ -53,7 +53,12 @@ module Lipsiadmin
         sm                    :checkbox
         add_plugin            l("new Ext.grid.Search()")
         view                  :default
-        on(:dblclick, :edit, :this)
+        
+        # We need to add a setTimeout because, we destroy
+        # the grid before loading a new page/js.
+        on(:dblclick) do |p|
+          p.delay(0.2) { p.call :edit }
+        end
 
         yield self if block_given?
       end

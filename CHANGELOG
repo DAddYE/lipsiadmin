@@ -1,4 +1,7 @@
 2009-02-28
+  * Fixed a small js error on dblclick on grids
+  * Added for Ext::Component a new method for remove listener, remove_listener 
+  * Added for Ext::Component a new alias for grid.on, called add_listener
   * Fixed problem with generation of template for boolean cols
   * Improvement in Backend.js, now mask() when clean()
   * Fixed Attachment for get many styles
