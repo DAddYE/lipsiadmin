@@ -24,18 +24,20 @@ Haml 2+
 
 ==Installation
 
+  $ sudo gem install lipsiadmin
+  
+Then in your config/environment.rb
+  
+  config.gem "lipsiadmin", :version => "< 4.0"
+  
+Why we need to specify version?
+
+Simply because we mantain backward compatibility until a 4.0 version.
+This mean that before v 4.0 we only do small improvemets, bug fix, doc etc...
+
+If you want install the edge version you can simply do:
+
   script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
-
-The version 2.9 version is an alpha relase and the gem will be aviable from 3.0
-
-In future you can simply do:
-
-  in config/environments.rb
-  config.gem "lipsiadmin"
-  
-then (if you don't have it already)
-  
-  $ rake gems:install
   
 ==Examples
 

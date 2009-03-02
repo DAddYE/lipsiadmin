@@ -1,3 +1,6 @@
+2009-03-02
+  * Release the stable version 3.0
+
 2009-02-28
   * Fixed a small js error on dblclick on grids
   * Added for Ext::Component a new method for remove listener, remove_listener 
