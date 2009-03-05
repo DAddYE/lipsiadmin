@@ -1,3 +1,9 @@
+2009-03-05
+  * Fixed an issue with frontend_login_required
+  * Removed from backend generator frontend stuff
+  * Small Fix in Backend Controller
+  * Fixed Spelling Issue
+
 2009-03-02
   * Release the stable version 3.0
 

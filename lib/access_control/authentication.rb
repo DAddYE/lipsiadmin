@@ -71,7 +71,7 @@ module Lipsiadmin
         #     before_filter :login_frontend_required, :except => [:login]
         # 
         def fronted_login_required
-          logged_in?  && allowed? || access_denied(:backend)
+          logged_in?  && allowed? || access_denied(:frontend)
         end
 
         def access_denied(where)#:nodoc:

@@ -1,6 +1,5 @@
 # This controller handles the login/logout function of the site.  
 class Backend::SessionsController < ApplicationController
-  layout false
   layout "backend"
   
   def create
