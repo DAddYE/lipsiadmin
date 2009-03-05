@@ -7,7 +7,7 @@ require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
 
 PKG_NAME      = 'lipsiadmin'
-PKG_VERSION   = "3.0"
+PKG_VERSION   = "3.1"
 PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
