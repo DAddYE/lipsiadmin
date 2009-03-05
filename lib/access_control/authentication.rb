@@ -7,7 +7,7 @@ module Lipsiadmin
     #   Examples:
     # 
     #     class FrontendController <  ApplicationController
-    #       before_filter :login_frontend_required, :except => [:login]
+    #       before_filter :frontend_login_required, :except => [:login]
     #     end
     # 
     module Authentication
@@ -68,9 +68,9 @@ module Lipsiadmin
         #
         #   Examples:
         # 
-        #     before_filter :login_frontend_required, :except => [:login]
+        #     before_filter :frontend_login_required, :except => [:some]
         # 
-        def fronted_login_required
+        def frontend_login_required
           logged_in?  && allowed? || access_denied(:frontend)
         end
 

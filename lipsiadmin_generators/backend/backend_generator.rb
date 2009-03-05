@@ -1,9 +1,5 @@
 class BackendGenerator < Rails::Generator::Base
-  def initialize(runtime_args, runtime_options = {})
-    runtime_args = ["none"].concat(runtime_args) # Skip usage
-    super
-  end
-  
+
   def manifest
     # Initial routes
     routes = <<-ROUTES

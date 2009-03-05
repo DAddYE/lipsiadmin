@@ -1,0 +1,14 @@
+.padding{ :style => "width:300px" }
+  
+  %h1 Reserved Area
+  %h2=flash[:notice]
+
+  -form_tag :action => :create do
+    %p
+      %label Email
+      =text_field_tag :email
+    %p
+      %label Password
+      =password_field_tag :password
+    %p
+      =submit_tag "Login Now"

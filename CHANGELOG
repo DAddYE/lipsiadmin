@@ -1,4 +1,8 @@
 2009-03-05
+  * Bump to version 3.1
+  * Added a base login page for frontend
+  * Added a new generator for frontend
+  * Fixed a Typo in Authentication
   * Fixed an issue with frontend_login_required
   * Removed from backend generator frontend stuff
   * Small Fix in Backend Controller

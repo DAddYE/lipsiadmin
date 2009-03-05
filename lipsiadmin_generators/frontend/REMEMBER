@@ -1,0 +1,10 @@
+
+================================================================
+
+Please remember to:
+  
+  - Remove /public/index.html
+  - Add a route map.connect '', :controller => 'frontend/base', 
+                                :action => 'index'
+  
+================================================================

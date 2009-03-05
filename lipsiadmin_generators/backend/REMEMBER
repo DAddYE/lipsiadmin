@@ -8,6 +8,7 @@ Please remember to:
   - Edit Account Migration (setting your username and password)
   - Run rake db:create && rake db:migrate
   - Set your default locale I18n in environment.rb (IT||EN)
+  - Point to http://localhost:3000/backend
 
 Extra:
   in config/environment.rb
