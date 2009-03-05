@@ -51,6 +51,7 @@ So you can do:
 
   $ script/generate backend # Generate the base admin
   $ script/generate backend_page yourmodel # Generate a "scaffold" for your model
+  $ script/generate frontend # Generate the base frontend
   $ script/generate attachment # Generate the an attachments
   $ script/generate pdf PdfName # Generate a new pdf document
 
