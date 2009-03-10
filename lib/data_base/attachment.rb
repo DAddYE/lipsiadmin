@@ -37,7 +37,12 @@ module Lipsiadmin
         # 
         # Then in your form (with multipart) you can simply add:
         # 
-        #   =file_field :mymodel, :image_attributes
+        #   =file_field_tag "yourmodel[image_attributes][file]"
+        # 
+        # or
+        # 
+        #   -fields_for "yourmodel[image_attributes][file]", @yourmodel.build_image do |image|
+        #     =image.file_field :file
         # 
         def has_one_attachment(name, options={})
           options[:as]         ||= :attacher
@@ -73,7 +78,7 @@ module Lipsiadmin
             if file_column = self.send(name)
               file_column.update_attributes(attributes)
             else
-              self.send(name).build(attributes)
+              self.send("build_#{name}", attributes)
             end
 
           end
@@ -91,7 +96,7 @@ module Lipsiadmin
         # 
         # Then in your form (with multipart) you can simply add:
         #   
-        #   =fields_for "yourmodel[attachments_attributes][]", @yourmodel.images.build do |image|
+        #   -fields_for "yourmodel[images_attributes][]", @yourmodel.images.build do |image|
         #     =image.file_field :file
         # 
         def has_many_attachments(name, options = {})

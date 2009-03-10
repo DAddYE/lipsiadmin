@@ -1,3 +1,8 @@
+2009-03-10
+  * Bump to version 3.2
+  * Fixed a problem with has_one_attachment
+  * Fixed few typo in api doc for attachments
+
 2009-03-05
   * Bump to version 3.1
   * Added a base login page for frontend
