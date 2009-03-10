@@ -82,7 +82,7 @@ module Lipsiadmin
     module ClassMethods#:nodoc:
 
       def attachment_url(url)
-        attachment_attachment_url_for(self.name, url)
+        attachment_url_for(self.name, url)
       end
 
       def attachment_default_url(url)

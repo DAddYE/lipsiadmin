@@ -161,7 +161,7 @@ module Lipsiadmin
         #   attachment_default_url :avatar, "/images/backend/no-image.png"
         #   User.new.avatar.url(:small) # => "/images/backend/no-image.png"        
         def attachment_default_url_for(name, url)
-          attachment_definitions[name][:default_url]
+          attachment_definitions[name][:default_url] = url
         end
         
         # The path were the attachment are stored. 
