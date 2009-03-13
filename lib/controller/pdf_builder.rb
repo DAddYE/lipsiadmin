@@ -27,19 +27,26 @@ module Lipsiadmin
     # go here: http://pd4ml.com/buy.htm and then put your licensed jar in a directory in your
     # project then simply calling this:
     # 
-    #   Lipsiadmin::Utils::PdfBuilder::JAR_PATH = "here/is/my/licensed/pd4ml"
+    #   Lipsiadmin::Utils::PdfBuilder::JARS_PATH = "here/is/my/licensed/pd4ml"
     # 
     # you can use your version without any problem.
+    # 
+    # By default Lipsiadmin will look into your "vendor/pd4ml" and if:
+    # 
+    # * pd4ml.jar
+    # * ss_css2.jar
+    # 
+    # are present will use it
     # 
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
       
-      # Path to the pd4ml jarfile
-      JARPATH = Lipsiadmin::Utils::PdfBuilder::JAR_PATH
-
-      # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
+      # # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
       def render_pdf(template, filename=nil, options={})
 
+        # path to the pd4ml jarfile
+        jars_path = Lipsiadmin::Utils::PdfBuilder::JARS_PATH
+        
         options[:landescape] ||= true
         options[:send_data]  ||= !filename.blank?
         # encode the template
@@ -53,12 +60,12 @@ module Lipsiadmin
         input.gsub!('src="/', 'src="' + RAILS_ROOT + '/public/')
         input.gsub!('url(','url('+RAILS_ROOT+'/public')
 
-        cmd = "java -Xmx512m -Djava.awt.headless=true -cp pd4ml.jar:.:#{File.dirname(__FILE__)}/#{JARPATH} Pd4Ruby '#{input}' 950 A4 #{options[:landescape]}"
+        cmd = "java -Xmx512m -Djava.awt.headless=true -cp #{jars_path}/pd4ml.jar:.:#{jars_path} Pd4Ruby '#{input}' 950 A4 #{options[:landescape]}"
 
-        output = %x[cd #{File.dirname(__FILE__)}/#{JARPATH} \n #{cmd}]
+        output = %x[cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} \n #{cmd}]
 
         # raise error if process returned false (ie: a java error)
-        raise PdfError, "An unknonwn error occurred while generating pdf: cd #{File.dirname(__FILE__)}/#{JARPATH} #{cmd}" if $?.success? === false
+        raise PdfError, "An unknonwn error occurred while generating pdf: cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} && #{cmd}" if $?.success? === false
         
         # return raw pdf binary-stream
         if options[:send_data]
