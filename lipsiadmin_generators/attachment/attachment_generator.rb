@@ -4,7 +4,7 @@ class AttachmentGenerator < Rails::Generator::Base
   def manifest    
     record do |m|
       unless options[:skip_migration]
-        m.migration_template("migration.rb", "db/migrate", :migration_file_name => "create_attachment")
+        m.migration_template("migration.rb", "db/migrate", :migration_file_name => "create_attachments")
       end
       m.template('model.rb', 'app/models/attachment.rb')
       m.readme "../REMEMBER"      

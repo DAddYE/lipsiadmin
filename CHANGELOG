@@ -1,3 +1,11 @@
+2009-03-13
+  * Bump to version 3.3
+  * Fixed a bug with responds_to_parent
+  * Added a new generator for build database state session for extjs (script/generate state_session)
+  * Added a new utils for use your licensed (if you have it) pd4ml jar
+  * Fix pluralization in creatin migrations (attachment)
+  * Removed debug info in lipsiadmin rake
+  
 2009-03-10
   * Fixed some typos in attachment table [Vakiliy]
 

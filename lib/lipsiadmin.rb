@@ -1,5 +1,6 @@
 require 'utils/html_entities'
 require 'utils/literal'
+require 'utils/pdf_builder'
 require 'access_control/authentication'
 require 'access_control/base'
 require 'mailer/pdf_builder'

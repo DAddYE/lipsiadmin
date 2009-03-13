@@ -1,0 +1,38 @@
+
+================================================================
+
+Please remember to:
+
+  Update your Javascripts
+  
+    $ rake lipsiadmin:update:javascripts
+  
+  Edit app/model/account.rb and add:
+  
+    has_many :state_sessions, :dependent => :destroy
+    
+  Edit app/model/account_access.rb and add:
+  
+    role.allow_all_actions "/backend/state_sessions"
+  
+  Edit app/views/javascripts/backend.js and change this:
+  
+    Ext.state.Manager.setProvider(
+      new Ext.state.CookieProvider({
+        expires: new Date(new Date().getTime()+(1000*60*60*24*365))
+      })        
+    );
+  
+  into this:
+  
+    Ext.state.Manager.setProvider(new Ext.state.DataBaseProvider());
+    
+  finally:
+  
+    $ rake db:migrate
+    
+  verify that in your config/routes.rb there is this:
+    
+    backend.resources :state_sessions
+
+================================================================

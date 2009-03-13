@@ -2,6 +2,10 @@ module Lipsiadmin
   module Mailer
     # This module convert a string/controller to a pdf through Pd4ml java library (included in this plugin)
     # 
+    # PD4ML is a powerful PDF generating tool that uses HTML and CSS (Cascading Style Sheets) as page layout 
+    # and content definition format. Written in 100% pure Java, it allows users to easily add PDF generation 
+    # functionality to end products.
+    # 
     # For generate a pdf you can simply do
     #   
     #     script/generate pdf invoice
@@ -24,11 +28,19 @@ module Lipsiadmin
     #     end       
     #   end
     #
+    # Lipsiadmin include a trial fully functional evaluation version, but if you want buy it, 
+    # go here: http://pd4ml.com/buy.htm and then put your licensed jar in a directory in your
+    # project then simply calling this:
+    # 
+    #   Lipsiadmin::Utils::PdfBuilder::JAR_PATH = "here/is/my/licensed/pd4ml"
+    # 
+    # you can use your version without any problem.
+    #
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
       
       # Path to the pd4ml jarfile        
-      JARPATH = "../../resources"
+      JARPATH = Lipsiadmin::Utils::PdfBuilder::JAR_PATH
       
       # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
       def render_pdf(template, body)

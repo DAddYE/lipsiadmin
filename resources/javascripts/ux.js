@@ -1100,3 +1100,67 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
 }); // eo extend
 
 // eof
+
+/**
+ * This class store state session of extjs in the database for the current account
+ */
+Ext.state.DataBaseProvider = function(config){
+  Ext.state.DataBaseProvider.superclass.constructor.call(this);
+  this.path = "/backend/state_sessions";
+  Ext.apply(this, config);
+  this.state = this.readCookies();
+};
+
+Ext.extend(Ext.state.DataBaseProvider, Ext.state.Provider, {
+  // private
+  set : function(name, value){
+    if(typeof value == "undefined" || value === null){
+      this.clear(name);
+      return;
+    }
+    this.setCookie(name, value);
+    Ext.state.DataBaseProvider.superclass.set.call(this, name, value);
+  },
+
+  // private
+  clear : function(name){
+    this.clearCookie(name);
+    Ext.state.DataBaseProvider.superclass.clear.call(this, name);
+  },
+
+  // private
+  readCookies : function(){
+    var cookies = {};
+    var values  = [];
+    new Ajax.Request(this.path, {
+      method: 'GET',
+      asynchronous: false,
+      onSuccess: function(response, request){
+        values = Ext.decode(response.responseText);
+      }
+    });
+    values.each(function(f){
+      if(f.component && f.component.substring(0,3) == "ys-"){
+        cookies[f.component.substr(3)] = this.decodeValue(f.data);
+      }
+      }, this);
+      return cookies;
+    },
+
+  // private
+  setCookie : function(name, value){
+    Ext.Ajax.request({
+      url: this.path,
+      method: 'POST',
+      params: { id: 'ys-'+name, data: this.encodeValue(value) }
+    })
+  },
+  
+  // private
+  clearCookie : function(name){
+    Ext.Ajax.request({
+      url: this.path+'/ys-'+name,
+      method: 'DELETE'
+    })
+  }
+});
