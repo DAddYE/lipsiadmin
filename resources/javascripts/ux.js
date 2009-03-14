@@ -1140,12 +1140,12 @@ Ext.extend(Ext.state.DataBaseProvider, Ext.state.Provider, {
       }
     });
     values.each(function(f){
-      if(f.component && f.component.substring(0,3) == "ys-"){
-        cookies[f.component.substr(3)] = this.decodeValue(f.data);
+      if(f.state_session && f.state_session.component && f.state_session.component.substring(0,3) == "ys-"){
+        cookies[f.state_session.component.substr(3)] = this.decodeValue(f.state_session.data);
       }
-      }, this);
-      return cookies;
-    },
+    }, this);
+    return cookies;
+  },
 
   // private
   setCookie : function(name, value){

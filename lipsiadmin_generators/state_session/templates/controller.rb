@@ -1,10 +1,6 @@
 class Backend::StateSessionsController < BackendController
   
   def index
-    return_data = current_account.state_sessions.inject({}) do |mem, ss|
-      mem[ss.component.to_sym] = ss.data
-      mem
-    end
     render :json => current_account.state_sessions
   end
 

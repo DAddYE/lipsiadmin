@@ -5,9 +5,10 @@ require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
+require 'version'
 
 PKG_NAME      = 'lipsiadmin'
-PKG_VERSION   = "3.3"
+PKG_VERSION   = Lipsiadmin::VERSION::STRING
 PKG_FILE_NAME = "#{PKG_NAME}-#{PKG_VERSION}"
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
