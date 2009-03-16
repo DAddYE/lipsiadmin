@@ -1,3 +1,7 @@
+2009-03-16
+  * Bump to version 3.3.2
+  * Updated locales for work with rails 2.3.2 (do rake lipsiadmin:update:locales)
+
 2009-03-14
   * Bump to version 3.3.1
   * Removed debug code from state_session_controller
