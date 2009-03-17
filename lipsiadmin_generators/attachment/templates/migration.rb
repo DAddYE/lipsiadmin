@@ -1,4 +1,4 @@
-class CreateAttachment < ActiveRecord::Migration
+class CreateAttachments < ActiveRecord::Migration
   def self.up
     create_table :attachments, :force => true do |t|
       t.string  :attached_file_name, :attached_content_type
