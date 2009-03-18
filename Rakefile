@@ -5,7 +5,7 @@ require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 require 'rake/contrib/sshpublisher'
-require 'version'
+require "#{File.dirname(__FILE__)}/lib/version"
 
 PKG_NAME      = 'lipsiadmin'
 PKG_VERSION   = Lipsiadmin::VERSION::STRING
