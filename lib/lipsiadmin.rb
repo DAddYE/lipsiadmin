@@ -70,7 +70,6 @@ ActionView::Helpers::AssetTagHelper.register_javascript_expansion :backend => ["
 # Add a better organization of locales
 I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'backend',  '*.{rb,yml}')]
 I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'frontend', '*.{rb,yml}')]
-I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'menu',     '*.{rb,yml}')]
 I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'models',   '*.{rb,yml}')]
 I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'rails',    '*.{rb,yml}')]
 
