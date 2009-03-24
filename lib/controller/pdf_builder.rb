@@ -47,7 +47,7 @@ module Lipsiadmin
         # path to the pd4ml jarfile
         jars_path = Lipsiadmin::Utils::PdfBuilder::JARS_PATH
         
-        options[:landescape] ||= true
+        options[:landescape] ||= false
         options[:send_data]  ||= !filename.blank?
         # encode the template
         input = encode_entities(render(:template => "/pdf/#{template}.html.haml", :layout => "print"))

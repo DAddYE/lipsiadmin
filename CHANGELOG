@@ -1,3 +1,6 @@
+2009-03-24
+  * Fix landescape mode in pdf builder
+
 2009-03-18
   * Removed an unused menu locales dir
   * Updated the readme with new generators
