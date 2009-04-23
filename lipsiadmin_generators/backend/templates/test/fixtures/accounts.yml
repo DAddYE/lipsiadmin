@@ -1,0 +1,8 @@
+admin:
+  id: 1
+  name: Davide
+  surname: D'Agostino
+  email: d.dagostino@lipsiasoft.com
+  salt: 066f31caf14fdf474c6b5586738be7cc190d8b33
+  crypted_password: UlMOC7qYsxw= #Admin
+  role: administrator

@@ -1,0 +1,17 @@
+# This file is a configuration file for loops rails plugin
+#
+
+# This section is used to control loops manager
+global:
+  logger: stdout
+  poll_period: 5
+  workers_engine: fork
+
+# Each record in this section represents one loop which could be ran using loops plugin.
+# Each loop should have a file in app/loops directory with the same name as its config record.
+loops:
+
+  # Simple time printing loop
+  simple_loop:
+    workers_number: 1
+

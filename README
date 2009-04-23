@@ -45,7 +45,7 @@ now run script/generate and you can see some like:
 
   Installed Generators
     Builtin: controller, integration_test, mailer, migration, model, etc..
-    Lipsiadmin: attachment, backend, backend_page, pdf
+    Lipsiadmin: attachment, backend, backend_page, pdf, loops
 
 So you can do:
 

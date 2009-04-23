@@ -157,22 +157,20 @@ module Lipsiadmin
       end
 
       # Generate or set a new Ext.grid.GroupingView
-      # You can pass tbar :default options that will autocreate a correct GroupingView
+      # You can pass view :default options that will autocreate a correct GroupingView
       # 
       #   Examples:
       #     view: new Ext.grid.GroupingView({
       #       forceFit:true,
       #       groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Foo" : "Bar"]})'
       #     })
-      #   view :forceFit => true, :groupTextTpl => "{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Foo" : "Bar"]})"
+      #   view :forceFit => true, :groupTextTpl => '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Foo" : "Bar"]})'
       # 
       def view(object=nil, &block)
-        if object == :default
-          view = Component.new("Ext.grid.GroupingView", { :forceFit => true })
-        elsif value.is_a?(Hash)
-          view = Component.new("Ext.grid.GroupingView", { :forceFit => true }.merge(object))
-        else
-          view = object
+        view = case object
+          when :default then Component.new("Ext.grid.GroupingView", { :forceFit => true })
+          when Hash     then Component.new("Ext.grid.GroupingView", { :forceFit => true }.merge(object))
+          else object
         end
         add_object(:view, view)
       end

@@ -1,3 +1,4 @@
+# coding: utf-8
 module Lipsiadmin
   module Utils
     # Convert common utf-8 chars to html entities, this is beautifull (but the code not)

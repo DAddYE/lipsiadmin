@@ -178,6 +178,7 @@ module Lipsiadmin#:nodoc:
         
         def add_object(name, object)
           if object.class == Component || object.class.superclass == Component
+            @before.delete_if { |b| b.start_with?("var #{object.get_var} = new") }
             @before << object.to_s
             @config[name.to_sym] = l(object.get_var)
           else

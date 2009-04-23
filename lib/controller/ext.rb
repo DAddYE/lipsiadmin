@@ -71,7 +71,7 @@ module Lipsiadmin
             options[:query]   = false
           end
           
-          # Reforma DataIndex
+          # Reformat DataIndex
           if options[:dataIndex].is_a?(Array)
             options[:dataIndex] = options[:dataIndex].collect do |f| 
               f.is_a?(Symbol) ? "#{@model.table_name}.#{f}" : f 

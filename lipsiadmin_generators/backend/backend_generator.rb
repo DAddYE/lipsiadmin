@@ -30,6 +30,7 @@ class BackendGenerator < Rails::Generator::Base
       m.create_all("models", "app/models")
       m.create_all("views", "app/views")
       m.create_all("config", "config")
+      m.create_all("test", "test")
       
       # Using this for prevent raising errors
       migration = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_accounts.rb$/)

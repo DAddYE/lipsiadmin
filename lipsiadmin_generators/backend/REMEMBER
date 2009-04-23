@@ -14,6 +14,6 @@ Extra:
   in config/environment.rb
   
   - config.active_record.timestamped_migrations = false
-  - comment config.time_zone = 'UTC'
+  - config.time_zone = 'Rome'
   
 ================================================================

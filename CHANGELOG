@@ -1,3 +1,17 @@
+2009-04-23
+  * Fix rdoc for grid view
+  * Fix a bug override default ext component methods
+
+2009-04-20
+  * Fix compatibility issues with ruby 1.9
+  * Added a new module for background workers
+  * Little formatting to tab helper for accept custom options
+  * Fix rdoc for open_window helper
+
+2009-04-10
+  * Added startup test for account
+  * Added raketasks for init test and autotest
+
 2009-03-24
   * Fix landescape mode in pdf builder
 

@@ -22,9 +22,12 @@ module Lipsiadmin
         
         # This method add tab for in your view
         def tab(name, padding=true, options={}, &block)
-          options[:style] = "padding:10px;#{options[:style]}" if padding
-          options[:id] ||= name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/-+$/, '').gsub(/^-+$/, '')
-          concat content_tag(:div, capture(&block), { :id => options[:id], :class => "x-hide-display", :style => options[:style], :tabbed => true, :title => name })
+          options[:id]   ||= name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/-+$/, '').gsub(/^-+$/, '')
+          options[:style]  = "padding:10px;#{options[:style]}" if padding
+          options[:title]  = name
+          options[:tabbed] = true
+          options[:class]  = "x-hide-display"
+          concat content_tag(:div, capture(&block), options)
         end
         
         # Set the title of the page
@@ -49,7 +52,6 @@ module Lipsiadmin
         #   Example:
         #     
         #     # in app/views/dossiers/_form.html.haml
-
         #         %tr
         #           %td{:style=>"width:100px"} 
         #             %b Customer:

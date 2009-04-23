@@ -205,12 +205,9 @@ module Lipsiadmin
 
         def find_credentials(creds)
           case creds
-          when File:
-            YAML.load_file(creds.path)
-          when String:
-            YAML.load_file(creds)
-          when Hash:
-            creds
+          when File   then YAML.load_file(creds.path)
+          when String then YAML.load_file(creds)
+          when Hash   then creds
           else
             raise ArgumentError, "Credentials are not a path, file, or hash."
           end

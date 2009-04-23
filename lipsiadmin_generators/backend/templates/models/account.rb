@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
   end
 
   def authenticated?(password)
-    crypted_password == encrypt(password)
+    crypted_password.chomp == encrypt(password).chomp
   end
 
   

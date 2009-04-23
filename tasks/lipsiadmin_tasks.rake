@@ -23,3 +23,19 @@ namespace :lipsiadmin do
     end
   end
 end
+
+desc "Init the test env and autotest them"
+task :autotest => "test:init" do
+  system("autotest")
+end
+
+namespace :test do
+  desc "Init the test database dropping them, recreating and loading fixtures"
+  task :init do
+    RAILS_ENV = "test"
+    Rake::Task["db:drop"].invoke
+    Rake::Task["db:create"].invoke
+    Rake::Task["db:migrate"].invoke
+    Rake::Task["db:fixtures:load"].invoke
+  end
+end
