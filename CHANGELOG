@@ -1,3 +1,7 @@
+2009-04-29
+  * Added :displayInfo => true in generators of grids
+  * Fixed a problem with dependencies
+
 2009-04-23
   * Fix rdoc for grid view
   * Fix a bug override default ext component methods
