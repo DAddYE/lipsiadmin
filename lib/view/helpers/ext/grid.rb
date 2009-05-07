@@ -264,7 +264,7 @@ module Lipsiadmin
           after << "#{config[:store]}.load();"
         end
         
-        after << "Backend.app.addItem(#{get_var})"
+        after << "Backend.app.addItem(#{get_var});"
         
         super
       end

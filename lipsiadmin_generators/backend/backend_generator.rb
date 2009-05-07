@@ -9,17 +9,23 @@ class BackendGenerator < Rails::Generator::Base
   end
 
   map.backend                 '/backend', :controller => 'backend/base', :action => 'index'
-  map.activation              '/backend/accounts/activate/:activation_code', :controller => 'backend/accounts', :action=>'activate'
-  map.refresh_project_modules '/backend/accounts/refresh_project_modules', :controller => 'backend/accounts', :action=>'refresh_project_modules'
   map.connect                 '/javascripts/:action.:format', :controller => 'javascripts'
   ROUTES
+  
+    lipsiadmin_task = <<-EOF
+begin
+  gem 'lipsiadmin'
+  require 'lipsiadmin_tasks'
+rescue Gem::LoadError
+end
+    EOF
     
     record do |m|
       m.directory("app/views/exceptions")
       
       m.append("config/routes.rb", routes, "ActionController::Routing::Routes.draw do |map|")
       m.append("public/robots.txt", "User-agent: *\nDisallow: /backend")
-      m.append("RakeFile", "require 'lipsiadmin_tasks'")
+      m.append("RakeFile", lipsiadmin_task)
       
       m.create_all("controllers", "app/controllers")
       m.create_all("helpers", "app/helpers")

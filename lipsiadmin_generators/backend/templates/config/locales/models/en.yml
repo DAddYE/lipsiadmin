@@ -1,21 +1,6 @@
 # This file is used for translate Model/Table an their Attributes/Columns
 en:
   activerecord:
-    errors:
-      # You can define own errors for models or model attributes.
-      # The values :model, :attribute and :value are always available for interpolation.
-      #
-      # For example,
-      #   models:
-      #     user:
-      #       blank: "This is a custom blank message for {{model}}: {{attribute}}"
-      #       attributes:
-      #         login:
-      #           blank: "This is a custom blank message for User login"
-      # Will define custom blank validation message for User model and 
-      # custom blank validation message for login attribute of User model.
-      models:
-        
     # Translate model names. Used in Model.human_name().
     #models:
       # For example,

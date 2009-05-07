@@ -34,12 +34,6 @@ module Lipsiadmin
       end
 
       class << self
-        def inherited(klass)#:nodoc:
-          columns_hash.each do |name, column|
-            klass.columns << column unless klass.column_names.include(name)
-          end
-        end
-        
         # Returns columns for this *fake* table
         def columns()
           @columns ||= []
