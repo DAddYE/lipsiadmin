@@ -46,7 +46,7 @@ spec = Gem::Specification.new do |s|
   s.files             = FileList["CHANGELOG", "README", "MIT-LICENSE", "Rakefile", "init.rb", "{lipsiadmin_generators,lib,resources,tasks}/**/*"].to_a
   s.has_rdoc          = true
   s.add_dependency('haml')
-  s.add_dependency('rails', '>= 2.3.2')
+  s.add_dependency('rails', '>= 2.2.1')
 end
 
 Rake::GemPackageTask.new(spec) do |p|

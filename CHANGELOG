@@ -2,7 +2,8 @@
   * Fixed a problem with WithoutTable
   * Removed unusued routes
   * Fix few typos
-
+  * Require at least Rails 2.2.x
+  
 2009-04-30
   * Fix a small typo in extgrid
   * Fix a dependency problem in lipsiadmin rake tasks
