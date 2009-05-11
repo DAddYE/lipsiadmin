@@ -1,7 +1,7 @@
 2009-05-11
   * Bumped version to 4.0.0
   * Added editable grids
-  * Refactored backend.js so javascript in tabs are evalued after render so you can interact with tabs
+  * Refactored backend.js so javascript in tabs are evaluated after render so you can interact with tabs
   * Refactored Backend.window so now you can do much more with your grids/forms. See rdoc for examples.
   * Small refactor to attachment processor, now original attachments are saved without "_original_" in the filename.
 

@@ -32,8 +32,8 @@ Then in your config/environment.rb
   
 Why we need to specify version?
 
-Simply because we mantain backward compatibility until a 4.0 version.
-This mean that before v 4.0 we only do small improvemets, bug fix, doc etc...
+Simply because we mantain backward compatibility until a 5.0 version.
+This mean that before v 5.0 we only do small improvemets, bug fix, doc etc...
 
 If you want install the edge version you can simply do:
 
