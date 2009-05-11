@@ -56,9 +56,54 @@ module Lipsiadmin
       #   # Generates: Ext.util.Format.boolRenderer
       #   :renderer => :boolean
       # 
+      # You can pass :edit_with_###
+      # 
+      #   # Generates: { checkbox: true }
+      #   :editor => { :xtype => :checkbox, :someConfig => true }
+      #   # Generates: new Ext.form.ComboBox({ someConfig => true });
+      #   :editor => { :xtype => :combo, :someConfig => true }
+      #   # Generates: new Ext.form.DateField({ someConfig => true });
+      #   :editor => { :xtype => :datefield, :someConfig => true }
+      #   # Generates: new Ext.form.NumberField({ someConfig => true });
+      #   :editor => { :xtype => :numberfield, :someConfig => true }
+      #   # Generates: new Ext.form.Radio({ someConfig => true });
+      #   :editor => { :xtype => :radio, :someConfig => true }
+      #   # Generates: new Ext.form.TextArea({ someConfig => true });
+      #   :editor => { :xtype => :textarea, :someConfig => true }
+      #   # Generates: new Ext.form.TextField({ someConfig => true });
+      #   :editor => { :xtype => :textfield, :someConfig => true }
+      #   # Generates: new Ext.form.TimeField({ someConfig => true });
+      #   :editor => { :xtype => :timefield, :someConfig => true }
+      # 
+      #   Form components so are:
+      #   ---------------------------------------
+      #   :checkbox      =>   Ext.form.Checkbox
+      #   :combo         =>   Ext.form.ComboBox
+      #   :datefield     =>   Ext.form.DateField
+      #   :numberfield   =>   Ext.form.NumberField
+      #   :radio         =>   Ext.form.Radio
+      #   :textarea      =>   Ext.form.TextArea
+      #   :textfield     =>   Ext.form.TextField
+      #   :timefield     =>   Ext.form.TimeField
+      # 
       def add(name=nil, data=nil, options={})
         options[:header] = name if name
-        options[:dataIndex] = data if data
+        options[:dataIndex] = data if date
+        
+        if options[:editor]
+          xtype = options[:editor].delete(:xtype)
+          case xtype
+            when :checkbox    then options.delete(:editor); options.merge!(:checkbox => true)
+            when :combo       then options.merge!(:editor => l("new Ext.form.ComboBox(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :datefield   then options.merge!(:editor => l("new Ext.form.DateField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :numberfield then options.merge!(:editor => l("new Ext.form.NumberField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :radio       then options.merge!(:editor => l("new Ext.form.Radio(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :textarea    then options.merge!(:editor => l("new Ext.form.TextArea(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :textfield   then options.merge!(:editor => l("new Ext.form.TextField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :timefield   then options.merge!(:editor => l("new Ext.form.TimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
+          end
+        end
+        
         case options[:renderer]
           when :date        then options.merge!(:renderer => l("Ext.util.Format.dateRenderer()"))
           when :datetime    then options.merge!(:renderer => l("Ext.util.Format.dateTimeRenderer()"))
@@ -66,7 +111,9 @@ module Lipsiadmin
           when :us_money    then options.merge!(:renderer => l("Ext.util.Format.usMoney"))
           when :boolean     then options.merge!(:renderer => l("Ext.util.Format.boolRenderer"))
         end
-        raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || options[:dataIndex].blank?
+        
+        raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || 
+                                                                                                     options[:dataIndex].blank?
         config[:columns] << Configuration.new(options)
       end
     end

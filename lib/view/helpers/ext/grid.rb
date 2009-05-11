@@ -38,10 +38,22 @@ module Lipsiadmin
     #     grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
     #   end
     # 
+    #   # Returns:
+    #   #   var grid = new Ext.grid.EditorGridPanel({
+    #   #     clicksToEdit: 1,
+    #   #   ...
+    #
+    #   page.grid :editable => true do |grid|
+    #     grid.id "grid-posts"
+    #     ...
+    # 
     class Grid < Component
+
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
-        super("Ext.grid.GridPanel", options)
+        @editable = options.delete(:editable)
+        
+        super("Ext.grid.#{@editable ? 'EditorGridPanel' : 'GridPanel' }", options)
 
         # Write default configuration if not specified
         config[:plugins]      ||= []
@@ -255,7 +267,7 @@ module Lipsiadmin
         end
         
         if @default_tbar
-          after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar])
+          after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable)
         end
         
         if config[:store]

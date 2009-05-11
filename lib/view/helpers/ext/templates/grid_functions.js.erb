@@ -13,6 +13,56 @@
    }
 });
 
+<% if @editable %>
+<%= @var %>.on('cellmousedown', function(grid, rowIndex, colIndex, e){
+  var columnId  = grid.getColumnModel().getColumnId(colIndex);
+  var column    = grid.getColumnModel().getColumnById(columnId);
+  var t         = e.getTarget();
+
+  if(column.checkbox && t.className && t.className.indexOf('x-grid3-cc-'+t.id) != -1){
+    e.stopEvent();
+    var record    = grid.store.getAt(rowIndex);
+    var editEvent = {
+      grid: grid,
+      record: grid.store.getAt(rowIndex),
+      field: column.dataIndex,
+      value: !record.data[column.dataIndex],
+      originalValue: record.data[column.dataIndex],
+      row: rowIndex,
+      column: grid.getColumnModel().findColumnIndex(column.dataIndex)
+    };
+    record.set(column.dataIndex, editEvent.value);
+    grid.getSelectionModel().selectRow(rowIndex);
+    grid.fireEvent('afteredit', editEvent);
+  }
+});
+
+
+<%= @var %>.on('afteredit', function(e){
+  var columnId  = <%= @var %>.getColumnModel().getColumnId(e.column);
+  var column    = <%= @var %>.getColumnModel().getColumnById(columnId);
+
+  Ext.Ajax.request({
+    url: '<%= @base_path %>/'+e.record.id,
+    method: 'PUT',
+    params: column.name+'='+e.value,
+    success: function(result, request){
+      var resultValue = Ext.decode(result.responseText); 
+      if (resultValue.success == true){
+        e.record.commit();
+      } else {
+        Ext.MessageBox.alert(Lipsiadmin.locale.alert.title, resultValue.msg);
+        e.record.reject();
+      }
+    },                
+    failure: function(result, request) {
+      Ext.Msg.alert(Lipsiadmin.locale.alert.title, Lipsiadmin.locale.alert.msg);
+      e.record.reject();
+    }
+  });
+});
+<% end %>
+
 function add(){
   Backend.app.load('<%= @new_path.blank? ? "#{@base_path}/new" : @new_path %>');
 }

@@ -141,8 +141,8 @@ module Lipsiadmin
         #     grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
         #   end
         # 
-        def grid(&block)
-          self << Lipsiadmin::Ext::Grid.new(&block)
+        def grid(options={}, &block)
+          self << Lipsiadmin::Ext::Grid.new(options, &block)
         end
       end
     end

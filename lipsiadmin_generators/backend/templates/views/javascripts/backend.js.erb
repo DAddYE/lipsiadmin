@@ -30,6 +30,7 @@ Backend.app = function(){
           contentEl:'header',
           region:'north',
           border: false,
+          height: 65,
           bbar: new Ext.Toolbar({ cls:'x-toolbar-menu', items: [<%= backend_menu %>] })
         });
       }
@@ -61,12 +62,16 @@ Backend.app = function(){
       return window.location.search ? Ext.urlDecode(window.location.search.substring(1)).small : false;
     }, // small
     
+    toolbar: function(){
+      return window.location.search ? Ext.urlDecode(window.location.search.substring(1)).toolbar : false;
+    }, // hideToolbar
+    
     load : function(url, cache){
       var ext = (/[.]/.exec(url)) ? /[^.]+$/.exec(url) : 'html';
       var cache = (cache && cache == true) || false;
       
       if (!cache){ Backend.cache.clear(); }
-      
+
       if (ext.length == 1 && ext[0].toLowerCase() == 'js') {
         // Clean the cache
         this.clean();
@@ -81,10 +86,11 @@ Backend.app = function(){
           } 
         });
       } else if (ext == 'html'){
-        this.contentDynamic.getUpdater().update({ url: url, headers: { 'Accept': 'text/html, text/javascript, application/xml, text/xml, */*' } });
+        this.contentDynamic.getUpdater().update({ url: url, scripts: false, headers: { 'Accept': 'text/html, text/javascript, application/xml, text/xml, */*' } });
       } else {
         Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
       }
+      this.contentDynamic.addEvents('inspection');
     }, // load
     
     back: function(){
@@ -106,6 +112,7 @@ Backend.app = function(){
     clean : function(){
       this.mask();
       this.contentDynamic.body.update('');
+      this.contentDynamic.items.each(function(i){ i.destroy(); });
       this.contentDynamic.removeAll(true);
       this.contentDynamic.doLayout();
     }, // clean
@@ -113,9 +120,6 @@ Backend.app = function(){
     addItem : function(item){
       this.contentDynamic.add(item);
       this.contentDynamic.doLayout();
-      if (this.smallView()){
-        window.parent.Backend.window.item = item;
-      }
     }, // addItem
     
     submitForm : function(){
@@ -148,7 +152,12 @@ Backend.app = function(){
       if (tabs.elements.length > 0){
         // Build Tabs
         var items = tabs.elements.collect(function(tab){
-          return { id: tab.id, contentEl: tab.id, title: tab.title };
+          var editable = tab.getAttribute('htmleditor');
+          if (editable) {
+            return { id: tab.id, autoScroll:false, title: tab.title, items: { xtype: 'htmleditor', id: editable, enableFont: false, value: tab.getAttribute('value') } };
+          } else {
+            return { id: tab.id, contentEl: tab.id, title: tab.title };
+          }
         });
 
         // Get ActiveTab
@@ -156,29 +165,69 @@ Backend.app = function(){
         
         // Get The container, this code is redundant, but is a trick for ie.
         var container = Ext.get(tabs.elements[0].id).parent().id;
-
-        // Build TabPanel
-        var tabPanel = new Ext.TabPanel({
+        
+        var tabConfig = {
           applyTo: container,
           layoutOnTabChange:true,
           activeTab: activeTab,
           border:false,
           region:'center',
           items: items,
-          bbar: [{ 
-            text: Backend.locale.buttons.back, 
-            cls: 'x-btn-text-icon back', 
-            handler: Backend.app.back 
-          }, '->',{ 
-            text: Backend.locale.buttons.save, 
-            cls: 'x-btn-text-icon save', 
-            handler: Backend.app.submitForm 
-          }],
           defaults: { autoScroll:true, layout:'fit' }
-        });
+        }
         
+        if (this.toolbar()!="1"){
+          Ext.apply(tabConfig, {
+            bbar: [{ 
+              text: Backend.locale.buttons.back, 
+              cls: 'x-btn-text-icon back', 
+              handler: Backend.app.back 
+            }, '->',{ 
+              text: Backend.locale.buttons.save, 
+              cls: 'x-btn-text-icon save', 
+              handler: Backend.app.submitForm 
+            }]
+          });
+        }
+
+        // Build TabPanel
+        var tabPanel = new Ext.TabPanel(tabConfig);
         this.addItem(tabPanel);
+        // Need to use this because some times we add tabs from inline scripts
+        tabPanel.on('add', function(){ tabPanel.setActiveTab(activeTab) });
       }
+      
+      // Now we can load scripts
+      var html = el.dom.innerHTML;
+      var id = Ext.id();
+      var dom = this.contentDynamic.body.dom;
+      
+      var hd = document.getElementsByTagName("head")[0];
+      var re = /(?:<script([^>]*)?>)((\n|\r|.)*?)(?:<\/script>)/ig;
+      var srcRe = /\ssrc=([\'\"])(.*?)\1/i;
+      var typeRe = /\stype=([\'\"])(.*?)\1/i;
+
+      var match;
+      while(match = re.exec(html)){
+        var attrs = match[1];
+        var srcMatch = attrs ? attrs.match(srcRe) : false;
+        if(srcMatch && srcMatch[2]){
+          var s = document.createElement("script");
+          s.src = srcMatch[2];
+          var typeMatch = attrs.match(typeRe);
+          if(typeMatch && typeMatch[2]){
+            s.type = typeMatch[2];
+          }
+          hd.appendChild(s);
+        }else if(match[2] && match[2].length > 0){
+          if(window.execScript) {
+            window.execScript(match[2]);
+          } else {
+            window.eval(match[2]);
+          }
+        }
+      }
+      
       this.unmask();
     },//inspectContent
     
@@ -267,63 +316,64 @@ Backend.app = function(){
   } // return
 }();
 
-Backend.window = function(){
-  return {
-    current: undefined, // currentWindow
-    item: undefined, // item
-    config: undefined, // config
-    open: function(config){
-      if (this.current) { this.current.close(); }
-      this.config = config;
-      this.current = new Ext.Window({
-        width: 700,
-        height: 300,
-        layout: 'fit',
-        autoScroll: true,
-        modal: true,
-        resizable: true,
-        maximizable: true,
-        bodyStyle: 'background-color:#FFF',
-        buttons:[{
-          text: Backend.locale.buttons.close,
-          handler: this.close
-        },{
-          text: Backend.locale.buttons.select,
-          handler: this.select
-        }],
-        html: '<iframe id="'+Ext.id('','iframe-')+'" src="/backend/base/?small=1&load='+config.url+'" frameBorder="0" width="100%" height="100%" />'
-      });
-      this.current.show();
-      return this.current
-    }, // open
-    
-    close: function(){
-      if (Backend.window.current){
-        Backend.window.current.close();
-        Backend.window.item   = undefined;
-        Backend.window.config = undefined;
-      }
-    }, // close
-    
-    select: function(){
-      try {
-        var selected =  Backend.window.item.getSelectionModel().getSelected();
-        var config   =  Backend.window.config;
-        var name = selected.data[config.display];
-        if (config.value=='id'){
-          var id = selected.id;
-        } else {
-          var id = selected.data[config.value];
-        }
-        $(config.displayField).update(name);
-        $(config.valueField).value = id;
-        Backend.window.close();
-      } catch(e) {
-        Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.notSelected);
-      }
-    } // select
-  } // return
-}();
+Backend.window = Ext.extend(Ext.Window, {
+  width: 700,
+  height: 300,
+  layout: 'fit',
+  autoScroll: true,
+  modal: true,
+  maximizable: true,
+  bodyStyle: 'background-color:#FFF',
+  grid: undefined,
+  form: false,
+  url: '',
+  iframeId: Ext.id('','iframe-'),
+  initComponent : function(){
+    Backend.window.superclass.initComponent.call(this);
+    this.addEvents('selected');
+    this.addEvents('saved');
+    this.addButton({
+      text: Backend.locale.buttons.close,
+      handler: this[this.closeAction].createDelegate(this, [])      
+    });
+    if (this.grid){
+      this.addButton({
+        text: Backend.locale.buttons.select,
+        handler: this.closeWithSelections.createDelegate(this, [])}
+      );
+    }
+    if (this.form){
+      this.addButton({
+        text: Backend.locale.buttons.save,
+        handler: this.saveForm.createDelegate(this, [])}
+      );
+    }
+    this.html = '<iframe id="'+this.iframeId+'" src="/backend/base/?small=1&toolbar='+(this.form?1:0)+'&load='+this.url+'" frameBorder="0" width="100%" height="100%" />';
+  }, // initComponent
+  
+  afterShow : function(afterShow){
+    Backend.window.superclass.afterShow.call(this);
+    this.contentWindow = Ext.fly(this.iframeId).dom.contentWindow;
+  }, // onRender
+  
+  getSelections: function(){
+    return this.contentWindow[this.grid].getSelectionModel().getSelections();
+  }, // getSelections
+  
+  closeWithSelections: function(){
+    if (this.getSelections().length > 0){
+      this.fireEvent('selected', this, this.getSelections());
+      this[this.closeAction]();
+    } else { 
+      Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.notSelected); 
+    }
+  }, // closeWithSelections
+  
+  saveForm: function(){
+    this.contentWindow.Backend.app.submitForm();
+    this.fireEvent('saved', this);
+  } // saveForm
+});
 
 Backend.cache = function(){
   return {

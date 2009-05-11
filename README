@@ -28,7 +28,7 @@ Haml 2+
   
 Then in your config/environment.rb
   
-  config.gem "lipsiadmin", :version => "< 4.0"
+  config.gem "lipsiadmin", :version => "< 5.0"
   
 Why we need to specify version?
 
@@ -52,6 +52,7 @@ So you can do:
   $ script/generate backend # Generate the base admin
   $ script/generate backend_page yourmodel # Generate a "scaffold" for your model
   $ script/generate state_session # Create a "scaffold" for store extjs grid settings in db
+  $ script/generate loops # Generate background workers
   $ script/generate frontend # Generate the base frontend
   $ script/generate attachment # Generate the an attachments
   $ script/generate pdf PdfName # Generate a new pdf document

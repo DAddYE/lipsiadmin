@@ -78,6 +78,9 @@ module Lipsiadmin
             end.join(",")
           end
           
+          # Adding a name for our column
+          options[:name] ||= "#{@model.table_name.singularize}[#{options[:method]}]"
+          
           # Reformat query
           if options[:method].is_a?(Symbol)
             options[:dataIndex] ||= "#{@model.table_name}.#{options[:method]}"

@@ -47,22 +47,99 @@ module Lipsiadmin
           return config.to_json
         end
         
+        # Open a new windows that can contain a grid that you can reuse
+        # 
+        # The first argument name is used as the link text.
+        # 
+        # The second argument is the url where js of grid are stored.
+        # 
+        # The third argument is the name of the gird var usually gridPanel or editorGridPanel.
+        # 
+        # The four argument are callbacks that may be specified:
+        # 
+        # <tt>:before</tt>::     Called before request is initiated.
+        # <tt>:update</tt>::     Called after user press +select+ button.
+        #                        This call are performed in an handler where
+        #                        you have access to two variables:
+        #                        <tt>:win</tt>::  Backend.window
+        #                        <tt>:selections</tt>::  Records selected in the grid
+        # 
+        #   # Generates: <a onclick="      
+        #   #   new Backend.window({ 
+        #   #     url: '/backend/categories.js', 
+        #   #     grid: 'gridPanel',  
+        #   #     listeners: {
+        #   #       selected: function(win, selections){
+        #   #         $('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');
+        #   #         $('category_names').innerHTML = selections.collect(function(s) { return s.data['categories.name'] }).join(', ');
+        #   #       }
+        #   #     }
+        #   #   }).show();
+        #   #   return false;" href="#">Select a Category</a>
+        # 
+        #   open_grid "Select a Category", "/backend/categories.js", "gridPanel",
+        #     :update => "$('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');" +
+        #     "$('category_names').innerHTML = selections.collect(function(s) { return s.data['categories.name'] }).join(', ');"
+        # 
+        def open_grid(text, url, grid, options={})
+          options[:before] = options[:before] + ";" if options[:before]
+          javascript = <<-JAVASCRIPT
+            #{options[:before]}
+            new Backend.window({ 
+              url: '#{url}', 
+              grid: '#{grid}',  
+              listeners: {
+                selected: function(win, selections){
+                  #{options[:update]}
+                }
+              }
+            }).show()
+          JAVASCRIPT
+          link_to_function(text, javascript)
+        end
+
         # Open a new windows that can contain a form that you can reuse
         # 
-        #   Example:
-        #     
-        #     # in app/views/dossiers/_form.html.haml
-        #         %tr
-        #           %td{:style=>"width:100px"} 
-        #             %b Customer:
-        #           %td
-        #             %span{:id => :account_name}=@dossier.account ? @dossier.account.full_name : "None" 
-        #             =hidden_field :dossier, :account_id
-        #             =open_window "/backend/accounts.js", :id, :name, :dossier_account_id, :account_name
+        # The first argument name is used as the link text.
         # 
-        def open_window(url, value, display, render_value_to, render_display_to)
-          link_to_function(image_tag("backend/new.gif", :style=>"vertical-align:bottom"), 
-            "Backend.window.open({url:'#{url}', display:'#{display}', value:'#{value}', displayField:'#{render_display_to}', valueField:'#{render_value_to}'})")
+        # The second argument is the url where html of form are stored.
+        # 
+        # The third argument are callbacks that may be specified:
+        # 
+        # <tt>:before</tt>::     Called before request is initiated.
+        # <tt>:update</tt>::     Called after user press +save+ button.
+        #                        This call are performed in an handler where
+        #                        you have access to one variables:
+        #                        <tt>:win</tt>::  Backend.window
+        # 
+        #   # Generates: <a onclick="  
+        #   #     new Backend.window({ 
+        #   #       url: '/backend/posts/'+$('comment_post_id').value+'/edit', 
+        #   #       form: true,
+        #   #       listeners: {
+        #   #         saved: function(win){
+        #   #           someFn();
+        #   #         }
+        #   #       }
+        #   #     }).show();
+        #   # return false;" href="#">Edit Post</a>
+        #   open_form "Edit Post", "/backend/posts/'+$('comment_post_id').value+'/edit", :update => "someFn();"
+        #   
+        def open_form(text, url, options={})
+          options[:before] = options[:before] + ";" if options[:before]
+          javascript = <<-JAVASCRIPT
+            #{options[:before]}
+            new Backend.window({ 
+              url: '#{url}', 
+              form: true,
+              listeners: {
+                saved: function(win){
+                  #{options[:update]}
+                }
+              }
+            }).show()
+          JAVASCRIPT
+          link_to_function(text, javascript)
         end
         
         # This method call a remote_function and in the same time do a 

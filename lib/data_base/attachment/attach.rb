@@ -115,7 +115,7 @@ module Lipsiadmin
           :path          => ":rails_root/public/uploads/:id_:style_:basename.:extension",
           :styles        => {},
           :default_url   => "/images/backend/no-image.png",
-          :default_style => :normal,
+          :default_style => :original,
           :validations   => {},
           :storage       => :filesystem
         }
@@ -486,9 +486,9 @@ module Lipsiadmin
         interpolations = self.class.interpolations.sort{|a,b| a.first.to_s <=> b.first.to_s }
         interpolations.reverse.inject( pattern.dup ) do |result, interpolation|
           tag, blk = interpolation
-          result.gsub(/:#{tag}/) do |match|
-            blk.call( self, style )
-          end
+          match    = blk.call(self, style)
+          # If we use tag original we dont want to add :original to filename or url
+          tag == :style && match == :original ? result.gsub(/:style_/, "") : result.gsub(/:#{tag}/, match.to_s)
         end
       end
 
