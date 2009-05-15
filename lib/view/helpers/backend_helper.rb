@@ -22,18 +22,19 @@ module Lipsiadmin
         
         # This method add tab for in your view.
         # 
-        # +name+ is the name and title of the tab, an interesting thing wose that this helper 
+        # First argument is the name and title of the tab, an interesting thing wose that this helper 
         # try to translate itself to your current locale ex:
         # 
         #   # Look for: I18n.t("backend.tabs.settings") in config/locales/backend/yourlocale.yml
         #   tab :settings do
         #     ...
         # 
-        # +padding+ specify if is necessary 10px of padding inside the tab, default is +true+
+        # The second argument specify if is necessary 10px of padding inside the tab, default is +true+
         # 
-        # +options+ accepts:
-        #   <tt>:id</tt>::    The id of the tab
-        #   <tt>:style</tt>:: Custom style of the tab
+        # Third argument is an hash that accepts:
+        # 
+        # <tt>:id</tt>::    The id of the tab
+        # <tt>:style</tt>:: Custom style of the tab
         # 
         def tab(name, padding=true, options={}, &block)
           options[:id]    ||= name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/-+$/, '').gsub(/^-+$/, '')
