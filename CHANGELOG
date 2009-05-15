@@ -5,6 +5,7 @@
   * Improved documentation of helpers
   * Fixed rdoc typos
   * Imporved backend helpers and rdoc
+  * Added a frontend helper for keywords
 
 2009-05-11
   * Bumped version to 4.0.0

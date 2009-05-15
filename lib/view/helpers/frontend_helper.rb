@@ -13,6 +13,12 @@ module Lipsiadmin
         def description(text)
           content_for(:description) { text }
         end
+        
+        # Set the meta keywords of the page
+        # Usefull for google & c.
+        def description(text)
+          content_for(:keywords) { text }
+        end
       end
     end
   end
