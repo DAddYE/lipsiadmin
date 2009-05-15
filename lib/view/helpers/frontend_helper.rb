@@ -16,7 +16,7 @@ module Lipsiadmin
         
         # Set the meta keywords of the page
         # Usefull for google & c.
-        def description(text)
+        def keywords(text)
           content_for(:keywords) { text }
         end
       end
