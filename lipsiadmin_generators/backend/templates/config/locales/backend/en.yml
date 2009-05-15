@@ -1,14 +1,23 @@
 # If you translate this other language or have something to fix please send me an email at: d.dagostino@lipsiasoft.com
 en:
   backend:
+    tabs:
+      general: "General"
+    titles:
+      welcome: "Welcome"
     general:
+      list: "List {{model}}"
       editForm: "Edit {{model}} {{value}}"
       newForm: "New {{model}}"
       cantDelete: "You cannot delete this record."
     sessions:
       wrong: "Wrong email or password"
       logout: "Correctly Logged Out"
-      
+    menus:
+      account: "Account"
+      list: "List"
+      new: "New"
+      help: "Help"
     javascripts:
       buttons:
         add: "Add"

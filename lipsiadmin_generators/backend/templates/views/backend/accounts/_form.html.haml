@@ -1,21 +1,21 @@
 =simple_error_messages_for :account
--tab "General" do
+-tab :general do
   %table
     %tr
-      %td Name
+      %td=human_name_for :account, :name
       %td=text_field :account, :name
     %tr
-      %td Surname
+      %td=human_name_for :account, :surname
       %td=text_field :account, :surname
     %tr
-      %td Email
+      %td=human_name_for :account, :email
       %td=text_field :account, :email
     %tr
-      %td Password
+      %td=human_name_for :account, :password
       %td=password_field :account, :password
     %tr
-      %td Password Confirmation
+      %td=human_name_for :account, :password_confirmation
       %td=password_field :account, :password_confirmation
     %tr
-      %td Role
+      %td=human_name_for :account, :role
       %td=select :account, :role, AccountAccess.roles

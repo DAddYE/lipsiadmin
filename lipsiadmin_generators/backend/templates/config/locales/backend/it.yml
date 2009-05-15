@@ -1,13 +1,22 @@
 it:
   backend:
+    tabs:
+      general: "Generale"
+    titles:  
+      welcome: "Benvenuto"
     general:
+      list: "Elenco {{model}}"
       editForm: "Modifica {{model}} {{value}}"
-      newForm: "Nuova {{model}}"
+      newForm: "Nuovo {{model}}"
       cantDelete: "Non puoi cancellare questo record."
     sessions:
       wrong: "Email o password sbagliati"
       logout: "Sei correttamente uscito dal sistema"
-
+    menus:
+      help: "Aiuto"
+      account: "Account"
+      list: "Elenco"
+      new: "Nuovo"
     javascripts:
       buttons:
         add: "Aggiungi"

@@ -2,11 +2,11 @@ class Backend::AccountsController < BackendController
   def index
     params[:limit] ||= 50
     @column_store = column_store_for Account do |cm|
-      cm.add :name,         "Name",           :sortable => true
-      cm.add :surname,      "Surname",        :sortable => true
-      cm.add :email,        "Email",          :sortable => true
-      cm.add :created_at,   "Created at",     :sortable => true, :renderer => :datetime, :align => :right
-      cm.add :updated_at,   "Updated at",     :sortable => true, :renderer => :datetime, :align => :right
+      cm.add :name
+      cm.add :surname
+      cm.add :email
+      cm.add :created_at, :renderer => :datetime, :align => :right
+      cm.add :updated_at, :renderer => :datetime, :align => :right
     end
     
     respond_to do |format|

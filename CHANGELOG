@@ -1,3 +1,8 @@
+2009-05-15
+  * Now admin can be completly translated in any languages
+  * Refactored generation of grids
+  * Improved documentation of helpers
+
 2009-05-11
   * Bumped version to 4.0.0
   * Added editable grids

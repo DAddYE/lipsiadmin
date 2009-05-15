@@ -5,7 +5,7 @@ class Backend::<%= controller_class_name %>Controller < BackendController
     
     @column_store = column_store_for <%= model_name %> do |cm|
       <%- model_instance.class.content_columns.collect do |column| -%>
-      cm.add :<%= column.name.downcase %>,  "<%= model_instance.class.human_attribute_name(column.name) %>", :sortable => true<% if column.type == :date %>, :renderer => :date <% elsif column.type == :datetime %>, :renderer => :datetime <% end %>
+      cm.add :<%= column.name.downcase %><% if column.type == :date %>, :renderer => :date <% elsif column.type == :datetime %>, :renderer => :datetime <% end %>
       <%- end -%>
     end
     

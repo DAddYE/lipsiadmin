@@ -1,6 +1,6 @@
 page.grid do |grid|
   grid.id "grid-accounts"
-  grid.title "List All Accounts"
+  grid.title list_title_for(Account)
   grid.base_path "/backend/accounts"
   grid.forgery_protection_token request_forgery_protection_token
   grid.authenticity_token form_authenticity_token
@@ -9,6 +9,7 @@ page.grid do |grid|
     store.url "/backend/accounts.json"
     store.fields @column_store.store_fields
   end
+  grid.before << "groupingStore.setDefaultSort('accounts.created_at', 'DESC');"
   grid.columns do |columns|
     columns.fields @column_store.column_fields
   end

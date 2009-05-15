@@ -1,6 +1,6 @@
 page.grid do |grid|
   grid.id "grid-<%= plural_name %>"
-  grid.title "List all <%= model_instance.class.human_name %>"
+  grid.title list_title_for(<%= model_instance.class.name %>)
   grid.base_path "/backend/<%= plural_name %>"
   grid.forgery_protection_token request_forgery_protection_token
   grid.authenticity_token form_authenticity_token

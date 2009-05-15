@@ -3,5 +3,6 @@
 
 Added a new resource in routes.rb
 Added a new rules in app/models/account_access.rb
+Translate your attributes in config/locales/models
 
 ================================================================

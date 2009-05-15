@@ -155,9 +155,9 @@ module Lipsiadmin
         return @allowed.uniq
       end
       
-      # Return the original name or try to humanize the symbol
+      # Return the original name or try to translate or humanize the symbol
       def human_name
-        return @name.is_a?(Symbol) ? @name.to_s.humanize : @name
+        return @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
       end
       
       # Return a unique id for the given project module
@@ -167,9 +167,9 @@ module Lipsiadmin
       
       # Return ExtJs Config for this project module
       def config
-        options = @options.merge(:id => uid, :text => human_name)
+        options = @options.merge(:text => human_name)
         options.merge!(:menu => @menus.collect(&:config)) if @menus.size > 0
-        options.merge!(:handler =>  ActiveSupport::JSON::Variable.new("function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }")) if @url
+        options.merge!(:handler =>  "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l) if @url
         return options
       end
     end
@@ -202,9 +202,9 @@ module Lipsiadmin
         return @allowed.uniq
       end
       
-      # Return the original name or try to humanize the symbol
+      # Return the original name or try to translate or humanize the symbol
       def human_name
-        return @name.is_a?(Symbol) ? @name.to_s.humanize : @name
+        return @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
       end
       
       # Return a unique id for the given project module
@@ -214,9 +214,9 @@ module Lipsiadmin
       
       # Return ExtJs Config for this menu
       def config
-        options = @options.merge(:id => uid, :text => human_name)
+        options = @options.merge(:text => human_name)
         options.merge!(:menu => @items.collect(&:config)) if @items.size > 0
-        options.merge!(:handler =>  ActiveSupport::JSON::Variable.new("function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }")) if @url
+        options.merge!(:handler => "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l) if @url
         return options
       end
     end
