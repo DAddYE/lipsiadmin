@@ -4,6 +4,7 @@
   * Refactored generation of grids
   * Improved documentation of helpers
   * Fixed rdoc typos
+  * Imporved backend helpers and rdoc
 
 2009-05-11
   * Bumped version to 4.0.0

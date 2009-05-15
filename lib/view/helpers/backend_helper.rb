@@ -25,7 +25,7 @@ module Lipsiadmin
         # First argument is the name and title of the tab, an interesting thing wose that this helper 
         # try to translate itself to your current locale ex:
         # 
-        #   # Look for: I18n.t("backend.tabs.settings") in config/locales/backend/yourlocale.yml
+        #   # Look for: I18n.t("backend.tabs.settings", :default => "Settings")
         #   tab :settings do
         #     ...
         # 
@@ -50,11 +50,11 @@ module Lipsiadmin
         # An interesting thing wose that this helper 
         # try to translate itself to your current locale ex:
         # 
-        #   # Look for: I18n.t("backend.titles.welcome_here") in config/locales/backend/yourlocale.yml
+        #   # Look for: I18n.t("backend.titles.welcome_here", :default => "Welcome Here")
         #   title :welcome_here
         # 
         def title(title)
-          title = I18n.t("backend.titles.#{title.to_s.downcase}", :default => title)
+          title = I18n.t("backend.titles.#{title.to_s.downcase}", :default => title.to_s.humanize)
           content_tag(:script, "Backend.app.setTitle(#{title.to_json})", :type => Mime::JS)
         end
         
@@ -136,9 +136,11 @@ module Lipsiadmin
         #   #   Account Name
         #   #   Custom Title For Surname
         #   #   Im a
+        #   #   Attribute not translated
         #   human_name_for :account, :name
         #   human_name_for :account, :surname
         #   human_name_for :account, :role
+        #   human_name_for :account, :attribute_not_translated
         # 
         def human_name_for(instance, method)
           I18n.t("activerecord.attributes.#{instance}.#{method}", :default => method.to_s.humanize)
