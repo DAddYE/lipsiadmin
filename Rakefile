@@ -23,7 +23,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.options << '--line-numbers' << '--inline-source' << '--accessor' << 'cattr_accessor=object'
   rdoc.options << '--charset' << 'utf-8'
   rdoc.template = 'resources/rdoc/horo'
-  rdoc.rdoc_files.include('README', 'CHANGELOG')
+  rdoc.rdoc_files.include('README.rdoc', 'CHANGELOG')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
@@ -74,7 +74,7 @@ end
 
 desc "Publish the API documentation"
 task :pdoc => [:rdoc] do 
-  Rake::SshDirPublisher.new("root@server1.lipsiasoft.com", "/var/www/apps/lipsiadmin/rdoc", "doc").upload
+  Rake::SshDirPublisher.new("root@lipsiasoft.net", "/mnt/www/apps/lipsiadmin/doc", "doc").upload
 end
 
 desc "Publish the release files to RubyForge."

@@ -14,8 +14,10 @@ for example ext manage the layout of page, grids, tree and errors, but form are 
 Author:: Davide D'Agostino
 Copyright:: Copyright (c) 2009 Lipsiasoft s.r.l. (http://www.lipsiasoft.com)
 License:: MIT License (http://www.opensource.org/licenses/mit-license.php)
-Api Documentation:: http://api.lipsiasoft.com
+WebSite:: http://www.lipsiadmin.com
+Api Documentation:: http://api.lipsiadmin.com
 Community:: http://groups.google.com/group/lipsiadmin
+Twitter:: http://twitter.com/daddye
 
 ==Requirements
 
@@ -49,17 +51,19 @@ now run script/generate and you can see some like:
 
 So you can do:
 
-  $ script/generate backend # Generate the base admin
+  $ script/generate backend                # Generate the base admin
   $ script/generate backend_page yourmodel # Generate a "scaffold" for your model
-  $ script/generate state_session # Create a "scaffold" for store extjs grid settings in db
-  $ script/generate loops # Generate background workers
-  $ script/generate frontend # Generate the base frontend
-  $ script/generate attachment # Generate the an attachments
-  $ script/generate pdf PdfName # Generate a new pdf document
+  $ script/generate state_session          # Create a "scaffold" for store extjs grid settings in db
+  $ script/generate loops                  # Generate background workers
+  $ script/generate frontend               # Generate the base frontend
+  $ script/generate attachment             # Generate the an attachments
+  $ script/generate pdf PdfName            # Generate a new pdf document
 
 ==Contribute
 
-Please contribute in coding, patch, and submitting translation api documentation etc...
+Please contribute in coding, patch, and submitting translation api documentation, suggestion etc...
 
+Official Site can be found here:: http://www.lipsiadmin.com
 Community can be found here:: http://groups.google.com/group/lipsiadmin
 Api documentation can be found here:: http://api.lipsiasoft.com
+Follow us on twitter:: http://twitter.com/daddye

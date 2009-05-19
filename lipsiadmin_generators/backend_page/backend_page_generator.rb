@@ -17,7 +17,7 @@ class ScaffoldingSandbox
   def default_input_block
     Proc.new do |record, column|
 "    %tr
-      %td #{model_instance.class.human_attribute_name(column.name)}
+      %td=human_name_for :#{record}, :#{column.name}
       %td#{input(record, column.name)}"
     end
   end
@@ -102,7 +102,7 @@ class BackendPageGenerator < Rails::Generator::NamedBase
       
       # Adding new permissions
       permissions = <<-CODE
-    role.project_module "#{model_instance.class.human_name}" do |project|
+    role.project_module :#{model_instance.class.table_name} do |project|
       project.menu :list,   "/backend/#{@controller_name}.js" do |submenu|
         submenu.add :new, "/backend/#{@controller_name}/new"
       end

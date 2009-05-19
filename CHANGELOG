@@ -1,3 +1,7 @@
+2009-05-18
+  * Small fix in generation of account access
+  * Fix an issue in backend_page generator
+
 2009-05-15
   * Bumped version to 4.1.0
   * Now admin can be completly translated in any languages
