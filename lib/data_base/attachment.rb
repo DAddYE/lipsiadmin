@@ -78,7 +78,7 @@ module Lipsiadmin
             attributes.merge!(:attachment_definitions => self.class.attachment_definitions[name])
             
             # We need to add the new attacher_name
-            attributes.merge!(:attacher_name => name.to_s) if columns.collect(&:name).include?("attacher_name")
+            attributes.merge!(:attacher_name => name.to_s) if self.class.columns.collect(&:name).include?("attacher_name")
             
             if file_column = self.send(name)
               file_column.update_attributes(attributes)
@@ -142,7 +142,7 @@ module Lipsiadmin
               next if attribute["file"].blank?
               attribute.merge!(:attachment_definitions => self.class.attachment_definitions[name])
               # We need to add the new attacher_name
-              attribute.merge!(:attacher_name => name.to_s) if columns.collect(&:name).include?("attacher_name")
+              attribute.merge!(:attacher_name => name.to_s) if self.class.columns.collect(&:name).include?("attacher_name")
               self.send(name).build(attribute)
             end
 

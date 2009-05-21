@@ -24,8 +24,8 @@ namespace :lipsiadmin do
         end
       end
     
-      desc "Updated the current models locales"
-      task :models do
+      desc "Updated the current models locales. Use LANGS=en,it,cz"
+      task :models => :environment do
         langs = ENV['LANGS'] ? ENV['LANGS'].split(",") : [:en]
         models = Dir["#{RAILS_ROOT}/app/models/*"].collect { |model| File.basename(model, ".rb") }
 
@@ -48,7 +48,7 @@ namespace :lipsiadmin do
               columns.each do |c|
                 locale += "        #{c}: #{klass.human_attribute_name(c)}" unless locale.include?("#{c}:")
               end
-              print "#{lang} already exist ..."; $stdout.flush
+              print "#{lang} already exist ... "; $stdout.flush
               # Do some ere
             else
               locale     = "#{lang}:" + "\n" +
@@ -58,9 +58,9 @@ namespace :lipsiadmin do
                            "    attributes:" + "\n" +
                            "      #{model}:" + "\n" +
                            columns.collect { |c| "        #{c}: #{klass.human_attribute_name(c)}" }.join("\n")
+              print "#{lang} created new one ... "; $stdout.flush
             end
             File.open(filename, "w") { |f| f.puts locale }
-            print "... #{lang} created new one"; $stdout.flush
           end
           puts
         end
