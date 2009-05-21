@@ -47,7 +47,11 @@ module Lipsiadmin
         def has_one_attachment(name, options={})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"
-          options[:conditions]   = "attacher_name = '#{name}'" if columns.collect(&:name).include?("attacher_name")
+          
+          # We need to check if the attachment model allow multiple attachments
+          multi_attachments = options[:class_name].constantize.column_names.include?("attacher_name")
+          
+          options[:conditions]   = "attacher_name = '#{name}'" if multi_attachments
           
           has_one name, options
           before_save "before_save_for_#{name}"
@@ -78,7 +82,7 @@ module Lipsiadmin
             attributes.merge!(:attachment_definitions => self.class.attachment_definitions[name])
             
             # We need to add the new attacher_name
-            attributes.merge!(:attacher_name => name.to_s) if self.class.columns.collect(&:name).include?("attacher_name")
+            attributes.merge!(:attacher_name => name.to_s) if multi_attachments
             
             if file_column = self.send(name)
               file_column.update_attributes(attributes)
@@ -107,7 +111,11 @@ module Lipsiadmin
         def has_many_attachments(name, options = {})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"
-          options[:conditions]   = "attacher_name = '#{name}'" if columns.collect(&:name).include?("attacher_name")
+          
+          # We need to check if the attachment model allow multiple attachments
+          multi_attachments = options[:class_name].constantize.column_names.include?("attacher_name")
+          
+          options[:conditions]   = "attacher_name = '#{name}'" if multi_attachments
 
           has_many name, options
           before_save "before_save_for_#{name}"
@@ -142,7 +150,7 @@ module Lipsiadmin
               next if attribute["file"].blank?
               attribute.merge!(:attachment_definitions => self.class.attachment_definitions[name])
               # We need to add the new attacher_name
-              attribute.merge!(:attacher_name => name.to_s) if self.class.columns.collect(&:name).include?("attacher_name")
+              attribute.merge!(:attacher_name => name.to_s) if multi_attachments
               self.send(name).build(attribute)
             end
 
