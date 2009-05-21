@@ -1,4 +1,5 @@
 2009-05-21
+  * Removed some grids defaults
   * Added attacher_name in before_save
   * Started a new task for translate models for I18n
   * Fix a bug in account.rb
