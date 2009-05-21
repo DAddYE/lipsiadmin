@@ -47,6 +47,8 @@ module Lipsiadmin
         def has_one_attachment(name, options={})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"
+          options[:conditions]   = "attacher_name = '#{name}'" if columns.collect(&:name).include?("attacher_name")
+          
           has_one name, options
           before_save "before_save_for_#{name}"
           attr_accessor "#{name}_attributes"
@@ -102,7 +104,8 @@ module Lipsiadmin
         def has_many_attachments(name, options = {})
           options[:as]         ||= :attacher
           options[:class_name] ||= "Attachment"
-          
+          options[:conditions]   = "attacher_name = '#{name}'" if columns.collect(&:name).include?("attacher_name")
+
           has_many name, options
           before_save "before_save_for_#{name}"
           attr_accessor "#{name}_attributes"

@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   
   serialize                 :modules
   
+  # Validations
   validates_presence_of     :name, :surname, :email
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
@@ -13,30 +14,32 @@ class Account < ActiveRecord::Base
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :email,    :case_sensitive => false
   validates_format_of       :email,    :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
-  before_save               :encrypt_password
+  validates_inclusion_of    :role,     :in => AccountAccess.roles
+
+  # Relations
+  # go here
   
-  def after_create
-    Notifier.deliver_registration(self)
-  end
+  # Callbacks
+  before_save               :encrypt_password
+  after_create              :deliver_registration
+  
+  # Named Scopes
+  # go here
   
   def full_name
     "#{name} #{surname}".strip
   end
   
+  # If we don't found a module we need to 
+  # to return an empty array
   def modules
     read_attribute(:modules) || []
   end
   
+  # We need to perform a little rewrite
   def modules=(perms)
     perms = perms.collect {|p| p.to_sym unless p.blank? }.compact if perms
     write_attribute(:modules, perms)
-  end
-  
-  # Activates the user in the database.
-  def activate
-    @activated = true
-    self.activated_at = Time.now.utc
-    self.activation_code = nil
   end
 
   # Authenticates a user by their email and unencrypted password.  Returns the user or nil.
@@ -54,7 +57,8 @@ class Account < ActiveRecord::Base
   rescue
     nil
   end
-
+  
+  # Get the uncripted password
   def password_clean
     unless @password
       enc = OpenSSL::Cipher::Cipher.new('DES-EDE3-CBC')
@@ -67,8 +71,9 @@ class Account < ActiveRecord::Base
     nil
   end
   
+  # If you want you can integrate you custom activation/blocking system
+  # Our auth system already check this method so don't delete it
   def active?
-    # If you want you can integrate you custom activation/blocking system
     true
   end
 
@@ -77,11 +82,12 @@ class Account < ActiveRecord::Base
     self.class.encrypt(password, salt)
   end
 
+  # Check if the db password 
   def authenticated?(password)
-    crypted_password.chomp == encrypt(password).chomp
+    crypted_password.chomp == encrypt(password).chomp rescue false
   end
 
-  
+  # Gets the project modules for this accounts
   def maps
     if modules && modules.split(",").size > 0
       maps = AccountAccess.find_by_project_modules(modules.split(","))
@@ -100,17 +106,20 @@ class Account < ActiveRecord::Base
   #   def administrator?
   #     role == "administrator"
   #   end
-  AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase.gsub(" ","_").to_sym == r.to_s.downcase.gsub(" ","_").to_sym } }
+  AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase == r.to_s.downcase } }
   
-  protected
-    # before filter 
-    def encrypt_password
-      return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--") if new_record?
-      self.crypted_password = encrypt(password)
-    end
-      
-    def password_required?
-      crypted_password.blank? || !password.blank?
-    end
+protected
+  def encrypt_password
+    return if password.blank?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--") if new_record?
+    self.crypted_password = encrypt(password)
+  end
+    
+  def password_required?
+    crypted_password.blank? || !password.blank?
+  end
+  
+  def deliver_registration
+    Notifier.deliver_registration(self)
+  end
 end

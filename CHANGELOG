@@ -1,3 +1,9 @@
+2009-05-21
+  * Fix a bug in account.rb
+  * Added ImageMagick requirements to gem
+  * Improved doc
+  * Allow models to have multiple attachments definitions
+  
 2009-05-18
   * Small fix in generation of account access
   * Fix an issue in backend_page generator
