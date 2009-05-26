@@ -18,6 +18,16 @@ en:
       list: "List"
       new: "New"
       help: "Help"
+    labels:
+      none: "Nothing"
+      add: "Add"
+      remove: "Remove"
+      upload_file: "Upload File"
+      upload_files: "Upload Files"
+      upload_image: "Upload Image"
+      upload_images: "Upload Images"
+    texts: 
+      order_updated: Order updated!
     javascripts:
       buttons:
         add: "Add"

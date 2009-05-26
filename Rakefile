@@ -75,7 +75,7 @@ end
 
 desc "Publish the API documentation"
 task :pdoc => [:rdoc] do 
-  Rake::SshDirPublisher.new("root@lipsiasoft.net", "/mnt/www/apps/lipsiadmin/doc", "doc").upload
+  Rake::SshDirPublisher.new("root@lipsiasoft.net", "/mnt/www/apps/lipsiasoft/doc", "doc").upload
 end
 
 desc "Publish the release files to RubyForge."

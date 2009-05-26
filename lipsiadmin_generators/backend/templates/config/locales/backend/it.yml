@@ -17,6 +17,16 @@ it:
       account: "Account"
       list: "Elenco"
       new: "Nuovo"
+    labels:
+      none: "Nessuno"
+      add: "Aggiungi"
+      remove: "Rimuovi"
+      upload_file: "Carica File"
+      upload_files: "Carica Files"
+      upload_image: "Carica Immagine"
+      upload_images: "Carica Immagini"
+    texts: 
+      order_updated: L'ordine è stato aggiornato!
     javascripts:
       buttons:
         add: "Aggiungi"

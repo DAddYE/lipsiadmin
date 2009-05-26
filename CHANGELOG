@@ -1,3 +1,10 @@
+2009-05-26
+  * Fixed validates_attachment_content_type_for, now accepts correctly regex
+  * Added a attachment_tag for autogenerate html for upload one file/image
+  * Added a attachemnts_tag autogenerate html for upload multiple file/image and order them
+  * Added a open_standard_grid for simplify use of ext window with ours grids.
+  * Improved attachment generator
+
 2009-05-21
   * Removed some grids defaults
   * Added attacher_name in before_save

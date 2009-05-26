@@ -157,8 +157,164 @@ module Lipsiadmin
           config << { :text => I18n.t("backend.menus.help", :default => "Help"), :handler => "function() { Backend.app.openHelp() }".to_l }
           return config.to_json
         end
+
+        # Returns html for upload one image or generic file.
+        # 
+        # Options can be one of the following:
+        # 
+        # <tt>:image</tt>::     Indicate if the attachments are ONLY images.
+        # 
+        # Examples:
+        # 
+        #   class Category < ActiveRecord::Base
+        #     has_one_attachments    :file,   :dependent => :destroy
+        #   ...
+        # 
+        # Then in our view we can simply add this:
+        # 
+        #   attachments_tag(:category, :file)
+        # 
+        # Remember that al labels can be translated. See Locales for Backend.
+        # 
+        def attachment_tag(object_name, method, options={})
+          variable = instance_variable_get("@#{object_name}")
+          html     = []
+          html    << '<!-- Generated from Lipsiadmin -->'
+          html    << '<ul id="' + "#{method}-order" + '" class="label">'
+
+          if attachment = variable.send(method)
+            # Create first the remove link
+            remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
+                                                      :method => :delete, 
+                                                      :success => "$('#{method}_#{attachment.id}').remove();")
+
+            if options[:image]
+              fstyle  = "float:left;margin:5px;margin-left:0px;"
+              fclass  = "box-image"
+              ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
+              ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
+              ftag   += '  ' + remove_link
+              ftag   += '</div>'
+            else
+              fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
+              fclass  = "box-file"
+              ftag    = '<div style="float:left;cursor:pointer">'
+              ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
+              ftag   += '</div>'
+              ftag   += '<div style="float:right;cursor:pointer">'
+              ftag   += '  ' + remove_link
+              ftag   += '</div>'
+              ftag   += '<br style="clear:both" />'
+            end
+
+            html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
+            html << ' ' + ftag
+            html << '</li>'
+          end # End of Loop
+
+          html << '</ul>'
+          html << '<br style="clear:both" />'
+
+          flbl = options[:image] ? :upload_image : :upload_file
+          html << '<div class="label-title">' + tl(flbl) + '</div>'
+          html << '<table>'
+          rowa  = '  <tr class="attachment">'
+          rowa << '    <td>' + human_name_for(:attachment, :attached_file_name) + '</td>'
+          rowa << '    <td>' + file_field_tag("category[#{method}_attributes][file]", :style => "width:250px") + '</td>'
+          rowa << '  </tr>'
+          html << rowa
+          html << '</table>'
+          html.join("\n")
+        end
         
-        # Open a new windows that can contain a grid that you can reuse
+        # Returns html for upload multiple images or generic files.
+        # 
+        # Options can be one of the following:
+        # 
+        # <tt>:image</tt>::     Indicate if the attachments are ONLY images.
+        # <tt>:order</tt>::     Indicate if user can order files.
+        # 
+        # Examples:
+        # 
+        #   class Category < ActiveRecord::Base
+        #     has_many_attachments    :images,   :dependent => :destroy
+        #     validates_attachment_content_type_for :images, /^image/
+        #   ...
+        # 
+        # Then in our view we can simply add this:
+        # 
+        #   attachments_tag(:category, :images, :image => true, :order => true)
+        # 
+        # Remember that al labels can be translated. See Locales for Backend.
+        # 
+        def attachments_tag(object_name, method, options={})
+          variable = instance_variable_get("@#{object_name}")
+          html     = []
+          html    << '<!-- Generated from Lipsiadmin -->'
+          html    << '<ul id="' + "#{method}-order" + '" class="label">'
+
+          for attachment in variable.send(method).all(:order => :position)
+            # Create first the remove link
+            remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
+                                                      :method => :delete, 
+                                                      :success => "$('#{method}_#{attachment.id}').remove();")
+
+            if options[:image]
+              fstyle  = "float:left;margin:5px;margin-left:0px;"
+              fstyle += "cursor:move;" if options[:order]
+              fclass  = "box-image"
+              ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
+              ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
+              ftag   += '  ' + remove_link
+              ftag   += '</div>'
+            else
+              fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
+              fstyle += "cursor:move;" if options[:order]
+              fclass  = "box-file"
+              ftag    = '<div style="float:left;cursor:pointer">'
+              ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
+              ftag   += '</div>'
+              ftag   += '<div style="float:right;cursor:pointer">'
+              ftag   += '  ' + remove_link
+              ftag   += '</div>'
+              ftag   += '<br style="clear:both" />'
+            end
+
+            html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
+            html << ' ' + ftag
+            html << '</li>'
+          end # End of Loop
+
+          html << '</ul>'
+          html << '<br style="clear:both" />'
+
+          if options[:order]
+            constraint = options[:image] ? "horizontal" : "vertical"
+            html << '<div id="' + "#{method}-message" + '" style="padding:5px">&nbsp;</div>'
+            html << sortable_element("#{method}-order", :url => "/backend/attachments/order", :update => "#{method}-message", :constraint => constraint,
+                                                        :complete => visual_effect(:highlight, "#{method}-message", :duration => 0.5))
+          end
+
+          flbl = options[:image] ? :upload_images : :upload_files
+          html << '<div class="label-title">'+ tl(flbl) +'</div>'
+          html << '<table>'
+          rowa  = '  <tr class="attachment">'
+          rowa << '    <td>' + human_name_for(:attachment, :attached_file_name) + '</td>'
+          rowa << '    <td>' + file_field_tag("category[#{method}_attributes][][file]", :style => "width:250px") + '</td>'
+          rowa << '    <td>' + link_to_function(tl(:remove), "this.up('.attachment').remove()") + '</td>'
+          rowa << '  </tr>'
+          html << rowa
+          html << ' <tr id="' + "add-#{method}" + '">'
+          html << '  <td colspan="2">&nbsp;</td>'
+          html << '  <td style="padding-top:15px">'
+          html << '     ' + link_to_function(tl(:add)) { |page| page.insert_html(:before, "add-#{method}", rowa) }
+          html << '  </td>'
+          html << ' </tr>'
+          html << '</table>'
+          html.join("\n")
+        end
+
+        # Build a new windows that can contain an existent grid
         # 
         # The first argument name is used as the link text.
         # 
@@ -187,12 +343,11 @@ module Lipsiadmin
         #   #     }
         #   #   }).show();
         #   #   return false;" href="#">Select a Category</a>
-        # 
-        #   open_grid "Select a Category", "/backend/categories.js", "gridPanel",
+        #   build_grid "Select a Category", "/backend/categories.js", "gridPanel",
         #     :update => "$('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');" +
         #     "$('category_names').innerHTML = selections.collect(function(s) { return s.data['categories.name'] }).join(', ');"
         # 
-        def open_grid(text, url, grid, options={})
+        def build_grid(text, url, grid, options={})
           options[:before] = options[:before] + ";" if options[:before]
           javascript = <<-JAVASCRIPT
             #{options[:before]}
@@ -206,7 +361,56 @@ module Lipsiadmin
               }
             }).show()
           JAVASCRIPT
-          link_to_function(text, javascript)
+          link_to_function(text, javascript.gsub(/\n|\s+/, " "))
+        end
+        alias_method :open_grid, :build_grid
+
+        # Open a Standard window that can contain a standard existent grid
+        # 
+        # Options can be one of the following:
+        # 
+        # <tt>:grid</tt>::       The name of the grid var. Default "gridPanel"
+        # <tt>:url</tt>::        The url where the grid is stored. Default is autogenerated.
+        # <tt>:name</tt>::       The name of the link that open the window grid. Default a image.
+        # 
+        #   # Generates: <a onclick="      
+        #   #   new Backend.window({ 
+        #   #     url: '/backend/categories.js', 
+        #   #     grid: 'gridPanel',  
+        #   #     listeners: {
+        #   #       selected: function(win, selections){
+        #   #         $('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');
+        #   #         $('category_names').innerHTML = selections.collect(function(s) { return s.data['categories.name'] }).join(', ');
+        #   #       }
+        #   #     }
+        #   #   }).show();
+        #   #   return false;" href="#">Select a Category</a>
+        #   # Generates: new Backend.window({ 
+        #   #   url: '/backend/suppliers.js', 
+        #   #   grid: 'gridPanel', 
+        #   #   listeners: {  
+        #   #     selected: function(win, selections){  
+        #   #       $('warehouse_supplier_id').value = selections.first().id; 
+        #   #       $('warehouse_supplier_name').innerHTML = selections.first().data['suppliers.name']  
+        #   #     }  
+        #   #   }  
+        #   # }).show(); return false;">
+        #   # <img alt="New" src="/images/backend/new.gif?1242655402" style="vertical-align:bottom" /></a>
+        #   # <input id="warehouse_supplier_id" name="warehouse[supplier_id]" type="hidden" value="16" />
+        #   open_standard_grid :warehouse, :supplier, :id, :name
+        #
+        def open_standard_grid(object_name, ext_object, value, display, options={})
+          current_value       = instance_variable_get("@#{object_name}").send(ext_object).send(display) rescue "Nessuno"
+          value_field         = value.to_s.downcase == "id" ? "id" : "data['#{ext_object.to_s.pluralize}.#{value}']"
+          options[:grid]    ||= "gridPanel"
+          options[:url]     ||= "/backend/#{ext_object.to_s.pluralize}.js"
+          options[:name]    ||= image_tag("backend/new.gif", :style => "vertical-align:bottom")
+          update_function     = "$('#{object_name}_#{ext_object}_#{value}').value = selections.first().#{value_field}; " + 
+                                "$('#{object_name}_#{ext_object}_#{display}').innerHTML = selections.first().data['#{ext_object.to_s.pluralize}.#{display}']"
+
+          content_tag(:span, current_value, :id => "#{object_name}_#{ext_object}_#{display}" ) + ' ' +
+          build_grid(options[:name], options[:url], options[:grid], :update => update_function) +
+          hidden_field(object_name, "#{ext_object}_#{value}")
         end
 
         # Open a new windows that can contain a form that you can reuse
@@ -250,7 +454,7 @@ module Lipsiadmin
               }
             }).show()
           JAVASCRIPT
-          link_to_function(text, javascript)
+          link_to_function(text, javascript.gsub(/\n/, " "))
         end
         
         # This method call a remote_function and in the same time do a 

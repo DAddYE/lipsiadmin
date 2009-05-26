@@ -347,8 +347,8 @@ module Lipsiadmin
           valid_types = []
           args.each do |variable|
             case variable
-              when String then valid_types << variable
               when Hash   then options.merge!(variable)
+              else valid_types << variable
             end
           end
           attachment_definitions[name][:validations][:content_type] = lambda do |attachment, instance|

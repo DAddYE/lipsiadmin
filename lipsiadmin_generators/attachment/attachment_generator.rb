@@ -6,7 +6,11 @@ class AttachmentGenerator < Rails::Generator::Base
       unless options[:skip_migration]
         m.migration_template("migration.rb", "db/migrate", :migration_file_name => "create_attachments")
       end
+      m.append("config/routes.rb", "    backend.resources :attachments, :collection => { :order => :post }", "map.namespace(:backend) do |backend|")
+      m.directory('app/controllers/backend')
+      m.directory('app/models')
       m.template('model.rb', 'app/models/attachment.rb')
+      m.template('controller.rb', 'app/controllers/backend/attachments_controller.rb')
       m.readme "../REMEMBER"      
     end
   end 
