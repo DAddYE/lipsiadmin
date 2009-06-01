@@ -41,12 +41,19 @@ class Backend::<%= controller_class_name %>Controller < BackendController
   end
 
   def update
-    @<%= singular_name %> = <%= model_name %>.find(params[:id])    
+    @<%= singular_name %> = <%= model_name %>.find(params[:id]) 
+    
     if @<%= singular_name %>.update_attributes(params[:<%= singular_name %>])
-      redirect_parent_to(:action => "edit", :id => @<%= singular_name %>)
+      respond_to do |format|
+        format.html { redirect_parent_to(:action => "edit", :id => @<%= singular_name %>) }
+        format.json { render :json => { :success => true } }
+      end
     else
-      render_to_parent(:action => "edit")
-    end 
+      respond_to do |format|
+        format.html { render_to_parent(:action => "edit") }
+        format.json { render :json => { :success => false, :msg => @<%= singular_name %>.errors.full_messages.join("<br />") } }
+      end
+    end
   end
   
   # Add in your model before_destroy and if the callback returns false, 

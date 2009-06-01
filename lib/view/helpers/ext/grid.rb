@@ -48,7 +48,7 @@ module Lipsiadmin
     #     ...
     # 
     class Grid < Component
-
+      
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
         @editable = options.delete(:editable)
@@ -65,7 +65,7 @@ module Lipsiadmin
         sm                    :checkbox
         add_plugin            l("new Ext.grid.Search()")
         view                  :default
-        
+        render                true
         # We need to add a setTimeout because, we destroy
         # the grid before loading a new page/js.
         on(:dblclick) do |p|
@@ -97,8 +97,8 @@ module Lipsiadmin
       end
       
       # Define the title of the grid
-      def title(title)
-        before << "Backend.app.setTitle(#{title.to_json});"
+      def title(title, global=true)
+        global ? (before << "Backend.app.setTitle(#{title.to_json});") :  config[:title] = title
       end
       
       # Assign plugins for the current grid
@@ -203,6 +203,15 @@ module Lipsiadmin
         add_object(:cm, cm)
       end
       
+      
+      # Define if the grid need to be added to
+      #   
+      #   Backend.app.addItem(#{get_var});
+      # 
+      def render(value)
+        @render = value
+      end
+      
       # The base_path used for ToolBar, it's used for generate [:new, :edit, :destory] urls
       def base_path(value)
         @base_path = value
@@ -270,13 +279,13 @@ module Lipsiadmin
           after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable)
         end
         
-        if config[:store]
+        if config[:store] && @render
           after << "#{config[:store]}.on('beforeload', function(){ Backend.app.mask(); });"
           after << "#{config[:store]}.on('load', function(){ Backend.app.unmask(); });"
           after << "#{config[:store]}.load();"
         end
         
-        after << "Backend.app.addItem(#{get_var});"
+        after << "Backend.app.addItem(#{get_var});" if @render
         
         super
       end

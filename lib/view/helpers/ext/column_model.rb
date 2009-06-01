@@ -35,7 +35,7 @@ module Lipsiadmin
       
       # This add automatically fields from an array
       def fields(fields)
-        fields.each { |options| add(nil, nil, options)  }
+        fields.each { |options| add(nil, nil, options); }
       end
       
       # Add columns to a Ext.grid.ColumnModel
@@ -55,8 +55,17 @@ module Lipsiadmin
       #   :renderer => :us_money
       #   # Generates: Ext.util.Format.boolRenderer
       #   :renderer => :boolean
+      #   ...
+      #   :render => :capitalize
+      #   :render => :file_size
+      #   :render => :downcase
+      #   :render => :trim
+      #   :render => :undef
+      #   :render => :upcase
       # 
-      # You can pass :edit_with_###
+      # For more see http://extjs.com/deploy/dev/docs/?class=Ext.util.Format
+      # 
+      # You can pass :editor
       # 
       #   # Generates: { checkbox: true }
       #   :editor => { :xtype => :checkbox, :someConfig => true }
@@ -88,19 +97,20 @@ module Lipsiadmin
       # 
       def add(name=nil, data=nil, options={})
         options[:header] = name if name
-        options[:dataIndex] = data if date
+        options[:dataIndex] = data if data
         
         if options[:editor]
           xtype = options[:editor].delete(:xtype)
           case xtype
-            when :checkbox    then options.delete(:editor); options.merge!(:checkbox => true)
-            when :combo       then options.merge!(:editor => l("new Ext.form.ComboBox(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :datefield   then options.merge!(:editor => l("new Ext.form.DateField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :numberfield then options.merge!(:editor => l("new Ext.form.NumberField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :radio       then options.merge!(:editor => l("new Ext.form.Radio(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :textarea    then options.merge!(:editor => l("new Ext.form.TextArea(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :textfield   then options.merge!(:editor => l("new Ext.form.TextField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :timefield   then options.merge!(:editor => l("new Ext.form.TimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :checkbox      then options.delete(:editor); options.merge!(:checkbox => true)
+            when :combo         then options.merge!(:editor => l("new Ext.form.ComboBox(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :datefield     then options.merge!(:editor => l("new Ext.form.DateField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :numberfield   then options.merge!(:editor => l("new Ext.form.NumberField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :radio         then options.merge!(:editor => l("new Ext.form.Radio(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :textarea      then options.merge!(:editor => l("new Ext.form.TextArea(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :textfield     then options.merge!(:editor => l("new Ext.form.TextField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :timefield     then options.merge!(:editor => l("new Ext.form.TimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :datetimefield then options.merge!(:editor => l("new Ext.form.DateTimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
           end
         end
         
@@ -110,10 +120,17 @@ module Lipsiadmin
           when :eur_money   then options.merge!(:renderer => l("Ext.util.Format.eurMoney"))
           when :us_money    then options.merge!(:renderer => l("Ext.util.Format.usMoney"))
           when :boolean     then options.merge!(:renderer => l("Ext.util.Format.boolRenderer"))
+          when :capitalize  then options.merge!(:renderer => l("Ext.util.Format.capitalize"))
+          when :file_size   then options.merge!(:renderer => l("Ext.util.Format.fileSize"))
+          when :downcase    then options.merge!(:renderer => l("Ext.util.Format.lowercase"))
+          when :trim        then options.merge!(:renderer => l("Ext.util.Format.trim"))
+          when :undef       then options.merge!(:renderer => l("Ext.util.Format.undef"))
+          when :upcase      then options.merge!(:renderer => l("Ext.util.Format.uppercase"))
         end
         
         raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || 
                                                                                                      options[:dataIndex].blank?
+
         config[:columns] << Configuration.new(options)
       end
     end

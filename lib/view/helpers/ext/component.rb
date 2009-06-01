@@ -17,7 +17,9 @@ module Lipsiadmin#:nodoc:
     class Component      
 
       def initialize(klass, options={}, &block)#:nodoc:
-        @klass = klass
+        @klass  = klass
+        @prefix = options.delete(:prefix)
+        @var    = options.delete(:var)
         @config = Configuration.new(options)
         @before, @after = [], []
       
@@ -45,10 +47,11 @@ module Lipsiadmin#:nodoc:
       #      
       def get_var
         # I will nillify obj if they are blank
-        @var = nil     if @var == ""
-        @config[:var]  if @config[:var] == ""
+        @var = nil            if @var == ""
+        @config.delete(:var)  if @config[:var] == ""
         # Return a correct var
-        @var || @config[:var] || (@klass.split(".").last.demodulize.slice(0..0).downcase + @klass.split(".").last.demodulize.slice(1..-1))
+        current_var = (@var || @config[:var] || build_var)
+        @prefix.to_s + current_var.to_s
       end
       
       # Write the the configuration of object from an hash
@@ -69,6 +72,14 @@ module Lipsiadmin#:nodoc:
         else
           add_object(method, arg)
         end
+      end
+      
+      # Set the prefix for the var of the component.
+      # This is usefull when for example we are using two grids 
+      # for solve conflict problems.
+      # 
+      def prefix=(value)
+        @prefix = value
       end
       
       # Returns an array of javascripts to add before component is rendered.
@@ -165,11 +176,6 @@ module Lipsiadmin#:nodoc:
       alias_method :l, :literal
 
       private
-        def javascript_object_for(object)
-          object.respond_to?(:to_json) ? object.to_json : object.inspect
-        end
-        alias_method :s, :javascript_object_for
-        
         def render_javascript(template, assigns)
           assigns.each { |key, value| instance_variable_set("@#{key}", value) }
           template = File.read("#{File.dirname(__FILE__)}/templates/#{template}.js.erb")
@@ -178,11 +184,23 @@ module Lipsiadmin#:nodoc:
         
         def add_object(name, object)
           if object.class == Component || object.class.superclass == Component
+            object.prefix = get_var
             @before.delete_if { |b| b.start_with?("var #{object.get_var} = new") }
             @before << object.to_s
             @config[name.to_sym] = l(object.get_var)
           else
             @config[name.to_sym] = object
+          end
+        end
+        
+        def build_var
+          returning "" do |val|
+            if @prefix.blank?
+              val << @klass.split(".").last.demodulize.slice(0..0).downcase
+              val << @klass.split(".").last.demodulize.slice(1..-1)
+            else
+              val << @klass.split(".").last.demodulize
+            end
           end
         end
     end

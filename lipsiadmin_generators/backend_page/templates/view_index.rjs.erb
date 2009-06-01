@@ -9,6 +9,7 @@ page.grid do |grid|
   grid.store do |store|
     store.url "/backend/<%= plural_name %>.json"
     store.fields @column_store.store_fields
+    # store.sortInfo  :field => "<%= plural_name %>.created_at", :direction => "DESC"
   end
   grid.columns do |columns|
     columns.fields @column_store.column_fields

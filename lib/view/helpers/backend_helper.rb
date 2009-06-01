@@ -153,7 +153,7 @@ module Lipsiadmin
         
         # Generate the menu from the Lispiadmin::AccessControl
         def backend_menu
-          config = current_account.maps.collect(&:project_modules)[0].collect(&:config)
+          config = AccountAccess.maps_for(current_account).collect(&:project_modules).flatten.uniq.collect(&:config)
           config << { :text => I18n.t("backend.menus.help", :default => "Help"), :handler => "function() { Backend.app.openHelp() }".to_l }
           return config.to_json
         end

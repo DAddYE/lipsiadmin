@@ -87,19 +87,6 @@ class Account < ActiveRecord::Base
   def authenticated?(password)
     crypted_password.chomp == encrypt(password).chomp rescue false
   end
-
-  # Gets the project modules for this accounts
-  def maps
-    if modules && modules.split(",").size > 0
-      maps = AccountAccess.find_by_project_modules(modules.split(","))
-      return maps unless maps.blank?
-    end
-    
-    if !role.blank?
-      maps = AccountAccess.find_by_role(role)
-      return maps unless maps.blank?
-    end
-  end
   
   # Generate Methods takes from AccessControl rules
   # Example:

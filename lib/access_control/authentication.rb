@@ -39,8 +39,10 @@ module Lipsiadmin
         # 
         # For configure this role please refer to: <tt>Lipsiadmin::AccessControl::Base</tt>
         def allowed?
-          allowed = current_account.maps.collect(&:allowed)[0]
-          denied  = current_account.maps.collect(&:denied)[0]
+          maps = AccountAccess.maps_for(current_account)
+          
+          allowed = maps.collect(&:allowed).flatten.uniq
+          denied  = maps.collect(&:denied).flatten.uniq
           
           allow = allowed.find do |a|
             a[:controller] == params[:controller] &&
@@ -80,7 +82,7 @@ module Lipsiadmin
             format.js { render(:update) { |page| page.alert "You don't allowed to access to this javascript" } }
           end
           false
-        end  
+        end
 
         def store_location#:nodoc:
           session[:return_to] = request.request_uri

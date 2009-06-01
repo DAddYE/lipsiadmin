@@ -43,20 +43,20 @@
   var column    = <%= @var %>.getColumnModel().getColumnById(columnId);
 
   Ext.Ajax.request({
-    url: '<%= @base_path %>/'+e.record.id,
+    url: '<%= @base_path %>/'+e.record.id+".json",
     method: 'PUT',
     params: column.name+'='+e.value,
     success: function(result, request){
-      var resultValue = Ext.decode(result.responseText); 
+      var resultValue = Ext.decode(result.responseText);
       if (resultValue.success == true){
         e.record.commit();
       } else {
-        Ext.MessageBox.alert(Lipsiadmin.locale.alert.title, resultValue.msg);
+        Ext.Msg.alert(Backend.locale.messages.alert.title, resultValue.msg);
         e.record.reject();
       }
     },                
     failure: function(result, request) {
-      Ext.Msg.alert(Lipsiadmin.locale.alert.title, Lipsiadmin.locale.alert.msg);
+      Ext.Msg.alert(Backend.locale.messages.alert.title, Lipsiadmin.locale.alert.msg);
       e.record.reject();
     }
   });

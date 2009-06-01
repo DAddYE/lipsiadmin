@@ -16,7 +16,7 @@ module Lipsiadmin
         return if self.empty?
         i = ("  "*indent)
         s = self.size > 0 ? "\n" : "  "
-        "{#{s}" + self.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i}}"
+        "{#{s}" + self.reject { |k,v| k.blank? || v.to_s.blank? }.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i}}"
       end
       
       private

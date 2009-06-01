@@ -1,6 +1,6 @@
 class AccountAccess < Lipsiadmin::AccessControl::Base 
 
-  roles_for :administrator do |role|
+  roles_for :administrator do |role, current_account|
     # Shared Permission
     role.allow_all_actions "/backend"
     role.allow_all_actions "/backend/base"
@@ -16,6 +16,8 @@ class AccountAccess < Lipsiadmin::AccessControl::Base
     # It not necessary have a translation you can provide a classic strings like:
     # 
     #   role.project_module "My Menu Name"
+    # 
+    # <tt>current_account</tt> is an instance of current logged account
     # 
     role.project_module :account do |project|
       project.menu :list,   "/backend/accounts.js" do |submenu|

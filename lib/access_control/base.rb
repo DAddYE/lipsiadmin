@@ -13,7 +13,7 @@ module Lipsiadmin
     # 
     #   Examples:
     #   
-    #     roles_for :administrator do |role|
+    #     roles_for :administrator do |role, current_account|
     #       role.allow_all_actions "/backend/base"
     #       role.deny_action_of    "/backend/accounts/details"
     #     
@@ -24,6 +24,12 @@ module Lipsiadmin
     #           end
     #         end
     #       end
+    # 
+    #       role.project_module :categories do |project|
+    #         current_account.categories.each do |cat|
+    #           project.menu cat.name, "/backend/categories/#{cat.id}.js"
+    #         end
+    #       end
     #     end
     # 
     #   If a user logged with role administrator or that have a project_module administrator can:
@@ -32,6 +38,7 @@ module Lipsiadmin
     #   - Denied access to ONLY action <tt>"/backend/accounts/details"</tt>
     #   - Access to a project module called Administration
     #   - Access to all actions of the controller "/backend/settings"
+    #   - Access to all actions of the controller "/backend/categories"
     #   - Access to all actions EXCEPT <tt>details</tt> of controller "/backend/accounts"
     # 
     class Base
@@ -44,35 +51,17 @@ module Lipsiadmin
           @mappers ||= []
           @roles   ||= []
           @roles.concat(roles)
-          @mappers << Mapper.new(*roles, &block)
-        end        
+          @mappers << Proc.new { |account| Mapper.new(account, *roles, &block) }
+        end
         
         # Returns all roles
         def roles
-          @roles.collect(&:to_s)
+          @roles.nil? ? [] : @roles.collect(&:to_s)
         end
         
-        # Returns all project modules ids
-        def project_modules
-          @mappers.inject([]) do |pm, maps|
-            pm.concat(maps.project_modules.collect(&:uid))
-          end.uniq
-        end
-        
-        # Returns maps for a given role
-        def find_by_role(role)
-          role = case role
-            when String then role.downcase.to_sym
-            when Symbol then role
-          end
-          return @mappers.find_all { |m| m.roles.include?(role.to_sym) }
-        end
-      
-        # Returns maps for a given project modules uids
-        def find_by_project_modules(*uids)
-          uids.inject([]) do |maps, uid|
-            maps.concat @mappers.find_all { |m| m.project_modules.collect(&:uid).include?(uid.to_s) }
-          end
+        def maps_for(account)
+          @mappers.collect { |m| m.call(account) }.
+                   reject  { |m| !m.allowed? }
         end
       end
       
@@ -82,12 +71,14 @@ module Lipsiadmin
       include Helper
       attr_reader :project_modules, :roles
       
-      def initialize(*roles, &block)#:nodoc:
+      def initialize(account, *roles, &block)#:nodoc:
         @project_modules = []
         @allowed         = []
         @denied          = []
         @roles           = roles
-        yield self
+        @account         = account
+        # Mantain backward compatibility
+        yield(self, @account) rescue yield(self)
       end
       
       # Create a new project module
@@ -115,15 +106,25 @@ module Lipsiadmin
         @denied << { :controller => recognize_path(path)[:controller] }
       end
       
+      # Return true if current_account role is included in given roles
+      def allowed?
+        @roles.any? { |r| r.to_s.downcase == @account.role.downcase }
+      end
+      
       # Return allowed actions/controllers
       def allowed
-        @project_modules.each { |pm| @allowed.concat pm.allowed  }
-        return @allowed.uniq
+        # I know is a double check but is better 2 times that no one.
+        if allowed?
+          @project_modules.each { |pm| @allowed.concat pm.allowed  }
+          @allowed.uniq
+        else 
+          []
+        end
       end
       
       # Return denied actions/controllers
       def denied
-        return @denied.uniq
+        @denied.uniq
       end
     end
     
@@ -151,13 +152,13 @@ module Lipsiadmin
       
       # Return allowed controllers
       def allowed
-        @menus.each { |m| @allowed.concat m.allowed  }
-        return @allowed.uniq
+        @menus.each { |m| @allowed.concat(m.allowed) }
+        @allowed.uniq
       end
       
       # Return the original name or try to translate or humanize the symbol
       def human_name
-        return @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
+        @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
       end
       
       # Return a unique id for the given project module
@@ -170,7 +171,7 @@ module Lipsiadmin
         options = @options.merge(:text => human_name)
         options.merge!(:menu => @menus.collect(&:config)) if @menus.size > 0
         options.merge!(:handler =>  "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l) if @url
-        return options
+        options
       end
     end
     
@@ -199,12 +200,12 @@ module Lipsiadmin
       # Return allowed controllers
       def allowed
         @items.each { |i| @allowed.concat i.allowed }
-        return @allowed.uniq
+        @allowed.uniq
       end
       
       # Return the original name or try to translate or humanize the symbol
       def human_name
-        return @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
+        @name.is_a?(Symbol) ? I18n.t("backend.menus.#{@name}", :default => @name.to_s.humanize) : @name
       end
       
       # Return a unique id for the given project module
@@ -214,10 +215,14 @@ module Lipsiadmin
       
       # Return ExtJs Config for this menu
       def config
-        options = @options.merge(:text => human_name)
-        options.merge!(:menu => @items.collect(&:config)) if @items.size > 0
-        options.merge!(:handler => "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l) if @url
-        return options
+        if @url.blank?
+          options = human_name
+        else
+          options = @options.merge(:text => human_name)
+          options.merge!(:menu => @items.collect(&:config)) if @items.size > 0
+          options.merge!(:handler => "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l)
+        end
+        options
       end
     end
     

@@ -1,3 +1,18 @@
+2009-05-28
+  * Refactored account_access now current_account (account logged) is aviable in our roles
+  * Fix a typo in column_model
+  * Little refactoring in account model because now mapping is not necessary
+  * Improved Ext Components, now for example we can render in the same page multiple components without conflicts
+  * Removed some unusued methods
+  * Reject nil values from Ext Configuration
+  * Fixed raising errors in grid editor
+  * Updated controller generator, now accept ajax request
+
+2009-05-27
+  * Added new column renderer see: http://api.lipsiadmin.com/classes/Lipsiadmin/Ext/ColumnModel.html
+  * Added a new datetime editor
+  * Litte fix in AccountAccess.roles now return empty array if no roles instead rescue an error
+
 2009-05-26
   * Fixed validates_attachment_content_type_for, now accepts correctly regex
   * Added a attachment_tag for autogenerate html for upload one file/image
