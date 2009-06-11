@@ -17,6 +17,7 @@ module Lipsiadmin
         super
         subclass.write_inheritable_attribute(:attachment_definitions, {}) if subclass.attachment_definitions.nil?
         subclass.attachment_definitions[subclass.name] = {:validations => {}}.merge(Lipsiadmin::Attachment.options)
+        subclass.send(:include, Lipsiadmin::DataBase::UtilityScopes)
         subclass.extend(ClassMethods)
       end
       
