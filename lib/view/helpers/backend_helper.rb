@@ -220,7 +220,7 @@ module Lipsiadmin
           html << '<table>'
           rowa  = '  <tr class="attachment">'
           rowa << '    <td>' + human_name_for(:attachment, :attached_file_name) + '</td>'
-          rowa << '    <td>' + file_field_tag("category[#{method}_attributes][file]", :style => "width:250px") + '</td>'
+          rowa << '    <td>' + file_field_tag("#{object_name}[#{method}_attributes][file]", :style => "width:250px") + '</td>'
           rowa << '  </tr>'
           html << rowa
           html << '</table>'
@@ -300,7 +300,7 @@ module Lipsiadmin
           html << '<table>'
           rowa  = '  <tr class="attachment">'
           rowa << '    <td>' + human_name_for(:attachment, :attached_file_name) + '</td>'
-          rowa << '    <td>' + file_field_tag("category[#{method}_attributes][][file]", :style => "width:250px") + '</td>'
+          rowa << '    <td>' + file_field_tag("#{object_name}[#{method}_attributes][][file]", :style => "width:250px") + '</td>'
           rowa << '    <td>' + link_to_function(tl(:remove), "this.up('.attachment').remove()") + '</td>'
           rowa << '  </tr>'
           html << rowa
