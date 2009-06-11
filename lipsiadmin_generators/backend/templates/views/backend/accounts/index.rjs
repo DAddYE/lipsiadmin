@@ -9,7 +9,6 @@ page.grid do |grid|
     store.url "/backend/accounts.json"
     store.fields @column_store.store_fields
   end
-  grid.before << "groupingStore.setDefaultSort('accounts.created_at', 'DESC');"
   grid.columns do |columns|
     columns.fields @column_store.column_fields
   end
