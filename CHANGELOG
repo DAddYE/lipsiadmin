@@ -1,3 +1,6 @@
+2009-05-11
+  * Fiexed the attachment and attachments tags
+
 2009-05-28
   * Refactored account_access now current_account (account logged) is aviable in our roles
   * Fix a typo in column_model
