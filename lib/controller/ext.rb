@@ -71,7 +71,7 @@ module Lipsiadmin
           
           # Add some defaults
           options[:header]   ||= options[:method].to_s
-          options[:sortable] ||= true
+          options[:sortable]   = options[:sortable].nil? ? true : options[:sortable]
           
           # Try to translate header
           options[:header] = @model.human_attribute_name(options[:header].to_s)
