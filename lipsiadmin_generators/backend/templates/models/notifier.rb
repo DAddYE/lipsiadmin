@@ -3,7 +3,7 @@ class Notifier < ActionMailer::Base
     recipients  account.email
     from        AppConfig.email_from
     subject     "[#{AppConfig.project}] #{I18n.t('backend.emails.registration.object')}"
-    body        :account => account, :url => "http://#{AppConfig.host_addr}/backend"
+    body        :account => account, :url => "#{AppConfig.host_addr}/backend"
   end
   
   def support_request(account, message)

@@ -10,6 +10,8 @@ en:
       editForm: "Edit {{model}} {{value}}"
       newForm: "New {{model}}"
       cantDelete: "You cannot delete this record."
+      page: "Page"
+      of: "of"
     sessions:
       wrong: "Wrong email or password"
       logout: "Correctly Logged Out"

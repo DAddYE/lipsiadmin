@@ -8,6 +8,7 @@ page.grid do |grid|
   grid.store do |store|
     store.url "/backend/accounts.json"
     store.fields @column_store.store_fields
+    store.sortInfo  :field => "accounts.created_at", :direction => "DESC"
   end
   grid.columns do |columns|
     columns.fields @column_store.column_fields

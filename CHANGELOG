@@ -1,5 +1,44 @@
-2009-05-11
-  * Fiexed the attachment and attachments tags
+2009-06-05
+  * Dump to 5.0 Version
+  * Support to ExtJs 3.0
+  * Now we can browse with like "static" pages with back & next buttons of browsers [Ragunalth]
+  * Now we can call directly a page, usefull for do a manual refresh of a page but also for condivide links.
+  * Added a new method "un" for remove listners of extjs components
+  * Removed "l" method because we just have to_l for have literal json (ex: "function add(){...}".to_l)
+  * Removed unusued literals
+  * Refactored add method, now is possible to add components
+  * Renamed in ColumnModel add => add_column for conflict reason with add component
+  * Refactored Configuration (used for extjs)
+  * Fixed toolbar for add_buttons like "->" (ex: tbar.add_button :text => "->")
+  * Fixed a extra comma in attachment generator
+  * Fixed account grid generator
+  * Fixed attachment_table, now correctly include utility_scopes
+  * Fixed a little typo in ext controller component
+  * Maked ext columns compatible with extjs 3.0 and 2.0
+  * Added the possibility to add buttons with their menu
+  * Fixed Pdf generator now dude to limtis of previous version we don't put html to stdin but we made a tmp file
+  * Added Erb Templates in Pdf Generator
+  * Added mswin compatibility with Pdf Generator
+  * Fixed Ext DateTimeFiled with allowblank
+  * Removed the default allowBlank: true from Ext.form.DateTimeField
+  * Updated pdf mail builder according to new changes
+  * Removed from Controller Pdf Builder the layout for compatiblity with pdf mailer
+  * Changed simple_error_messages_for, now is localizable like default rails version
+  * Fixed path in in menu generation expecially when we use params
+  * Fixed a little issue when we regenerate locales for our models
+  * Fixed menu with empty urls and submenus
+  * Added a new option for column_model for render datetime to a date (:renderer => :time_to_date)
+  * Added a new option for column_model for render percentage (:renderer => :percentage)
+  * Fixed ext_date_select and ext_datetime_select to correctly render empty date(time) without the option :emptyToNow => true
+  * Fixed correctly the time in ext_datetime_select when :emptyToNow => true
+  * Change the box, now for render it (for uniformity reason) we need to use -box "My Box" do; some; end; instead of =box "My Box" ...
+  * Added AccountAccess caching, you can expire that using Lipsiadmin::AccountAccess::Base.cache[account.id] = nil
+  * Added Rake Tasks for start|stop|restart loops/background_workers
+  * Added handler :after => "myfn()" to open_form
+  * Added a new option to attachment_tag and attachments_tag for only upload files without manage the old ones
+  * Added the possiblity to personalize ttbar using only necessary buttons like ttbar [:edit, :delete] or [:add, :delete]
+  * Fixed a little bug in state_session generator
+  * Added few new images in backend
 
 2009-05-28
   * Refactored account_access now current_account (account logged) is aviable in our roles

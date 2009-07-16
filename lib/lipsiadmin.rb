@@ -10,6 +10,7 @@ require 'view/helpers/backend_helper'
 require 'view/helpers/frontend_helper'
 require 'view/helpers/view_helper'
 require 'view/helpers/ext_helper'
+require 'view/helpers/pdf_helper'
 require 'controller/ext'
 require 'controller/pdf_builder'
 require 'controller/responds_to_parent'
@@ -41,6 +42,7 @@ ActionView::Base.class_eval do
   include Lipsiadmin::View::Helpers::FormTagHelper
   include Lipsiadmin::View::Helpers::DateHelper
   include Lipsiadmin::View::Helpers::CountrySelectHelper
+  include Lipsiadmin::View::Helpers::PdfHelper
 end
 
 ActionView::Helpers::FormBuilder.send(:include, Lipsiadmin::View::Helpers::FormBuilder)
@@ -55,6 +57,11 @@ ActionController::Base.class_eval do
   include Lipsiadmin::Controller::RespondsToParent
   include Lipsiadmin::Controller::Ext
   include Lipsiadmin::AccessControl::Authentication
+end
+
+ActionMailer::Base.class_eval do
+  include Lipsiadmin::Mailer::PdfBuilder
+  include Lipsiadmin::View::Helpers::PdfHelper  
 end
 
 # For Attachments

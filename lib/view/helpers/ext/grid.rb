@@ -27,7 +27,7 @@ module Lipsiadmin
     #     grid.base_path "/backend/posts"
     #     grid.forgery_protection_token request_forgery_protection_token
     #     grid.authenticity_token form_authenticity_token
-    #     grid.tbar  :default
+    #     grid.tbar  :default # or [:add, :edit, :delete] or [:edit, :delete]
     #     grid.store do |store|
     #       store.url "/backend/posts.json"
     #       store.fields @column_store.store_fields
@@ -52,20 +52,20 @@ module Lipsiadmin
       def initialize(options={}, &block)#:nodoc:
         # Call Super Class for initialize configuration
         @editable = options.delete(:editable)
-        
-        super("Ext.grid.#{@editable ? 'EditorGridPanel' : 'GridPanel' }", options)
+        super("Ext.grid.#{@editable ? 'EditorGridPanel' : 'GridPanel' }", { :plugins => [] }.merge(options))
 
         # Write default configuration if not specified
         config[:plugins]      ||= []
         viewConfig            :forceFit => true
-        clicksToEdit          1
         border                false
         bodyBorder            false
+        clicksToEdit          1
         region                "center"
         sm                    :checkbox
-        add_plugin            l("new Ext.grid.Search()")
         view                  :default
         render                true
+        config[:plugins] <<   "new Ext.grid.Search()".to_l
+        
         # We need to add a setTimeout because, we destroy
         # the grid before loading a new page/js.
         on(:dblclick) do |p|
@@ -88,29 +88,14 @@ module Lipsiadmin
       # 
       def sm(object)
         selmodel = case object
-          when :default  then Component.new("Ext.grid.CheckboxSelectionModel")
-          when :checkbox then Component.new("Ext.grid.CheckboxSelectionModel")
-          when :row      then Component.new("Ext.grid.RowSelectionModel")
+          when :default  then Component.new("Ext.grid.CheckboxSelectionModel", :prefix => get_var)
+          when :checkbox then Component.new("Ext.grid.CheckboxSelectionModel", :prefix => get_var)
+          when :row      then Component.new("Ext.grid.RowSelectionModel",      :prefix => get_var)
           else object
         end
         add_object(:sm, selmodel)
       end
       
-      # Define the title of the grid
-      def title(title, global=true)
-        global ? (before << "Backend.app.setTitle(#{title.to_json});") :  config[:title] = title
-      end
-      
-      # Assign plugins for the current grid
-      def plugins(plugins)
-        config[:plugins] = plugins
-      end
-      
-      # Add a single plugin to the grid plugins
-      def add_plugin(plugins)
-        config[:plugins] << plugins
-      end
-          
       # Generate or set a new Ext.Toolbar
       # You can pass tbar :default options that will create 
       # defaults buttons for add, edit and remove records, it's generate also
@@ -142,12 +127,27 @@ module Lipsiadmin
       #   tbar  :default
       # 
       def tbar(object=nil, &block)
-        tbar = object.is_a?(ToolBar) ? object : ToolBar.new
-        if object == :default
-          tbar.add l("Backend.locale.buttons.add"),    :id => "add",    :disabled => literal(false), :cls => "x-btn-text-icon add",    :handler => l("add")
-          tbar.add l("Backend.locale.buttons.edit"),   :id => "edit",   :disabled => literal(true),  :cls => "x-btn-text-icon edit",   :handler => l("edit")
-          tbar.add l("Backend.locale.buttons.remove"), :id => "remove", :disabled => literal(true),  :cls => "x-btn-text-icon remove", :handler => l("remove")
-          @default_tbar = true 
+        tbar = object.is_a?(ToolBar) ? object : ToolBar.new(:prefix => get_var)
+        if object == :default || object == :all
+          tbar.add_button :text => "Backend.locale.buttons.add".to_l,    :id => "add",    :disabled => false, :cls => "x-btn-text-icon add",    :handler => "add".to_l
+          tbar.add_button :text => "Backend.locale.buttons.edit".to_l,   :id => "edit",   :disabled => true,  :cls => "x-btn-text-icon edit",   :handler => "edit".to_l
+          tbar.add_button :text => "Backend.locale.buttons.remove".to_l, :id => "remove", :disabled => true,  :cls => "x-btn-text-icon remove", :handler => "remove".to_l
+          @ttbar_add, @ttbar_edit, @ttbar_delete = true, true, true
+        end
+        if object.is_a?(Array)
+          object.each do |button|
+            case button
+              when :add
+                tbar.add_button :text => "Backend.locale.buttons.add".to_l,    :id => "add",    :disabled => false, :cls => "x-btn-text-icon add",    :handler => "add".to_l
+                @ttbar_add = true
+              when :edit
+                tbar.add_button :text => "Backend.locale.buttons.edit".to_l,   :id => "edit",   :disabled => true,  :cls => "x-btn-text-icon edit",   :handler => "edit".to_l
+                @ttbar_edit = true
+              when :delete
+                tbar.add_button :text => "Backend.locale.buttons.remove".to_l, :id => "remove", :disabled => true,  :cls => "x-btn-text-icon remove", :handler => "remove".to_l
+                @ttbar_delete = true
+            end
+          end
         end
         yield tbar if block_given?
         add_object(:tbar, tbar)
@@ -164,7 +164,7 @@ module Lipsiadmin
       #   bbar :pageSize => params[:limit], :store => store.get_var, displayInfo: true
       # 
       def bbar(object=nil, &block)
-        bbar = object.is_a?(Hash) ? Component.new("Ext.PagingToolbar", object) : object
+        bbar = object.is_a?(Hash) ? Component.new("Ext.PagingToolbar", object.merge(:prefix => get_var)) : object
         add_object(:bbar, bbar)
       end
 
@@ -180,8 +180,8 @@ module Lipsiadmin
       # 
       def view(object=nil, &block)
         view = case object
-          when :default then Component.new("Ext.grid.GroupingView", { :forceFit => true })
-          when Hash     then Component.new("Ext.grid.GroupingView", { :forceFit => true }.merge(object))
+          when :default then Component.new("Ext.grid.GroupingView", { :forceFit => true, :prefix => get_var })
+          when Hash     then Component.new("Ext.grid.GroupingView", { :forceFit => true, :prefix => get_var }.merge(object))
           else object
         end
         add_object(:view, view)
@@ -189,7 +189,7 @@ module Lipsiadmin
       
       # Generate or set a new Ext.data.GroupingStore
       def store(object=nil, &block)
-        store = object.is_a?(Store) ? object : Store.new(&block)
+        store = object.is_a?(Store) ? object : Store.new(:prefix => get_var, &block)
         add_object(:store, store)
       end
       
@@ -199,7 +199,7 @@ module Lipsiadmin
         if config[:sm] && before.find { |js| js.start_with?("var #{config[:sm]} = new Ext.grid.CheckboxSelectionModel") }
           options[:columns] << config[:sm]
         end
-        cm = object.is_a?(ColumnModel) ? value : ColumnModel.new(options, &block)
+        cm = object.is_a?(ColumnModel) ? value : ColumnModel.new(options.merge(:prefix => get_var), &block)
         add_object(:cm, cm)
       end
       
@@ -255,15 +255,15 @@ module Lipsiadmin
       def get_selected(data=:id)
         raise_error "No Column Selection Model Defined" if config[:sm].blank?
         if data.to_sym == :id
-          l("#{config[:sm]}.getSelected().id")
+         "#{config[:sm]}.getSelected().id".to_l
         else
-          l("#{config[:sm]}.getSelected().data[#{data.to_json}]")
+          "#{config[:sm]}.getSelected().data[#{data.to_json}]"
         end
       end
       
       # Return the javascript for create a new Ext.grid.GridPanel
       def to_s
-        if @default_tbar
+        if @ttbar_add || @ttbar_edit || @ttbar_delete
           raise_error "You must provide the base_path for autobuild toolbar."                      if @base_path.blank? && @new_path.blank? && @edit_path.blank? && @destroy_path.blank?
           raise_error "You must provide the new_path for autobuild button new of toolbar."         if @base_path.blank? && @new_path.blank?
           raise_error "You must provide the edit_path for autobuild button edit of toolbar."       if @base_path.blank? && @edit_path.blank?
@@ -275,9 +275,7 @@ module Lipsiadmin
           raise_error "You must provide the store."                                                if config[:store].blank?
         end
         
-        if @default_tbar
-          after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable)
-        end
+        after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable)
         
         if config[:store] && @render
           after << "#{config[:store]}.on('beforeload', function(){ Backend.app.mask(); });"

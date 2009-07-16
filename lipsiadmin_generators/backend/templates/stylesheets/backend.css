@@ -6,6 +6,7 @@
 * http://www.lipsiasoft.com
 */
 a{text-decoration:none;color:#15428b;}
+a:visited{text-decoration:none;color:#15428b;}
 a:hover{text-decoration:none;color:#3764A0;}
 h3{padding-bottom:5px;color:#3764A0;}
 /*Custom CSS Form*/
@@ -35,12 +36,20 @@ ul.x-tab-strip-top{background:#C4D2E5 none;}
 .edit .x-btn-text{background-image:url(/images/backend/edit.gif);}
 .save .x-btn-text{background-image:url(/images/backend/save.gif);}
 .duplicate .x-btn-text{background-image:url(/images/backend/plugin.gif);}
-.x-toolbar-menu{background-image:url(/images/backend/bg-menu.png);}
+/*Correlations buttons*/
+.up         .x-btn-text{background-image:url(/images/backend/arrow_up.png);}
+.down       .x-btn-text{background-image:url(/images/backend/arrow_down.png);}
+.join       .x-btn-text{background-image:url(/images/backend/arrow_join.png);}
+.divide     .x-btn-text{background-image:url(/images/backend/arrow_divide.png);}
+.divide     .x-btn-text{background-image:url(/images/backend/arrow_divide.png);}
+.categories .x-btn-text{background-image:url(/images/backend/categories.gif);}
+/*Overrite some defaults*/
 .x-panel-header{background-image:url(/images/backend/bg-hd.png);background-color:#6f839a; text-align:center; color:#343f4b;}
 .x-panel-noborder .x-panel-header-noborder { border-bottom:none; }
+.x-html-editor-wrap{border:none;}
 /*Main Site*/
 .content{background-color:#FFF;}
-.label-title{padding:5px 0px 0px 0px;color:#3764A0;border-bottom:1px dotted #C4D2E5;padding-bottom:3px;margin:5px 10px 5px 10px;font-size:1.2em;font-weight:bold;}
+.label-title{padding:5px 0px 0px 0px;color:#3764A0;border-bottom:1px dotted #C4D2E5;padding-bottom:3px;margin:5px 0px 5px 0px;font-size:1.2em;font-weight:bold;}
 .label-image{padding:5px 5px 5px 5px;background-color:#DFE8F6;margin:10px 10px 0px 10px;border:1px solid #99BBE8;}
 .description{padding:10px 0px 5px 0px;font-style:italic;}
 .label-it{padding:5px 0px 5px 20px;background-image:url(/images/backend/it.gif);background-position:left center;background-repeat:no-repeat;}

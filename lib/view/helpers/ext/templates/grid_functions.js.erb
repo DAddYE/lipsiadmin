@@ -1,17 +1,19 @@
+<% if @ttbar_edit || @ttbar_delete %>
 <%= @sm %>.on('selectionchange', function(){
   var n = <%= @sm %>.getSelected();
   var btns = <%= @tbar %>.items.map;
 
    if(!n){
-    btns.remove.disable();
-    btns.edit.disable();
-     return;
+    <% if @ttbar_delete %>btns.remove.disable();<% end %>
+    <% if @ttbar_edit %>btns.edit.disable();<% end %>
+    return;
   } else {
-    btns.remove.enable();
-    btns.edit.enable();
+    <% if @ttbar_delete %>btns.remove.enable();<% end %>
+    <% if @ttbar_edit %>btns.edit.enable();<% end %>
     return;
    }
 });
+<% end %>
 
 <% if @editable %>
 <%= @var %>.on('cellmousedown', function(grid, rowIndex, colIndex, e){
@@ -62,15 +64,17 @@
   });
 });
 <% end %>
-
+<% if @ttbar_add %>
 function add(){
   Backend.app.load('<%= @new_path.blank? ? "#{@base_path}/new" : @new_path %>');
 }
-
+<% end %>
+<% if @ttbar_edit %>
 function edit(){
   Backend.app.load('<%= @edit_path || @base_path %>/'+<%= @sm %>.getSelected().id+'/edit');
 }
-
+<% end %>
+<% if @ttbar_delete %>
 function remove(){
   Ext.Msg.confirm(Backend.locale.messages.confirm.title, String.format(Backend.locale.messages.confirm.message, <%= @sm %>.getCount()), function(btn, text){
     if (btn == 'yes'){
@@ -99,3 +103,4 @@ function remove(){
     }
   });
 }
+<% end %>

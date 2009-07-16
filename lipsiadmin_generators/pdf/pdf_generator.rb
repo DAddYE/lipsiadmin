@@ -2,6 +2,7 @@ class PdfGenerator < Rails::Generator::NamedBase
   def initialize(runtime_args, runtime_options = {})
     runtime_args = ["pdf"].concat(runtime_args) # Skip usage
     super
+    usage if runtime_args.size == 1
   end
   
   def manifest
@@ -11,10 +12,6 @@ class PdfGenerator < Rails::Generator::NamedBase
 
       # Layout and Views
       m.directory "app/views/pdf"
-      m.directory "app/views/layouts"
-      
-      # Layout
-      m.template 'layout.html.erb', 'app/views/layouts/print.html.erb'
 
       # View template for each action.
       actions.each do |action|

@@ -22,7 +22,7 @@ module Lipsiadmin#:nodoc:
         @var    = options.delete(:var)
         @config = Configuration.new(options)
         @before, @after = [], []
-      
+        @items  = {}
         if self.class == Component && block_given?
           yield self 
         end
@@ -47,11 +47,21 @@ module Lipsiadmin#:nodoc:
       #      
       def get_var
         # I will nillify obj if they are blank
-        @var = nil            if @var == ""
-        @config.delete(:var)  if @config[:var] == ""
+        @var = nil            if @var.blank?
+        @config.delete(:var)  if @config[:var].blank?
+        
         # Return a correct var
         current_var = (@var || @config[:var] || build_var)
         @prefix.to_s + current_var.to_s
+      end
+
+      # Define the title of the component.
+      # 
+      # Every component can have a title, because in Lipsiadmin we use it 
+      # as a "pagetitle", but if you need it as a config you can provide global = false
+      # 
+      def title(title, global=true)
+        global ? (before << "Backend.app.setTitle(#{title.to_json});") :  config[:title] = title
       end
       
       # Write the the configuration of object from an hash
@@ -60,17 +70,17 @@ module Lipsiadmin#:nodoc:
         @config = Configuration.new(options)
       end
 
-      # Read the the configuration of object from an hash
+      # Return the configuration hash
       #
       def config
         @config
       end
       
-      def method_missing(method, arg=nil)#:nodoc:
-        if method.to_s.start_with?("get_")
-          @config[method.to_s.gsub("get_", "").to_sym]
+      def method_missing(method, arguments=nil, &block)#:nodoc:
+        if method.to_s =~ /^get_/
+          @config[method.to_s.gsub(/^get_/, "").to_sym]
         else
-          add_object(method, arg)
+          add_object(method, arguments)
         end
       end
       
@@ -104,44 +114,53 @@ module Lipsiadmin#:nodoc:
       #     #       new();
       #     #       Ext.Msg.alert("Hello", "world");
       #     #     });
-      # 
       #     grid.on :dblclick do |p|
       #       p.call "edit"
       #       p.call "new"
       #       p.ext_alert "Hello", "world"
       #     end
+      # 
       def on(event, function=nil, scope=nil, &block)
         # Remove old handlers
-        remove_listener(event)
-        scope = ", #{l(scope)}" unless scope.blank?        
+        un(event)
+        scope = ", #{scope.to_l}" unless scope.blank?        
         if function
           after << "#{get_var}.on(#{event.to_json}, #{function}#{scope});"
         else
           generator = ActionView::Helpers::PrototypeHelper::JavaScriptGenerator.new(self, &block)
-          after << "#{get_var}.on(#{event.to_json}, function() { #{generator.to_s.gsub("\n", "\n  ")}\n}#{scope});"
+          after << "#{get_var}.on(#{event.to_json}, function() { \n  #{generator.to_s.gsub("\n", "\n  ")}\n}#{scope});"
         end
       end
-      alias_method :add_listener, :on
       
       # Remove a listener
+      #   
+      #   Example: grid.un(:dblclick)
       # 
-      #   Example: grid.remove_listener(:dblclick)
-      def remove_listener(event)
-        @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
+      def un(event)
+        found = @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
+        after << "#{get_var}.un(#{event.to_json})" unless found
       end
       
-      # Generates a new Component for generate on the fly ExtJs Objects
+      # Generates and add new Component for generate on the fly ExtJs Objects
       # 
       #   Examples:
       # 
       #     # Generates:
-      #     #   var myComponent = new MyComponent({
-      #     #     default: true
-      #     #   });
-      #     grid.my_component grid.new_component("MyComponent") { |p| p.default true }
+      #     #   var panel = new Ext.Panel({
+      #     #     id: 'testPanel',
+      #     #     region: 'center',
+      #     #     ...
+      #     #   })
+      #     #   mycmp.add(panel)
+      #     #   
+      #     mycmp.add "Ext.Panel" do |panel| 
+      #       panel.id "testPanel",
+      #       panel.region :center
+      #       ...
+      #     end
       # 
-      def new_component(klass, options={}, &block)
-        Component.new(klass, options, &block)
+      def add(klass, options={}, &block)
+        add_object(Component.new(klass, options.merge(:prefix => get_var), &block))
       end
       
       # Used by ActionView::Helpers::PrototypeHelper::JavaScriptGenerator
@@ -149,31 +168,23 @@ module Lipsiadmin#:nodoc:
         yield
       end
       
-      
       # Returns the javascript for current component
-      #
-      #   # Generates: var rowSelectionModel = Ext.grid.RowSelectionModel();
-      #   Component.new("Ext.grid.RowSelectionModel")
       # 
-      def to_s
-        script = []
-        script << @before.uniq.compact.join("\n\n")
-        script << "var #{get_var} = new #{@klass}(#{config.to_s});"
-        script << @after.uniq.compact.join("\n\n")
+      #   # Generates: var rowSelectionModel = Ext.grid.RowSelectionModel();
+      #   Component.new("Ext.grid.RowSelectionModel").to_s
+      # 
+      def to_s(options={})
+        script = returning [] do |script|
+          script << @before.uniq.compact.join("\n\n")
+          script << "var #{get_var} = new #{@klass}(#{config.to_s});"
+          script << @after.uniq.compact.join("\n\n")
+        end
         script.delete_if { |s| s.blank? }.join("\n\n")
       end
       
       def raise_error(error)#:nodoc:
          raise ComponentError, error
       end
-      
-      # Returns an object whose <tt>to_json</tt> evaluates to +code+. Use this to pass a literal JavaScript 
-      # expression as an argument to another JavaScriptGenerator method.
-      #
-      def literal(code)
-        ActiveSupport::JSON::Variable.new(code.to_s)
-      end
-      alias_method :l, :literal
 
       private
         def render_javascript(template, assigns)
@@ -187,7 +198,8 @@ module Lipsiadmin#:nodoc:
             object.prefix = get_var
             @before.delete_if { |b| b.start_with?("var #{object.get_var} = new") }
             @before << object.to_s
-            @config[name.to_sym] = l(object.get_var)
+            @config[name.to_sym] = object.get_var.to_l
+            @items.merge!({ name.to_s.to_sym => object })
           else
             @config[name.to_sym] = object
           end

@@ -1,7 +1,12 @@
--content_for(:header) do
-  Header Here!
-
-Content Here!
+%html
+  %head
+    %meta{'http-equiv' => 'Content-Type', :content => 'text/html', :charset=>"utf-8"}
+    =stylesheet_link_tag "standard", "print"
+  %body
+    -pdf_header do
+      My Header
     
--content_for(:footer) do
-  Footer Here!
+    -pdf_footer do
+      My Footer
+      
+    My Content

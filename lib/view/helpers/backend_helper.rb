@@ -4,17 +4,49 @@ module Lipsiadmin
       module BackendHelper
         # This method work like builtin Rails error_message_for but use an Ext.Message.show({..})
         def simple_error_messages_for(*params)
-          options = params.last.is_a?(Hash) ? params.pop.symbolize_keys : {}
-          objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
-          count   = objects.inject(0) {|sum, object| sum + object.errors.count }
+          options = params.extract_options!.symbolize_keys
+
+          if object = options.delete(:object)
+            objects = [object].flatten
+          else
+            objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
+          end
+
+          count  = objects.inject(0) {|sum, object| sum + object.errors.count }
           unless count.zero?
-            error_messages = objects.map {|object| object.errors.full_messages.map {|msg| "<li>#{msg}</li>" } }
-            return content_tag(:script, "Ext.Msg.show({
-                        title:Backend.locale.messages.alert.title,
-                        msg: '<ul>#{escape_javascript(error_messages.join)}</ul>',
-                        buttons: Ext.Msg.OK,
-                        minWidth: 400 
-                      });", :type => Mime::JS)
+            html = {}
+            [:id, :class].each do |key|
+              if options.include?(key)
+                value = options[key]
+                html[key] = value unless value.blank?
+              else
+                html[key] = 'errorExplanation'
+              end
+            end
+            options[:object_name] ||= params.first
+
+            I18n.with_options :locale => options[:locale], :scope => [:activerecord, :errors, :template] do |locale|
+              header_message = if options.include?(:header_message)
+                options[:header_message]
+              else
+                object_name = options[:object_name].to_s.gsub('_', ' ')
+                object_name = I18n.t(object_name, :default => object_name, :scope => [:activerecord, :models], :count => 1)
+                locale.t :header, :count => count, :model => object_name
+              end
+              message = options.include?(:message) ? options[:message] : locale.t(:body)
+              error_messages = objects.sum {|object| object.errors.full_messages.map {|msg| content_tag(:li, ERB::Util.html_escape(msg)) } }.join
+
+              contents = ''
+              contents << content_tag(:p, message) unless message.blank?
+              contents << content_tag(:ul, error_messages, :class => :list)
+              
+              content_tag(:script, "Ext.Msg.show({
+                          title: '#{header_message}',
+                          msg: '<ul>#{contents}</ul>',
+                          buttons: Ext.Msg.OK,
+                          minWidth: 400 
+                        });", :type => Mime::JS)
+            end
           else
             ''
           end
@@ -162,7 +194,8 @@ module Lipsiadmin
         # 
         # Options can be one of the following:
         # 
-        # <tt>:image</tt>::     Indicate if the attachments are ONLY images.
+        # <tt>:image</tt>::       Indicate if the attachments are ONLY images.
+        # <tt>:only_upload</tt>:: Indicate that is not necessary manage the old attachments.
         # 
         # Examples:
         # 
@@ -180,40 +213,43 @@ module Lipsiadmin
           variable = instance_variable_get("@#{object_name}")
           html     = []
           html    << '<!-- Generated from Lipsiadmin -->'
-          html    << '<ul id="' + "#{method}-order" + '" class="label">'
-
-          if attachment = variable.send(method)
-            # Create first the remove link
-            remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
-                                                      :method => :delete, 
-                                                      :success => "$('#{method}_#{attachment.id}').remove();")
-
-            if options[:image]
-              fstyle  = "float:left;margin:5px;margin-left:0px;"
-              fclass  = "box-image"
-              ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
-              ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
-              ftag   += '  ' + remove_link
-              ftag   += '</div>'
-            else
-              fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
-              fclass  = "box-file"
-              ftag    = '<div style="float:left;cursor:pointer">'
-              ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
-              ftag   += '</div>'
-              ftag   += '<div style="float:right;cursor:pointer">'
-              ftag   += '  ' + remove_link
-              ftag   += '</div>'
-              ftag   += '<br style="clear:both" />'
-            end
-
-            html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
-            html << ' ' + ftag
-            html << '</li>'
-          end # End of Loop
-
-          html << '</ul>'
-          html << '<br style="clear:both" />'
+          
+          unless options[:only_upload]
+            html    << '<ul id="' + "#{method}-order" + '" class="label">'
+            
+            if attachment = variable.send(method)
+              # Create first the remove link
+              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
+                                                        :method => :delete, 
+                                                        :success => "$('#{method}_#{attachment.id}').remove();")
+            
+              if options[:image]
+                fstyle  = "float:left;margin:5px;margin-left:0px;"
+                fclass  = "box-image"
+                ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
+                ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
+                ftag   += '  ' + remove_link
+                ftag   += '</div>'
+              else
+                fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
+                fclass  = "box-file"
+                ftag    = '<div style="float:left;cursor:pointer">'
+                ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
+                ftag   += '</div>'
+                ftag   += '<div style="float:right;cursor:pointer">'
+                ftag   += '  ' + remove_link
+                ftag   += '</div>'
+                ftag   += '<br style="clear:both" />'
+              end
+            
+              html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
+              html << ' ' + ftag
+              html << '</li>'
+            end # End of Loop
+            
+            html << '</ul>'
+            html << '<br style="clear:both" />'
+          end
 
           flbl = options[:image] ? :upload_image : :upload_file
           html << '<div class="label-title">' + tl(flbl) + '</div>'
@@ -231,8 +267,9 @@ module Lipsiadmin
         # 
         # Options can be one of the following:
         # 
-        # <tt>:image</tt>::     Indicate if the attachments are ONLY images.
-        # <tt>:order</tt>::     Indicate if user can order files.
+        # <tt>:image</tt>::       Indicate if the attachments are ONLY images.
+        # <tt>:only_upload</tt>:: Indicate that is not necessary manage the old attachments.
+        # <tt>:order</tt>::       Indicate if user can order files.
         # 
         # Examples:
         # 
@@ -251,50 +288,53 @@ module Lipsiadmin
           variable = instance_variable_get("@#{object_name}")
           html     = []
           html    << '<!-- Generated from Lipsiadmin -->'
-          html    << '<ul id="' + "#{method}-order" + '" class="label">'
+          unless options[:only_upload]
+            html    << '<ul id="' + "#{method}-order" + '" class="label">'
+            
+            for attachment in variable.send(method).all(:order => :position)
+              # Create first the remove link
+              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
+                                                        :method => :delete, 
+                                                        :success => "$('#{method}_#{attachment.id}').remove();")
+            
+              if options[:image]
+                fstyle  = "float:left;margin:5px;margin-left:0px;"
+                fstyle += "cursor:move;" if options[:order]
+                fclass  = "box-image"
+                ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
+                ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
+                ftag   += '  ' + remove_link
+                ftag   += '</div>'
+              else
+                fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
+                fstyle += "cursor:move;" if options[:order]
+                fclass  = "box-file"
+                ftag    = '<div style="float:left;cursor:pointer">'
+                ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
+                ftag   += '</div>'
+                ftag   += '<div style="float:right;cursor:pointer">'
+                ftag   += '  ' + remove_link
+                ftag   += '</div>'
+                ftag   += '<br style="clear:both" />'
+              end
+            
+              html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
+              html << ' ' + ftag
+              html << '</li>'
+            end # End of Loop
+            
+            html << '</ul>'
+            html << '<br style="clear:both" />'
+          
 
-          for attachment in variable.send(method).all(:order => :position)
-            # Create first the remove link
-            remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
-                                                      :method => :delete, 
-                                                      :success => "$('#{method}_#{attachment.id}').remove();")
-
-            if options[:image]
-              fstyle  = "float:left;margin:5px;margin-left:0px;"
-              fstyle += "cursor:move;" if options[:order]
-              fclass  = "box-image"
-              ftag    = '<div>' + image_tag(attachment.url(:thumb)) + '</div>'
-              ftag   += '<div style="text-align:center;padding:5px;cursor:pointer">'
-              ftag   += '  ' + remove_link
-              ftag   += '</div>'
-            else
-              fstyle  = "padding:5px;border-bottom:1px solid #DDE7F5;"
-              fstyle += "cursor:move;" if options[:order]
-              fclass  = "box-file"
-              ftag    = '<div style="float:left;cursor:pointer">'
-              ftag   += ' ' + link_to(attachment.attached_file_name, attachment.url) + ' ' + number_to_human_size(attachment.attached_file_size)
-              ftag   += '</div>'
-              ftag   += '<div style="float:right;cursor:pointer">'
-              ftag   += '  ' + remove_link
-              ftag   += '</div>'
-              ftag   += '<br style="clear:both" />'
+            if options[:order]
+              constraint = options[:image] ? "horizontal" : "vertical"
+              html << '<div id="' + "#{method}-message" + '" style="padding:5px">&nbsp;</div>'
+              html << sortable_element("#{method}-order", :url => "/backend/attachments/order", :update => "#{method}-message", :constraint => constraint,
+                                                          :complete => visual_effect(:highlight, "#{method}-message", :duration => 0.5))
             end
-
-            html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
-            html << ' ' + ftag
-            html << '</li>'
-          end # End of Loop
-
-          html << '</ul>'
-          html << '<br style="clear:both" />'
-
-          if options[:order]
-            constraint = options[:image] ? "horizontal" : "vertical"
-            html << '<div id="' + "#{method}-message" + '" style="padding:5px">&nbsp;</div>'
-            html << sortable_element("#{method}-order", :url => "/backend/attachments/order", :update => "#{method}-message", :constraint => constraint,
-                                                        :complete => visual_effect(:highlight, "#{method}-message", :duration => 0.5))
           end
-
+          
           flbl = options[:image] ? :upload_images : :upload_files
           html << '<div class="label-title">'+ tl(flbl) +'</div>'
           html << '<table>'
@@ -411,7 +451,8 @@ module Lipsiadmin
         # The third argument are callbacks that may be specified:
         # 
         # <tt>:before</tt>::     Called before request is initiated.
-        # <tt>:update</tt>::     Called after user press +save+ button.
+        # <tt>:after</tt>::      Called after  request is initiated.
+        # <tt>:on_save</tt>::    Called after user press +save+ button.
         #                        This call are performed in an handler where
         #                        you have access to one variables:
         #                        <tt>:win</tt>::  Backend.window
@@ -427,7 +468,7 @@ module Lipsiadmin
         #   #       }
         #   #     }).show();
         #   # return false;" href="#">Edit Post</a>
-        #   open_form "Edit Post", "/backend/posts/'+$('comment_post_id').value+'/edit", :update => "someFn();"
+        #   open_form "Edit Post", "/backend/posts/'+$('comment_post_id').value+'/edit", :update => "someFn(win);"
         #   
         def open_form(text, url, options={})
           options[:before] = options[:before] + ";" if options[:before]
@@ -437,11 +478,10 @@ module Lipsiadmin
               url: '#{url}', 
               form: true,
               listeners: {
-                saved: function(win){
-                  #{options[:update]}
-                }
+                saved: function(win){ #{options[:on_save]} },
+                close: function(panel){ #{options[:after]} }
               }
-            }).show()
+            }).show();
           JAVASCRIPT
           link_to_function(text, javascript.gsub(/\n/, " "))
         end
@@ -464,7 +504,7 @@ module Lipsiadmin
         # 
         #   Examples:
         # 
-        #     =box "My Title", "My Subtitle", :submit => true, :collapsible => true, :style => "padding:none", :start => :close do
+        #     -box "My Title", "My Subtitle", :submit => true, :collapsible => true, :style => "padding:none", :start => :close do
         #       my content
         # 
         # Defaults:
@@ -474,9 +514,9 @@ module Lipsiadmin
         # * :start => :close
         # 
         def box(title=nil, subtitle=nil, options={}, &block)
-          options[:style] ||= "width:99%;"
+          options[:style] ||= "width:100%;"
           options[:start] ||= :open
-          return <<-HTML
+          concat <<-HTML
             <div class="x-box" style="#{options[:style]}">
               <div class="x-box-tl">
                 <div class="x-box-tr">

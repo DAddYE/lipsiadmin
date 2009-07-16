@@ -1,5 +1,6 @@
 module Lipsiadmin
   module AccessControl
+
     module Helper#:nodoc:
       def recognize_path(path)#:nodoc:
         case path
@@ -42,6 +43,8 @@ module Lipsiadmin
     #   - Access to all actions EXCEPT <tt>details</tt> of controller "/backend/accounts"
     # 
     class Base
+      @@cache = {}
+      cattr_accessor :cache
       
       class << self
         
@@ -58,13 +61,14 @@ module Lipsiadmin
         def roles
           @roles.nil? ? [] : @roles.collect(&:to_s)
         end
-        
+
+        # Returns maps (allowed && denied actions) for the given account
         def maps_for(account)
-          @mappers.collect { |m| m.call(account) }.
-                   reject  { |m| !m.allowed? }
+          @@cache[account.id] ||= @mappers.collect { |m| m.call(account) }.
+                                           reject  { |m| !m.allowed? }
+          @@cache[account.id]
         end
       end
-      
     end
     
     class Mapper
@@ -178,18 +182,21 @@ module Lipsiadmin
     class Menu
       include Helper
       include ActionController::UrlWriter
-      attr_reader :name, :options, :url, :items
+      attr_reader :name, :options, :items
       
       def initialize(name, path=nil, options={}, &block)#:nodoc:
         @name    = name
+        @url     = path
         @options = options
         @allowed = []
         @items   = []        
-        if path
-          @url     = recognize_path(path) 
-          @allowed << { :controller => @url[:controller] } if path
-        end
+        @allowed << { :controller => recognize_path(path)[:controller] } if @url
         yield self if block_given?
+      end
+      
+      # Return the url of this menu
+      def url
+        @url.is_a?(Hash) ? url_for(@url.merge(:only_path => true)) : @url
       end
       
       # Add a new submenu to the menu
@@ -215,12 +222,12 @@ module Lipsiadmin
       
       # Return ExtJs Config for this menu
       def config
-        if @url.blank?
+        if @url.blank? && @items.empty?
           options = human_name
         else
           options = @options.merge(:text => human_name)
           options.merge!(:menu => @items.collect(&:config)) if @items.size > 0
-          options.merge!(:handler => "function(){ Backend.app.load('#{url_for(@url.merge(:only_path => true))}') }".to_l)
+          options.merge!(:handler => "function(){ Backend.app.load('#{url}') }".to_l) if !@url.blank?
         end
         options
       end

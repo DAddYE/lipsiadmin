@@ -12,7 +12,6 @@ module Lipsiadmin
     # <tt>has_many_attachments</tt> can override/add styles/validations etc...
     # 
     class AttachmentTable < ActiveRecord::Base
-      
       def self.inherited(subclass)#:nodoc:
         super
         subclass.write_inheritable_attribute(:attachment_definitions, {}) if subclass.attachment_definitions.nil?

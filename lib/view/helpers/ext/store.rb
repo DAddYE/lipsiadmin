@@ -36,10 +36,9 @@ module Lipsiadmin#:nodoc:
     #   end
     #
     class Store < Component
-      attr_accessor :items
-      
+
       def initialize(options={}, &block)#:nodoc:
-        @items   = []
+        @fields   = []
         super("Ext.data.GroupingStore", options)
         remoteSort true                     if config[:remoteSort].blank?
         baseParams("_method" => "GET")      if config[:baseParams].blank?
@@ -53,7 +52,7 @@ module Lipsiadmin#:nodoc:
       
       # This add automatically fields from an array
       def fields(fields)
-        fields.each { |options| add(nil, options) }
+        fields.each { |options| add_field(nil, options) }
       end
 
       # Add fields to a Ext.data.JsonReader 
@@ -69,21 +68,22 @@ module Lipsiadmin#:nodoc:
       # 
       #   add "accounts.datetime", :type => :datetime
       #
-      def add(name=nil, options={})#:nodoc:
+      def add_field(name=nil, options={})#:nodoc:
         options[:name] = name if name
         case options[:type]
-          when :date     then options.merge!({ :type => "date", :dateFormat => "Y-m-d" })
-          when :datetime then options.merge!({ :type => "date", :dateFormat => "c" })
+          when :date          then options.merge!({ :type => "date", :dateFormat => "Y-m-d" })
+          when :time_to_date  then options.merge!({ :type => "date", :dateFormat => "c" })
+          when :datetime      then options.merge!({ :type => "date", :dateFormat => "c" })
         end
         raise ComponentError, "You must provide a Name for all fields" if options[:name].blank?
-        @items << Configuration.new(options)
+        @fields << Configuration.new(options)
       end
       
       # Return the javascript for create a new Ext.data.GroupingStore 
       def to_s
         raise ComponentError, "You must provide the correct var the store."       if get_var.blank?
         raise ComponentError, "You must provide the url for get the store data."  if @url.blank? && config[:proxy].blank?
-        raise ComponentError, "You must provide some fields for get build store." if items.blank?
+        raise ComponentError, "You must provide some fields for get build store." if @fields.blank?
         config[:proxy]  = default_proxy  if config[:proxy].blank?
         config[:reader] = default_reader if config[:reader].blank?
         super
@@ -91,12 +91,12 @@ module Lipsiadmin#:nodoc:
       
       private
         def default_proxy
-          l("new Ext.data.HttpProxy(#{Configuration.new(:url => @url).to_s(2)})")
+         "new Ext.data.HttpProxy(#{Configuration.new(:url => @url).to_s(2)})".to_l
         end
 
         def default_reader
-          options = { :id => "id", :totalProperty => "count", :root => "results", :fields => l("["+items.collect { |i| i.to_s(3) }.join(",")+"]")  }
-          l("new Ext.data.JsonReader(#{Configuration.new(options).to_s(2)})")
+          options = { :id => "id", :totalProperty => "count", :root => "results", :fields => ("["+@fields.collect { |i| i.to_s(3) }.join(",")+"]").to_l  }
+          "new Ext.data.JsonReader(#{Configuration.new(options).to_s(2)})".to_l
         end
 
     end

@@ -56,7 +56,7 @@ module Lipsiadmin
           
           return allow && !deny
         end
-
+        
         # Returns a helper to pass in a <tt>before_filter</tt> for check if
         # an account are: <tt>logged_in?</tt> and <tt>allowed?</tt>
         # 

@@ -2,6 +2,7 @@ require 'view/helpers/ext/component'
 require 'view/helpers/ext/grid'
 require 'view/helpers/ext/column_model'
 require 'view/helpers/ext/tool_bar'
+require 'view/helpers/ext/button'
 require 'view/helpers/ext/configuration'
 require 'view/helpers/ext/store'
 
@@ -46,9 +47,9 @@ module Lipsiadmin
         #   # Generates: Backend.app.loadJs('/my/javascript.js');
         #   load(:controller => :my, :action => :javascript, :format => :js)
         #
-        def load(location, cache = false)
+        def load(location)
           url = location.is_a?(String) ? location : @context.url_for(location)
-          call "Backend.app.load", url, cache
+          call "Backend.app.load", url
         end
       
         # Show errors (if they are) for the given +objects+ and show a Ext.Message 

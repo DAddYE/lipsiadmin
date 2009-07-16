@@ -4,6 +4,8 @@ class StateSessionGenerator < Rails::Generator::Base
   def manifest    
     record do |m|
       # Controller class, functional test, helper, and views.
+      m.directory 'app/controllers/backend'
+      m.directory 'test/functional/backend'
       m.template 'controller.rb', 'app/controllers/backend/state_sessions_controller.rb'
       m.template 'functional_test.rb', 'test/functional/backend/state_sessions_controller_test.rb'
       

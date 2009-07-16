@@ -52,11 +52,13 @@ module Lipsiadmin
         # path to the pd4ml jarfile
         jars_path = Lipsiadmin::Utils::PdfBuilder::JARS_PATH
 
-        # set the landescape
-        landescape = (body[:landescape].delete || false)
-        
+        body[:landescape] = body[:landescape] ? "LANDESCAPE" : "PORTRAIT"
+
+        # try to find erb extension
+        ext = File.exist?("#{RAILS_ROOT}/app/views/pdf/#{template}.html.erb") ? "erb" : "haml"
+
         # encode the template
-        input = encode_entities(render_message("/pdf/#{template}.html.haml", body))
+        input = encode_entities(render_message("/pdf/#{template}.html.#{ext}", body))
 
         # search for stylesheet links and make their paths absolute.
         input.gsub!('<link href="/javascripts', '<link href="' + RAILS_ROOT + '/public/javascripts')
@@ -66,15 +68,27 @@ module Lipsiadmin
         input.gsub!('src="/', 'src="' + RAILS_ROOT + '/public/')
         input.gsub!('url(','url('+RAILS_ROOT+'/public')
 
-        cmd = "java -Xmx512m -Djava.awt.headless=true -cp #{jars_path}/pd4ml.jar:.:#{jars_path} Pd4Ruby '#{input}' 950 A4 #{landescape}"
+        # write our temp file
+        t = Tempfile.new("pd4ml.html", "#{Rails.root}/tmp")
+        t.binmode
+        t.write(input)
+        t.flush
 
-        output = %x[cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} \n #{cmd}]
+        # build the command
+        class_path = "#{jars_path}/pd4ml.jar:.:#{jars_path}"
+        class_path = "\"#{jars_path}/pd4ml.jar\";\"#{jars_path}\"" if RUBY_PLATFORM =~ /mswin/
+        cmd = "cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} && java -Xmx512m -Djava.awt.headless=true -cp #{class_path} Pd4Ruby --file \"#{t.path}\" --width 950 --orientation #{body[:landescape]} 2>&1"
+
+        # grep the output
+        output = IO.popen(cmd) { |s| s.read }
 
         # raise error if process returned false (ie: a java error)
-        raise PdfError, "An unknonwn error occurred while generating pdf: cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} && #{cmd}" if $?.success? === false
+        raise PdfError, "An unknonwn error occurred while generating pdf" if $?.exitstatus == 127
 
-        #return raw pdf binary-stream
-        output                
+        # return raw pdf binary-stream
+        output
+      ensure
+        t.close
       end
     end
 

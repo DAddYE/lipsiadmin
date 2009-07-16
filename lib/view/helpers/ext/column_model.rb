@@ -35,20 +35,24 @@ module Lipsiadmin
       
       # This add automatically fields from an array
       def fields(fields)
-        fields.each { |options| add(nil, nil, options); }
+        fields.each { |options| add_column(nil, nil, options); }
       end
       
       # Add columns to a Ext.grid.ColumnModel
       #
       #   # Generates: { header: "Created At", dataIndex: "accounts.datetime", sortable => true }
-      #   add "Created At", "accounts.datetime", :sortable => l(true)
+      #   add "Created At", "accounts.datetime", :sortable => true
       # 
       # You can pass :renderer
       #   
       #   # Generates: Ext.util.Format.dateRenderer()
+      #   :render   => :time_to_date # This render a datetime to a date
+      #   # Generates: Ext.util.Format.dateRenderer()
       #   :renderer => :date
       #   # Generates: Ext.util.Format.dateTimeRenderer()
       #   :renderer => :datetime
+      #   # Generates: Ext.util.Format.percentage
+      #   :renderer => :percentage
       #   # Generates: Ext.util.Format.eurMoney
       #   :renderer => :eur_money
       #   # Generates: Ext.util.Format.usMoney
@@ -95,37 +99,39 @@ module Lipsiadmin
       #   :textfield     =>   Ext.form.TextField
       #   :timefield     =>   Ext.form.TimeField
       # 
-      def add(name=nil, data=nil, options={})
+      def add_column(name=nil, data=nil, options={})
         options[:header] = name if name
         options[:dataIndex] = data if data
         
         if options[:editor]
-          xtype = options[:editor].delete(:xtype)
+          xtype = options[:editor][:xtype]
           case xtype
             when :checkbox      then options.delete(:editor); options.merge!(:checkbox => true)
-            when :combo         then options.merge!(:editor => l("new Ext.form.ComboBox(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :datefield     then options.merge!(:editor => l("new Ext.form.DateField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :numberfield   then options.merge!(:editor => l("new Ext.form.NumberField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :radio         then options.merge!(:editor => l("new Ext.form.Radio(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :textarea      then options.merge!(:editor => l("new Ext.form.TextArea(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :textfield     then options.merge!(:editor => l("new Ext.form.TextField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :timefield     then options.merge!(:editor => l("new Ext.form.TimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
-            when :datetimefield then options.merge!(:editor => l("new Ext.form.DateTimeField(#{Configuration.new(options[:editor]).to_s(3)})"))
+            when :combo         then options.merge!(:editor => "new Ext.form.ComboBox(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :datefield     then options.merge!(:editor => "new Ext.form.DateField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :numberfield   then options.merge!(:editor => "new Ext.form.NumberField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :radio         then options.merge!(:editor => "new Ext.form.Radio(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :textarea      then options.merge!(:editor => "new Ext.form.TextArea(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :textfield     then options.merge!(:editor => "new Ext.form.TextField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :timefield     then options.merge!(:editor => "new Ext.form.TimeField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
+            when :datetimefield then options.merge!(:editor => "new Ext.form.DateTimeField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
           end
         end
         
         case options[:renderer]
-          when :date        then options.merge!(:renderer => l("Ext.util.Format.dateRenderer()"))
-          when :datetime    then options.merge!(:renderer => l("Ext.util.Format.dateTimeRenderer()"))
-          when :eur_money   then options.merge!(:renderer => l("Ext.util.Format.eurMoney"))
-          when :us_money    then options.merge!(:renderer => l("Ext.util.Format.usMoney"))
-          when :boolean     then options.merge!(:renderer => l("Ext.util.Format.boolRenderer"))
-          when :capitalize  then options.merge!(:renderer => l("Ext.util.Format.capitalize"))
-          when :file_size   then options.merge!(:renderer => l("Ext.util.Format.fileSize"))
-          when :downcase    then options.merge!(:renderer => l("Ext.util.Format.lowercase"))
-          when :trim        then options.merge!(:renderer => l("Ext.util.Format.trim"))
-          when :undef       then options.merge!(:renderer => l("Ext.util.Format.undef"))
-          when :upcase      then options.merge!(:renderer => l("Ext.util.Format.uppercase"))
+          when :time_to_date then options.merge!(:renderer => "Ext.util.Format.dateRenderer()".to_l)
+          when :date         then options.merge!(:renderer => "Ext.util.Format.dateRenderer()".to_l)
+          when :datetime     then options.merge!(:renderer => "Ext.util.Format.dateTimeRenderer()".to_l)
+          when :percentage   then options.merge!(:renderer => "Ext.util.Format.percentage".to_l)
+          when :eur_money    then options.merge!(:renderer => "Ext.util.Format.eurMoney".to_l)
+          when :us_money     then options.merge!(:renderer => "Ext.util.Format.usMoney".to_l)
+          when :boolean      then options.merge!(:renderer => "Ext.util.Format.boolRenderer".to_l)
+          when :capitalize   then options.merge!(:renderer => "Ext.util.Format.capitalize".to_l)
+          when :file_size    then options.merge!(:renderer => "Ext.util.Format.fileSize".to_l)
+          when :downcase     then options.merge!(:renderer => "Ext.util.Format.lowercase".to_l)
+          when :trim         then options.merge!(:renderer => "Ext.util.Format.trim".to_l)
+          when :undef        then options.merge!(:renderer => "Ext.util.Format.undef".to_l)
+          when :upcase       then options.merge!(:renderer => "Ext.util.Format.uppercase".to_l)
         end
         
         raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || 

@@ -18,5 +18,6 @@ h2   { color:#525151; font-size:18px; margin:0px 0px 15px 0px; padding:0; }
 #content_intro { text-align:center; margin:210px 0px 0px 0px; color: #525151;}
 #content_intro a { color: #525151;}
 #copyright { position:absolute; top:100%; left:20px; margin-top:-30px; color:#FFF; }
+/* Classes */
 .field { padding-bottom:5px; }
 .bottom { color:#0BB1E1; margin-top:20px; }

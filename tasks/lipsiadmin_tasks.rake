@@ -1,5 +1,22 @@
 namespace :lipsiadmin do
   
+  namespace :loops do
+    desc "Start all yours loops"
+    task :start do
+      print "Starting all loops"
+      system "#{RAILS_ROOT}/script/loops -a -d &> /dev/null"
+      puts "... done."
+    end
+    
+    desc "Stop all yours loops"
+    task :stop do
+      system "#{RAILS_ROOT}/script/loops -a -s"
+    end
+    
+    desc "Restart all yours loops"
+    task :restart => [:stop, :start]
+  end
+  
   namespace :update do
     desc "Update your javascripts from your current lipsiadmin install"
     task :javascripts do
@@ -46,7 +63,7 @@ namespace :lipsiadmin do
             if File.exist?(filename)
               locale = File.open(filename).read
               columns.each do |c|
-                locale += "        #{c}: #{klass.human_attribute_name(c)}" unless locale.include?("#{c}:")
+                locale += "\n        #{c}: #{klass.human_attribute_name(c)}" unless locale.include?("#{c}:")
               end
               print "#{lang} already exist ... "; $stdout.flush
               # Do some ere

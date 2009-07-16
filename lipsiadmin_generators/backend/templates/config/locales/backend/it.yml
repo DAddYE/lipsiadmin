@@ -9,6 +9,8 @@ it:
       editForm: "Modifica {{model}} {{value}}"
       newForm: "Nuovo {{model}}"
       cantDelete: "Non puoi cancellare questo record."
+      page: "Pagina"
+      of: "di"
     sessions:
       wrong: "Email o password sbagliati"
       logout: "Sei correttamente uscito dal sistema"

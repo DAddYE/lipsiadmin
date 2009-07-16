@@ -5,8 +5,12 @@
 Ext.util.Format.eurMoney = function(v){
   v = (Math.round((v-0)*100))/100;
   v = (v == Math.floor(v)) ? v + ".00" : ((v*10 == Math.floor(v*10)) ? v + "0" : v);
-  return "€" + v ;
+  return v + " €" ;
 };
+
+Ext.util.Format.percentage = function(v, p, record){
+  return (v + ' %')
+}
 
 Ext.util.Format.boolRenderer = function(v, p, record){
   p.css += ' x-grid3-check-col-td'; 
@@ -15,12 +19,6 @@ Ext.util.Format.boolRenderer = function(v, p, record){
 
 // Tree DropConfig to allow Drop on Leaf
 var treeDropConfig = { getDropPoint : function(e, n, dd){ var tn = n.node; if(tn.isRoot){ return tn.allowChildren !== false ? "append" : false; } var dragEl = n.ddel; var t = Ext.lib.Dom.getY(dragEl), b = t + dragEl.offsetHeight; var y = Ext.lib.Event.getPageY(e); var noAppend = tn.allowChildren === false; if(this.appendOnly || tn.parentNode.allowChildren === false){ return noAppend ? false : "append"; } var noBelow = false; if(!this.allowParentInsert){ noBelow = tn.hasChildNodes() && tn.isExpanded(); } var q = (b - t) / (noAppend ? 2 : 3); if(y >= t && y < (t + q)){ return "above"; }else if(!noBelow && (noAppend || y >= b-q && y <= b)){ return "below"; }else{ return "append"; } }, completeDrop : function(de){ var ns = de.dropNode, p = de.point, t = de.target; if(!Ext.isArray(ns)){ ns = [ns]; } var n; for(var i = 0, len = ns.length; i < len; i++){ n = ns[i]; if(p == "above"){ t.parentNode.insertBefore(n, t); }else if(p == "below"){ t.parentNode.insertBefore(n, t.nextSibling); }else{ t.leaf = false; t.appendChild(n); } } n.ui.focus(); if(this.tree.hlDrop){ n.ui.highlight(); } t.ui.endDrop(); this.tree.fireEvent("nodedrop", de); } };
-
-// Fix for Prototype Adapter
-Ext.lib.Event.getTarget = function(e){ 
-  var ee = e.browserEvent || e; 
-  return ee.target ? Event.element(ee) : null;  
-};
 
 // CheckBox column
 Ext.grid.CheckColumn = function(config){
@@ -110,7 +108,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
     /**
      * @cfg {Object} dateConfig Config for DateField constructor.
      */
-    ,allowBlank: false
+    ,allowBlank: true
     /**
      * @cfg {Object} true to hide the time, default false.
      */    
@@ -145,7 +143,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         var timeConfig = Ext.apply({}, {
              id:this.id + '-time'
             ,format:this.timeFormat || Ext.form.TimeField.prototype.format
-            ,allowBlank:this.allowBlank
+            ,allowBlank:(this.hideTime || this.allowBlank)
             ,width:this.timeWidth
             ,selectOnFocus:this.selectOnFocus
             ,listeners:{
@@ -227,7 +225,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         this.isRendered = true;
         if (this.el.dom.value){
           this.setValue(this.el.dom.value);
-        } else {
+        } else if (true === this.emptyToNow) {
           this.setValue(new Date());
           this.updateHidden();
         }
@@ -252,7 +250,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
      * private initializes internal dateValue
      */
     ,initDateValue:function() {
-        this.dateValue = this.otherToNow ? new Date() : new Date(1970, 0, 1, 0, 0, 0);
+        this.dateValue = this.otherToNow ? new Date() : '';
     }
     // }}}
     // {{{
@@ -458,7 +456,7 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
      * private Sets the value of TimeField
      */
     ,setTime:function(date) {
-        this.tf.setValue(date);
+      this.tf.setRawValue(date);
     } // eo function setTime
     // }}}
     // {{{
@@ -497,8 +495,8 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
      */
     ,setValue:function(val) {
         if(!val && true === this.emptyToNow) {
-            this.setValue(new Date());
-            return;
+          this.setValue(new Date());
+          return;
         }
         else if(!val) {
             this.setDate('');
@@ -508,15 +506,16 @@ Ext.form.DateTimeField = Ext.extend(Ext.form.Field, {
         }
         if ('number' === typeof val) {
           val = new Date(val);
+        } else if('string' === typeof val && this.hiddenFormat) {
+            val = Date.parseDate(val, this.hiddenFormat)
         }
         val = val ? val : new Date(1970, 0 ,1, 0, 0, 0);
         var da, time;
         if(val instanceof Date) {
             this.setDate(val);
-            this.setTime(val);
+            this.setTime(val.format(this.timeFormat));
             this.dateValue = new Date(val);
-        }
-        else {
+        } else {
             da = val.split(this.dtSeparator);
             this.setDate(da[0]);
             if(da[1]) {

@@ -105,7 +105,9 @@ module Lipsiadmin
           options[:mapping] ||= options[:dataIndex].to_s.downcase.gsub(/[^a-z0-9]+/, '_').
                                                                   gsub(/-+$/, '_').
                                                                   gsub(/^-+$/, '_')
-
+          # Now is necessary for our columns an ID
+          options[:id] = options[:mapping]
+          
           @data << options
         end
 
@@ -125,8 +127,8 @@ module Lipsiadmin
         def store_fields
           @data.inject([]) do |fields, data|
             hash = { :name => data[:dataIndex], :mapping => data[:mapping] }
-            hash.merge!(:type => data[:renderer]) if data[:renderer] && 
-                                                     (data[:renderer] == :date || data[:renderer] == :datetime)
+            hash.merge!(:type => data[:renderer]) if  data[:renderer] && 
+                                                     (data[:renderer] == :date || data[:renderer] == :datetime || data[:renderer] == :time_to_date)
             fields << hash
             fields
           end

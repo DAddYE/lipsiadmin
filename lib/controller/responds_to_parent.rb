@@ -20,7 +20,7 @@ module Lipsiadmin
       def redirect_parent_to(location)
         responds_to_parent do
           render :update do |page|
-            page.load location, true
+            page.load location
           end
         end
       end

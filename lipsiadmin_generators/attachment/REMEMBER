@@ -10,10 +10,6 @@ Please remember to:
   
       - has_one_attachment :myfile
       - has_many_attachments :myfiles
-  
-  - Check/Add in account_access.rb
-	
-	  - role.allow_all_actions "/backend/attachments"
       
   You can add some validations/processor in your models like:
   

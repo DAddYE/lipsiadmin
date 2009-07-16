@@ -14,9 +14,10 @@ module Lipsiadmin
       # Optionally you can specify the indentation spaces.
       def to_s(indent=1)
         return if self.empty?
-        i = ("  "*indent)
+        i = (" "*indent)
         s = self.size > 0 ? "\n" : "  "
-        "{#{s}" + self.reject { |k,v| k.blank? || v.to_s.blank? }.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i}}"
+        r = "{#{s}" + self.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i if i.size > 1}}"
+        return r =~ /\{\s*\}/ ? "" : r
       end
       
       private
