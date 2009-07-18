@@ -80,9 +80,9 @@ module Lipsiadmin
         @allowed         = []
         @denied          = []
         @roles           = roles
-        @account         = account
+        @account_id      = account.is_a?(Account) ? account.id : account
         # Mantain backward compatibility
-        yield(self, @account) rescue yield(self)
+        yield(self, Account.find(@account_id)) rescue yield(self)
       end
       
       # Create a new project module
@@ -112,7 +112,7 @@ module Lipsiadmin
       
       # Return true if current_account role is included in given roles
       def allowed?
-        @roles.any? { |r| r.to_s.downcase == @account.role.downcase }
+        @roles.any? { |r| r.to_s.downcase == Account.find(@account_id).role.downcase }
       end
       
       # Return allowed actions/controllers
