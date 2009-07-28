@@ -6,7 +6,8 @@ module Lipsiadmin
     # go here: http://pd4ml.com/buy.htm and then put your licensed jar in a directory in your
     # project then simply calling this:
     # 
-    #   Lipsiadmin::Utils::PdfBuilder::JARS_PATH = "here/is/my/licensed/pd4ml"
+    #   Lipsiadmin::Utils::PdfBuilder.jars_path = "here/is/my/licensed/pd4ml"
+    #   Lipsiadmin::Utils::PdfBuilder.view_path = "keep/template/in/other/path"
     # 
     # you can use your version without any problem.
     # 
@@ -17,16 +18,21 @@ module Lipsiadmin
     # 
     # are present will use it
     #
-    module PdfBuilder
+    class PdfBuilder
       if File.exist?("#{Rails.root}/vendor/pd4ml/pd4ml.jar") &&
          File.exist?("#{Rails.root}/vendor/pd4ml/ss_css2.jar")
 
-        JARS_PATH = "#{Rails.root}/vendor/pd4ml"
+        @@jars_path = "#{Rails.root}/vendor/pd4ml"
       else
-        JARS_PATH = "#{File.dirname(__FILE__)}/../../resources/pd4ml"
+        @@jars_path = "#{File.dirname(__FILE__)}/../../resources/pd4ml"
       end
       
-      PD4RUBY_PATH = "#{File.dirname(__FILE__)}/../../resources/pd4ml/ruby"
+      @@pd4ruby_path = "#{File.dirname(__FILE__)}/../../resources/pd4ml/ruby"
+      @@view_path    = "#{RAILS_ROOT}/app/views/pdf"
+      
+      cattr_accessor :jars_path
+      cattr_accessor :pd4ruby_path
+      cattr_accessor :view_path
     end
   end
 end

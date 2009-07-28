@@ -27,7 +27,8 @@ module Lipsiadmin
     # go here: http://pd4ml.com/buy.htm and then put your licensed jar in a directory in your
     # project then simply calling this:
     # 
-    #   Lipsiadmin::Utils::PdfBuilder::JARS_PATH = "here/is/my/licensed/pd4ml"
+    #   Lipsiadmin::Utils::PdfBuilder.jars_path = "here/is/my/licensed/pd4ml"
+    #   Lipsiadmin::Utils::PdfBuilder.view_path = "keep/template/in/other/path"
     # 
     # you can use your version without any problem.
     # 
@@ -45,20 +46,22 @@ module Lipsiadmin
       def render_pdf(template, filename=nil, options={})
 
         # path to the pd4ml jarfile
-        jars_path = Lipsiadmin::Utils::PdfBuilder::JARS_PATH
+        jars_path = Lipsiadmin::Utils::PdfBuilder.jars_path
+        # path to our templates
+        view_path = Lipsiadmin::Utils::PdfBuilder.view_path
         
         options[:landescape]   =  options[:landescape] ? "LANDESCAPE" : "PORTRAIT"
         options[:send_data]  ||= !filename.blank?
         
         # try to find erb extension
-        ext = File.exist?("#{RAILS_ROOT}/app/views/pdf/#{template}.html.erb") ? "erb" : "haml"
+        ext = File.exist?("#{view_path}/#{template}.html.erb") ? "erb" : "haml"
         
         # encode the template
-        input = encode_entities(render(:template => "/pdf/#{template}.html.#{ext}"))
+        input = encode_entities(render(:template => "#{view_path}/#{template}.html.#{ext}"))
         
         # search for stylesheet links and make their paths absolute.
-        input.gsub!('<link href="/javascripts', '<link href="' + RAILS_ROOT + '/public/javascripts')
-        input.gsub!('<link href="/stylesheets', '<link href="' + RAILS_ROOT + '/public/stylesheets')   
+        input.gsub!('<link href="/javascripts', '<link href="' + view_path + '/../../../public/javascripts')
+        input.gsub!('<link href="/stylesheets', '<link href="' + view_path + '/../../../public/stylesheets')   
 
         # search for images src, append full-path.
         input.gsub!('src="/', 'src="' + RAILS_ROOT + '/public/')
@@ -73,7 +76,7 @@ module Lipsiadmin
         # build the command
         class_path = "#{jars_path}/pd4ml.jar:.:#{jars_path}"
         class_path = "\"#{jars_path}/pd4ml.jar\";\"#{jars_path}\"" if RUBY_PLATFORM =~ /mswin/
-        cmd = "cd #{Lipsiadmin::Utils::PdfBuilder::PD4RUBY_PATH} && java -Xmx512m -Djava.awt.headless=true -cp #{class_path} Pd4Ruby --file \"#{t.path}\" --width 950 --orientation #{options[:landescape]} 2>&1"
+        cmd = "cd #{Lipsiadmin::Utils::PdfBuilder.pd4ruby_path} && java -Xmx512m -Djava.awt.headless=true -cp #{class_path} Pd4Ruby --file \"#{t.path}\" --width 950 --orientation #{options[:landescape]} 2>&1"
         
         # grep the output
         output = IO.popen(cmd) { |s| s.read }
@@ -90,8 +93,6 @@ module Lipsiadmin
           erase_results
           output
         end
-      # ensure
-      #         t.close
       end
 
       # Errors For PDF

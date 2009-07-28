@@ -1,3 +1,6 @@
+2009-07-28
+  * Added cattr_accessor for set view_path, jars_path see doc of Lipsiadmin::Utils::PdfBuilder
+
 2009-07-18
   * Fixed a big problem that occours in Rails 2.3.2 with timezone active and caching class!
 
