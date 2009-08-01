@@ -156,7 +156,7 @@ module Lipsiadmin
         def store_data(params, options={})
           @model.send(:with_scope, :find => options) do
             collection           = @model.search(params)
-            collection_count     = collection.size
+            collection_count     = collection.length
             collection_paginated = collection.paginate(params)
             { :results => store_data_from(collection_paginated), :count => collection_count }
           end

@@ -1,3 +1,6 @@
+2009-08-01
+  * Improved performance of Ext store_data using length instead of size for count records
+
 2009-07-28
   * Added cattr_accessor for set view_path, jars_path see doc of Lipsiadmin::Utils::PdfBuilder
 
