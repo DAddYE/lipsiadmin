@@ -1,4 +1,5 @@
-  * Fix on monthnames in locale.js
+  * Fix for monthnames in locale.js
+  * Fix for daynames in locale.js
 
 2009-08-01
   * Improved performance of Ext store_data using length instead of size for count records
