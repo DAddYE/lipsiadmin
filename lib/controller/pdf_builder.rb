@@ -6,6 +6,8 @@ module Lipsiadmin
     # and content definition format. Written in 100% pure Java, it allows users to easily add PDF generation 
     # functionality to end products.
     # 
+    # Remember to install jdk ex: yum install java-1.6.0-openjdk-devel.i386
+    # 
     # For generate a pdf you can simply do
     #   
     #     script/generate pdf invoice

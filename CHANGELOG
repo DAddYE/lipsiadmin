@@ -1,5 +1,8 @@
+2009-09-07
+  * Bump to 5.0.4
   * Fix for monthnames in locale.js
   * Fix for daynames in locale.js
+  * Added the possibility to remove listners to cellmousedown and afteredit
 
 2009-08-01
   * Improved performance of Ext store_data using length instead of size for count records

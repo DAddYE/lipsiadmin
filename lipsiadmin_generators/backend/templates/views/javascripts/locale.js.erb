@@ -24,7 +24,7 @@ if(Ext.LoadMask){
   Ext.LoadMask.prototype.msg = "<%= I18n.t('extjs.msg') %>";
 }
 
-Date.monthNames = [<%= I18n.t('date.month_names').compact.to_json %>];
+Date.monthNames = <%= I18n.t('date.month_names').compact.to_json %>;
 
 Date.getShortMonthName = function(month) {
   return Date.monthNames[month].substring(0, 3);
@@ -49,7 +49,7 @@ Date.getMonthNumber = function(name) {
   return Date.monthNumbers[name.substring(0, 1).toUpperCase() + name.substring(1, 3).toLowerCase()];
 };
 
-Date.dayNames = [<%= I18n.t('date.day_names').compact.to_json %>];
+Date.dayNames = <%= I18n.t('date.day_names').compact.to_json %>;
 
 Date.getShortDayName = function(day) {
   return Date.dayNames[day].substring(0, 3);

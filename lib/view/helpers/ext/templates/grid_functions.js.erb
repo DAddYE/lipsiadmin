@@ -16,6 +16,7 @@
 <% end %>
 
 <% if @editable %>
+<% unless @un[:cellmousedown] %>
 <%= @var %>.on('cellmousedown', function(grid, rowIndex, colIndex, e){
   var columnId  = grid.getColumnModel().getColumnId(colIndex);
   var column    = grid.getColumnModel().getColumnById(columnId);
@@ -38,8 +39,8 @@
     grid.fireEvent('afteredit', editEvent);
   }
 });
-
-
+<% end %>
+<% unless @un[:afteredit] %>
 <%= @var %>.on('afteredit', function(e){
   var columnId  = <%= @var %>.getColumnModel().getColumnId(e.column);
   var column    = <%= @var %>.getColumnModel().getColumnById(columnId);
@@ -63,6 +64,7 @@
     }
   });
 });
+<% end %>
 <% end %>
 <% if @ttbar_add %>
 function add(){

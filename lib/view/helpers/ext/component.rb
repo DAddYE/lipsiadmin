@@ -22,7 +22,7 @@ module Lipsiadmin#:nodoc:
         @var    = options.delete(:var)
         @config = Configuration.new(options)
         @before, @after = [], []
-        @items  = {}
+        @items, @un  = {}, {}
         if self.class == Component && block_given?
           yield self 
         end
@@ -123,6 +123,7 @@ module Lipsiadmin#:nodoc:
       def on(event, function=nil, scope=nil, &block)
         # Remove old handlers
         un(event)
+        @un[event.to_sym] = false # we need to reset it
         scope = ", #{scope.to_l}" unless scope.blank?        
         if function
           after << "#{get_var}.on(#{event.to_json}, #{function}#{scope});"
@@ -137,6 +138,7 @@ module Lipsiadmin#:nodoc:
       #   Example: grid.un(:dblclick)
       # 
       def un(event)
+        @un[event.to_sym] = true
         found = @after.delete_if { |s| s.start_with?("#{get_var}.on(#{event.to_json}") if s.is_a?(String) }
         after << "#{get_var}.un(#{event.to_json})" unless found
       end

@@ -275,16 +275,16 @@ module Lipsiadmin
           raise_error "You must provide the store."                                                if config[:store].blank?
         end
         
-        after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable)
+        after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable, :un => @un)
         
-        if config[:store] && @render
-          after << "#{config[:store]}.on('beforeload', function(){ Backend.app.mask(); });"
-          after << "#{config[:store]}.on('load', function(){ Backend.app.unmask(); });"
-          after << "#{config[:store]}.load();"
+        if @render
+          after << "Backend.app.addItem(#{get_var});" if @render
+          if config[:store]
+            after << "#{config[:store]}.on('beforeload', function(){ Backend.app.mask(); });"
+            after << "#{config[:store]}.on('load', function(){ Backend.app.unmask(); });"
+            after << "#{config[:store]}.load();"
+          end
         end
-        
-        after << "Backend.app.addItem(#{get_var});" if @render
-        
         super
       end
     end
