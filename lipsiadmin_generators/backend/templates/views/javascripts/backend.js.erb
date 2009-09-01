@@ -63,16 +63,17 @@ Backend.app = function(){
       Ext.History.on('change', function(token){ if(token != Backend.app.oldUrl) { Backend.app.load(token) } });
       
       this.cache = {};
+      var header = undefined;
       
-      if (!this.smallView()){
-        var header = new Ext.Panel({
-          contentEl:'header',
-          region:'north',
-          border: false,
-          height: 65,
-          bbar: <%= backend_menu %>
-        });
-      }
+      <% if params[:small] != "1" %>
+      var header = new Ext.Panel({
+        contentEl:'header',
+        region:'north',
+        border: false,
+        height: 40,
+        bbar: <%= backend_menu %>
+      });
+      <% end %>
       
       this.contentDynamic = new Ext.Panel({
         id:'dynamic',
@@ -455,3 +456,4 @@ Backend.showAlert = function(){
 }
 
 Ext.onReady(Backend.app.init, Backend.app, true);
+Update EXJS to lastest svn rev.
