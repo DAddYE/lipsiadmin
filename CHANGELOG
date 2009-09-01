@@ -1,7 +1,8 @@
 2009-08-31
-  * Bump to 5.0.5
+  * Bump to 5.0.6
   * Small fix to render_pdf
-  * Update EXJS to lastest svn rev.
+  * Updated EXJS to lastest svn rev.
+  * Updated Prototype to lastest version 1.6.1
 
 2009-08-07
   * Bump to 5.0.4
