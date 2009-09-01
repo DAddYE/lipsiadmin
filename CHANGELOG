@@ -1,4 +1,8 @@
-2009-09-07
+2009-08-31
+  * Bump to 5.0.5
+  * Small fix to render_pdf
+
+2009-08-07
   * Bump to 5.0.4
   * Fix for monthnames in locale.js
   * Fix for daynames in locale.js

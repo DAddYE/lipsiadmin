@@ -32,7 +32,7 @@ module Lipsiadmin
       
       # Returns the url of the attachment, optionally you can pass the style like url(:thumb)
       def url(style=nil)
-        file.to_s(style)
+        file.url(style)
       end
       
       # Returns a <tt>Lipsiadmin::Attachment::Attach</tt> instance

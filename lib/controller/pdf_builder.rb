@@ -59,7 +59,7 @@ module Lipsiadmin
         ext = File.exist?("#{view_path}/#{template}.html.erb") ? "erb" : "haml"
         
         # encode the template
-        input = encode_entities(render(:template => "#{view_path}/#{template}.html.#{ext}"))
+        input = encode_entities(render(:template => "#{view_path}/#{template}.html.#{ext}", :layout => false))
         
         # search for stylesheet links and make their paths absolute.
         input.gsub!('<link href="/javascripts', '<link href="' + view_path + '/../../../public/javascripts')
