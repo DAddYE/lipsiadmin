@@ -73,6 +73,7 @@ Object.send(:include, Lipsiadmin::Utils::Literal)
 # Custom CSS and JS
 ActionView::Helpers::AssetTagHelper.register_stylesheet_expansion :backend => ["ext", "standard", "backend"]# Not ready for ext 3.0, :backend_slate => ["ext", "ext-slate", "standard", "backend-slate"]
 ActionView::Helpers::AssetTagHelper.register_javascript_expansion :backend => ["ext", "locale", "backend"]
+ActionView::Helpers::AssetTagHelper.register_javascript_expansion :ext     => ["ext", "locale"]
 
 # Add a better organization of locales
 I18n.load_path += Dir[File.join(RAILS_ROOT, 'config', 'locales', 'backend',  '*.{rb,yml}')]

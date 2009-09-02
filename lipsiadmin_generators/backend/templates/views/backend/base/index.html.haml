@@ -8,7 +8,7 @@
       .loading-indicator
         =image_tag("backend/logo-loader.png") + "Loading..."
     / include everything after the loading indicator
-    =javascript_include_tag :defaults, "backend.js?small=#{params[:small]}"
+    =javascript_include_tag :defaults, :ext, "backend.js?small=#{params[:small].to_i}"
     -unless params[:small]
       #header
         #logo=link_to AppConfig.project, backend_path

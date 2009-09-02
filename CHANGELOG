@@ -4,6 +4,7 @@
   * Updated EXJS to lastest svn rev.
   * Updated Prototype to lastest version 1.6.1
   * Fix in backend/base/index for open_grids
+  * Build a new js expansion for ext
 
 2009-08-07
   * Bump to 5.0.4
