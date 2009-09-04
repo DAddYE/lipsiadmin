@@ -1,3 +1,6 @@
+2009-09-4
+  * Fix header height on ie6+
+
 2009-08-31
   * Bump to 5.0.6
   * Small fix to render_pdf
