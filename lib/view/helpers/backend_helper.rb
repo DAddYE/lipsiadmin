@@ -74,7 +74,8 @@ module Lipsiadmin
           options[:title]  = I18n.t("backend.tabs.#{name.to_s.downcase}", :default => name.to_s.humanize)
           options[:tabbed] = true
           options[:class]  = "x-hide-display"
-          concat content_tag(:div, capture(&block), options)
+          container = content_tag(:div, capture(&block), :class => :full) # Is necessary for IE6+
+          concat content_tag(:div, container, options)
         end
         
         # Set the title of the page.

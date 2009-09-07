@@ -17,7 +17,7 @@ class ScaffoldingSandbox
   def default_input_block
     Proc.new do |record, column|
 "    %tr
-      %td=human_name_for :#{record}, :#{column.name}
+      %td.fixed=human_name_for :#{record}, :#{column.name}
       %td#{input(record, column.name)}"
     end
   end

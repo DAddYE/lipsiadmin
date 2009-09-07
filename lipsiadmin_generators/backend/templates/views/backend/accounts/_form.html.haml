@@ -1,8 +1,8 @@
 =simple_error_messages_for :account
 -tab :general do
-  %table
+  %table.full
     %tr
-      %td=human_name_for :account, :name
+      %td.fixed=human_name_for :account, :name
       %td=text_field :account, :name
     %tr
       %td=human_name_for :account, :surname

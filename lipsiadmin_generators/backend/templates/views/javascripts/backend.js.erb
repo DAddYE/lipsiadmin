@@ -6,10 +6,6 @@ Ext.BLANK_IMAGE_URL = '/images/ext/default/s.gif';
 Ext.namespace('Backend');
 Ext.namespace('Backend.util.Format');
 
-Ext.Updater.defaults.loadScripts = false;
-Ext.Updater.defaults.showLoadIndicator = false;
-Ext.Updater.defaults.disableCaching = true;
-
 // How it works?
 // 
 // Basically we can load (async) contents in 3 ways:
@@ -63,12 +59,12 @@ Backend.app = function(){
       Ext.History.on('change', function(token){ if(token != Backend.app.oldUrl) { Backend.app.load(token) } });
       
       this.cache = {};
-      var header = undefined;
+      var header;
       
       <% if params[:small] != "1" %>
       var header = new Ext.Panel({
-        contentEl:'header',
-        region:'north',
+        contentEl: 'header',
+        region: 'north',
         border: false,
         bbar: <%= backend_menu %>
       });
@@ -88,8 +84,6 @@ Backend.app = function(){
         items: header ? [header, this.contentDynamic] : [this.contentDynamic]
       });
 
-      this.contentDynamic.getUpdater().on('beforeupdate', function(){ this.cleanScripts(); this.clean(); }, this);
-      this.contentDynamic.getUpdater().on('update', this.inspectContent, this);
       this.load(loadUrl ? loadUrl : '/backend/base/welcome');
       setTimeout(function(){
         Ext.get('loading').remove();
@@ -130,7 +124,12 @@ Backend.app = function(){
         // Now we can append the child.
         hd.appendChild(s);
       } else if (ext == 'html'){
-        this.contentDynamic.getUpdater().update({ url: url, headers: { 'Accept': 'text/html, text/javascript, application/xml, text/xml, */*' } });
+        // Clean the html and scripts if requested
+        Ext.Ajax.request({
+          url: url,
+          headers: { 'Accept': 'text/html' },
+          success: function(response) { Backend.app.update(response.responseText) }
+        });
       } else {
         Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
       }
@@ -147,8 +146,8 @@ Backend.app = function(){
     update : function(html){
       this.cleanScripts();
       this.clean();
-      var el = this.contentDynamic.body.update(html, true);
-      this.inspectContent(el);
+      var el = this.contentDynamic.body.update(html);
+      this.inspectContent(el, html);
     }, // update
     
     cleanScripts: function(){
@@ -180,9 +179,8 @@ Backend.app = function(){
       this.contentDynamic.setTitle(title);
     }, // SetTitle
     
-    inspectContent: function(el, oResponseObject){
+    inspectContent: function(el, originalHtml){
       try {
-        
         // Search for forms (except ajax-frame) in the page, usually only one.
         el.select('form').each(function(form){
           if (form.id != 'ajax-iframe'){
@@ -246,16 +244,13 @@ Backend.app = function(){
           this.tabPanel.on('add', function(container, tab){ if (tab.id == activeTab) { Backend.app.tabPanel.setActiveTab(activeTab); } });
         }
         
-        // Now we can load scripts an eval scripts
-        var html = el.dom.innerHTML;
-        var dom  = this.contentDynamic.body.dom;
-
+        // Now we can load scripts an eval scripts from the original html
         var re = /(?:<script([^>]*)?>)((\n|\r|.)*?)(?:<\/script>)/ig;
         var srcRe = /\ssrc=([\'\"])(.*?)\1/i;
         var typeRe = /\stype=([\'\"])(.*?)\1/i;
 
         var match;
-        while(match = re.exec(html)){
+        while(match = re.exec(originalHtml)){
           var attrs = match[1];
           var srcMatch = attrs ? attrs.match(srcRe) : false;
           if(srcMatch && srcMatch[2]){
