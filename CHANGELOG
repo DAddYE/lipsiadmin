@@ -1,6 +1,7 @@
 2009-09-7
   * Bump to 5.0.7 Version
   * Fix some compatibility issues on IE6+
+  * Fix stackoverflow with prototype
 
 2009-09-4
   * Fix header height on ie6+
