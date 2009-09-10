@@ -8,7 +8,7 @@ class BackendGenerator < Rails::Generator::Base
     backend.resources :sessions
   end
 
-  map.backend                 '/backend', :controller => 'backend/base', :action => 'index'
+  map.backend                 '/backend',              :controller => 'backend/base', :action => 'index'
   map.connect                 '/javascripts/:action.:format', :controller => 'javascripts'
   ROUTES
   

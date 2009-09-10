@@ -24,6 +24,11 @@ namespace :lipsiadmin do
         puts "Coping #{File.basename(js)} ... DONE"
         FileUtils.cp(js, RAILS_ROOT + '/public/javascripts/')
       end
+      %w(backend locale).each do |t|
+        js = File.join(File.dirname(__FILE__), '..', "/lipsiadmin_generators/backend/templates/views/javascripts/#{t}.js.erb")
+        puts "Coping #{t}.js.erb  ... DONE"
+        FileUtils.cp(js, RAILS_ROOT + '/app/views/javascripts/')
+      end
     end
     
     

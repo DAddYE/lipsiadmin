@@ -1,7 +1,14 @@
+2009-09-09
+  * Bump to 5.0.8
+  * Changed the rake lipsiadmin:update:javascripts now update also backend.js.erb and locale.js.erb
+  * Added a new frontend helper method for resize images on the fly
+  * Added new locales for rails 2.3.4
+  
 2009-09-7
-  * Bump to 5.0.7 Version
+  * Bump to 5.0.7
   * Fix some compatibility issues on IE6+
   * Fix stackoverflow with prototype
+
 
 2009-09-4
   * Fix header height on ie6+

@@ -30,6 +30,8 @@ it:
     pm: 'pm'
 
   support:
+    select:
+      prompt: "Scegli"
     array:
       sentence_connector: "e"
       skip_last_comma: false
@@ -139,4 +141,5 @@ it:
         less_than_or_equal_to: "deve essere meno o uguale a {{count}}"
         odd: "deve essere dispari"
         even: "deve essere pari"
+        record_invalid: "Validazione fallita: {{errors}}"
         content_type: "il seguente tipo di file non è supportato"
