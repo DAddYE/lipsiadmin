@@ -1,3 +1,6 @@
+  
+  * Fixed a bug in generators on Windows [Paolo Angelini]
+
 2009-09-09
   * Bump to 5.0.8
   * Changed the rake lipsiadmin:update:javascripts now update also backend.js.erb and locale.js.erb

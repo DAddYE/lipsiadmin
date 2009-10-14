@@ -25,7 +25,7 @@ end
       
       m.append("config/routes.rb", routes, "ActionController::Routing::Routes.draw do |map|")
       m.append("public/robots.txt", "User-agent: *\nDisallow: /backend")
-      m.append("RakeFile", lipsiadmin_task)
+      m.append("Rakefile", lipsiadmin_task)
       
       m.create_all("controllers", "app/controllers")
       m.create_all("helpers", "app/helpers")
