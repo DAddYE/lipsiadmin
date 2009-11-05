@@ -154,10 +154,12 @@ module Lipsiadmin
         #     store_data(params, :include => :posts)
         # 
         def store_data(params, options={})
+          # Some can tell me that this method made two identical queries one for count one for paginate.
+          # We don't use the select count because in some circumstances require much time than select *.
           @model.send(:with_scope, :find => options) do
-            collection           = @model.search(params)
+            collection           = @model.ext_search(params)
             collection_count     = collection.length
-            collection_paginated = collection.paginate(params)
+            collection_paginated = collection.ext_paginate(params)
             { :results => store_data_from(collection_paginated), :count => collection_count }
           end
         end

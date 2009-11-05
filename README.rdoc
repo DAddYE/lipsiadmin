@@ -69,5 +69,5 @@ Please contribute in coding, patch, and submitting translation api documentation
 
 Official Site can be found here:: http://www.lipsiadmin.com
 Community can be found here:: http://groups.google.com/group/lipsiadmin
-Api documentation can be found here:: http://api.lipsiasoft.com
+Api documentation can be found here:: http://api.lipsiadmin.com
 Follow us on twitter:: http://twitter.com/daddye

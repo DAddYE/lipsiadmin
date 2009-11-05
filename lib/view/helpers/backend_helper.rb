@@ -179,11 +179,6 @@ module Lipsiadmin
           I18n.t("activerecord.attributes.#{instance}.#{method}", :default => method.to_s.humanize)
         end
         
-        # Store the location to come back from for example an extjs grid
-        def back_to(location)
-          content_tag(:script, "Backend.app.backTo(#{url_for(location)})", :type => Mime::JS)
-        end
-        
         # Generate the menu from the Lispiadmin::AccessControl
         def backend_menu
           config = AccountAccess.maps_for(current_account).collect(&:project_modules).flatten.uniq.collect(&:config)

@@ -1,4 +1,7 @@
-  
+  * Aliased Methods named_scope search to ext_search and paginate to ext_paginate to avoid conflicts.
+  * Updated the Readme
+  * Removed an unusued back_to helper
+  * Fixed a bug with simple_error_messages_for [joe1chen]
   * Fixed a bug in generators on Windows [Paolo Angelini]
 
 2009-09-09

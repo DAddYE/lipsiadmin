@@ -8,14 +8,14 @@ module Lipsiadmin
     # 
     #   Examples:
     #   
-    #     invoices = current_account.store.invoices.with(:order).search(params)
+    #     invoices = current_account.store.invoices.with(:order).ext_search(params)
     #     invoices_count = invoices.size
-    #     invoices_paginated = invoices.paginate(params)
+    #     invoices_paginated = invoices.ext_paginate(params)
     # 
     module UtilityScopes
       def self.included(base)#:nodoc:
         base.class_eval do 
-          named_scope :search, lambda { |params|
+          named_scope :ext_search, lambda { |params|
             order = params[:sort].blank? && params[:dir].blank? ? nil : "#{params[:sort]} #{params[:dir]}"
             conditions = nil
 
@@ -26,13 +26,21 @@ module Lipsiadmin
 
             { :conditions => conditions }
           }
-
-          named_scope :paginate, lambda { |params|
+          named_scope :ext_paginate, lambda { |params|
             order = params[:sort].blank? && params[:dir].blank? ? nil : "#{params[:sort]} #{params[:dir]}"
             { :order => order, :limit => params[:limit], :offset => params[:start] }
           }
-
           named_scope :with, lambda { |*associations| { :include => associations } }
+          
+          # You or your plugins (ex: will_paginate) now can override the search/paginate
+          # at the moment we can't remove them for backward compatibility.
+          (class << self; self end).instance_eval do
+            %w(search paginate).each do |name|
+              define_method name do |*args|
+                send("ext_#{name}", *args)
+              end
+            end
+          end
         end
       end
     end
