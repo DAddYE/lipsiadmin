@@ -1,0 +1,16 @@
+de:
+  lipsiadmin:
+    labels:
+      not_found: "Nicht gefunden"
+    buttons:
+      save: "Sichern"
+    exceptions:
+      404:
+        title: "Die Seite, nach denen Du suchst, existiert nicht !"
+        description: "Du hast bestimmt die Adresse vertippt oder die Seite ist umgezogen!"
+      422:
+        title: "Die Änderung, die Du willst, wurde abgelehnt !"
+        description: "Du versucht was zu ändern, wo Du kein Zugriff hast!"
+      500:
+        title: "Wir entschuldigen uns, aber etwas lief schief!"
+        description: "Wir wurden über dieses Thema informiert und wir werden innerhalb kürzester Zeit hier nachschauen!"

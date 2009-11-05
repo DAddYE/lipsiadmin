@@ -1,0 +1,15 @@
+# Diese Datei wird benötigt Modelle/Tabelle und ihre Attribute/Spalten zu übersetzen
+de:
+  activerecord:
+    # Übersetze Model namen. Benutzt in Model.human_name()
+    #models:
+      # Zum Beispiel:
+      #   user: "Dude"
+      # wird das "User" Model übersetzen in "Dude"
+    
+    # Übersetzt Model Attribute Namen. Benutzt in Model.human_attribute_name(attribute).
+    #attributes:
+      # Zum Beispiel:
+      #   user:
+      #     login: "Handle"
+      # wird das "User Attribute "login" als "Handle" übersezen

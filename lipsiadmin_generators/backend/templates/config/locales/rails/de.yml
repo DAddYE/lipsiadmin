@@ -1,0 +1,173 @@
+de:
+  date:
+    formats:
+      # Benutze die strftime Parameter für die Formatierung
+      # Wenn keine Formate angegeben wurde, wird "default" benutzt.
+      # Du kannst andere Formate hier bieten, wenn Du willst.
+      default: "&d.&m.%Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+
+    day_names: [Sontag, Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag]
+    abbr_day_names: [Son, Mon, Die, Mit, Don, Fre, Sam]
+
+    # Vergesse nicht "nil" am Anfang, da gibt es nichts als ein 0-ten Monat
+    month_names: [~, Januar, Februar, Marz, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember]
+    abbr_month_names: [~, Jan, Feb, Mar, Apr, Mai, Jun, Jul, Aug, Sep, Okt, Nov, Dez]
+    # Benutzt in date_select and datime_select.
+    order: [ day, :month, :year ]
+
+  time:
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      short: "%d %b %H:%M"
+      long: "%B %d, %Y %H:%M"
+    am: "am"
+    pm: "pm"
+
+# Benutzt in array.to_sentence.
+  support:
+    select:
+      prompt: "Bitte selektiere "
+    array:
+      words_connector: ", "
+      two_words_connector: " und "
+      last_word_connector: ", und "
+        
+  number:
+    # Benutzt in number_with_delimiter()
+    # Dies sind also die Standard-Einstellungen für Währung, Prozezentwerte, Genauigkeit und 
+    # These are also the defaults for 'currency', 'percentage', 'precision', and 'human'
+    format:
+      # Sets the separator between the units, for more precision (e.g. 1.0 / 2.0 == 0.5)
+      separator: ","
+      # Delimets thousands (e.g. 1,000,000 is a million) (always in groups of three)
+      delimiter: "."
+      # Anzahl von Dezimalstellen hinter dem 
+      # Number of decimals, behind the separator (the number 1 with a precision of 2 gives: 1.00)
+      precision: 2
+      
+    # Benutzt in number_to_currency()
+    currency:
+      format:
+        # Where is the currency sign? %u is the currency unit, %n the number (default: $5.00)
+        format: "%n %u"
+        unit: "€"
+        # These three are to override number.format and are optional
+        separator: ","
+        delimiter: "."
+        precision: 2
+        
+    # Benutzt in number_to_percentage()
+    percentage:
+      format:
+        # These three are to override number.format and are optional
+        # separator: 
+        delimiter: ""
+        # precision: 
+        
+    # Benutzt in number_to_precision()
+    precision:
+      format:
+        # These three are to override number.format and are optional
+        # separator:
+        delimiter: ""
+        # precision:
+        
+    # Benutzt in number_to_human_size()
+    human:
+      format:
+        # These three are to override number.format and are optional
+        # separator: 
+        delimiter: ""
+        precision: 1
+        
+      storage_units:
+        # Storage units output formatting.
+        # %u is the storage unit, %n is the number (default: 2 MB)
+        format: "%n %u"
+        units:
+          byte:
+            one:   "Byte"
+            other: "Bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
+
+  # Benutzt in distance_of_time_in_words(), distance_of_time_in_words_to_now(), time_ago_in_words()
+  datetime:
+    distance_in_words:
+      half_a_minute: "eine halbe Minute"
+      less_than_x_seconds:
+        one:   "weniger als 1 Sekunde"
+        other: "weniger als {{count}} Sekunden"
+      x_seconds:
+        one:   "1 Sekunde"
+        other: "{{count}} Sekunden"
+      less_than_x_minutes:
+        one:   "weniger als eine Minute"
+        other: "weniger als {{count}} Minuten"
+      x_minutes:
+        one:   "1 Minute"
+        other: "{{count}} Minuten"
+      about_x_hours:
+        one:   "über 1 Stunde"
+        other: "über {{count}} Stunden"
+      x_days:
+        one:   "1 Tag"
+        other: "{{count}} Tage"
+      about_x_months:
+        one:   "über 1 Monat"
+        other: "über {{count}} Monate"
+      x_months:
+        one:   "1 Monat"
+        other: "{{count}} Monate"
+      about_x_years:
+        one:   "über 1 Jahr"
+        other: "über {{count}} Jahre"
+      over_x_years:
+        one:   "vor 1 Jahr"
+        other: "vor {{count}} Jahre"
+    prompts:
+      year:   "Jahr"
+      month:  "Monat"
+      day:    "Tag"
+      hour:   "Stunde"
+      minute: "Minute"
+      second: "Sekunde"
+
+  activerecord:
+    errors:
+      template:
+        header:
+          one:    "1 Fehler verhindert, dass Objekt {{model}} gesichert werden kann"
+          other:  "{{count}} Fehler verhindern, dass Objekt {{model}} gesichert werden kann"
+        # Die Variable :count ist auch verfügbar
+        body: "Es existieren Probleme mit den follgenden Feldern:"
+      # The values :model, :attribute and :value are always available for interpolation
+      # The value :count is available when applicable. Can be used for pluralization.
+      messages:
+        inclusion: "ist nicht in der Liste enthalten"
+        exclusion: "ist reserviert"
+        invalid: "ist ungültig"
+        confirmation: "entspricht nicht der Bestätigung" 
+        accepted: "muss akzeptiert werden"
+        empty: "Darf nicht leer sein"
+        blank: "Darf nicht nur Leerzeichen sein
+        too_long: "ist zu lang (Maximum ist {{count}} Zeichen)"
+        too_short: "ist zu kurz (Minimum ist {{count}} Zeichen)"
+        wrong_length: "ist ungültiger Länge (soll {{count}} Zeichen sein)"
+        taken: "has already been taken"
+        not_a_number: "ist nicht eine Nummer"
+        greater_than: "muss größer sein als {{count}}"
+        greater_than_or_equal_to: "muss größer gleich sein als {{count}}"
+        equal_to: "muss gleich sein als {{count}}"
+        less_than: "muss weniger sein als {{count}}"
+        less_than_or_equal_to: "muss weniger oder gleich sein als {{count}}"
+        odd: "muss ungerade sein"
+        even: "muss gerade sein"
+        record_invalid: "Validierung schlug fehl: {{errors}}"
+        content_type: "Datei-Format wird nicht unterstützt"
+        # Füge deine eigenen Fehler hier an oder in dem Modell/attributes Scope.
+    

@@ -1,0 +1,6 @@
+# Diese Datei wird für Übersetzungen des Frontends (UI-Screens) benötigt 
+# Wir erinnern Dich daran, dass im Backend eine einfache Methode  in Style "Kauderwelsch" für die Übersetzung eingeführt wurde
+# So kannst Du schreiben "Übersetze mich in Deutsch"[] wird sein I18n.t("translate_me_in_german", :default => "Übersetze mich in Deutsch")
+
+de:
+  translate_me_in_german: Übersetze mich in Deutsch
