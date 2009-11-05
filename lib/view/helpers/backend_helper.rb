@@ -27,14 +27,14 @@ module Lipsiadmin
 
             I18n.with_options :locale => options[:locale], :scope => [:activerecord, :errors, :template] do |locale|
               header_message = if options.include?(:header_message)
-                options[:header_message]
+                escape_javascript(options[:header_message])
               else
                 object_name = options[:object_name].to_s.gsub('_', ' ')
                 object_name = I18n.t(object_name, :default => object_name, :scope => [:activerecord, :models], :count => 1)
-                locale.t :header, :count => count, :model => object_name
+                escape_javascript(locale.t :header, :count => count, :model => object_name)
               end
-              message = options.include?(:message) ? options[:message] : locale.t(:body)
-              error_messages = objects.sum {|object| object.errors.full_messages.map {|msg| content_tag(:li, ERB::Util.html_escape(msg)) } }.join
+              message = escape_javascript(options.include?(:message) ? options[:message] : locale.t(:body))
+              error_messages = objects.sum {|object| object.errors.full_messages.map {|msg| content_tag(:li, escape_javascript(msg)) } }.join
 
               contents = ''
               contents << content_tag(:p, message) unless message.blank?
