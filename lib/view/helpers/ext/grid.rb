@@ -59,6 +59,7 @@ module Lipsiadmin
         viewConfig            :forceFit => true
         border                false
         bodyBorder            false
+        template              :default
         clicksToEdit          1
         region                "center"
         sm                    :checkbox
@@ -203,8 +204,29 @@ module Lipsiadmin
         add_object(:cm, cm)
       end
       
+      # Define the template to use for build grid functions (add/delete/edit)
+      # 
+      # Default we use:
+      # 
+      #   /path/to/lipsiadmin/lib/view/helpers/ext/templates/grid_functions.js.erb
+      # 
+      # But you can easy add your own paths like:
+      #   
+      #   Lipsiadmin::Ext::Component.template_paths.unshift("/path/to/my/js/templates")
+      # 
+      # Or direct by grid:
+      #   
+      #   # products/show.rjs
+      #   page.grid :editable => true do |grid|
+      #     grid.id "grid-products"
+      #     grid.template "products/grid_functions"
+      #   ...
+      # 
+      def template(value)
+        @template = value == :default ? :grid_functions : value
+      end
       
-      # Define if the grid need to be added to
+      # Define if the grid need to be added to contentDynamic
       #   
       #   Backend.app.addItem(#{get_var});
       # 
@@ -275,7 +297,7 @@ module Lipsiadmin
           raise_error "You must provide the store."                                                if config[:store].blank?
         end
         
-        after << render_javascript(:grid_functions, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable, :un => @un)
+        after << render_javascript(@template, :var => get_var, :store => config[:store], :sm => config[:sm], :tbar => config[:tbar], :editable => @editable, :un => @un)
         
         if @render
           after << "Backend.app.addItem(#{get_var});" if @render

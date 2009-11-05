@@ -1,3 +1,4 @@
+  * Added Template Paths for grids and custom template for grid [Ragunalth]
   * Added German Translations [Peter]
   * Aliased Methods named_scope search to ext_search and paginate to ext_paginate to avoid conflicts.
   * Updated the Readme

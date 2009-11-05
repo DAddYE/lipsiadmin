@@ -14,8 +14,14 @@ module Lipsiadmin#:nodoc:
     # 
     #   Component.new("Ext.grid.GroupingView", { :forceFit => true });
     # 
+    # If you want to override our default templates you can do easly with:
+    # 
+    #   Lipsiadmin::Ext::Component.template_paths.unshift("/path/to/my/js/templates")
+    # 
     class Component      
-
+      @@template_paths = ["#{File.dirname(__FILE__)}/templates", "#{Rails.root}/app/views/backend"]
+      cattr_accessor :template_paths
+      
       def initialize(klass, options={}, &block)#:nodoc:
         @klass  = klass
         @prefix = options.delete(:prefix)
@@ -191,7 +197,9 @@ module Lipsiadmin#:nodoc:
       private
         def render_javascript(template, assigns)
           assigns.each { |key, value| instance_variable_set("@#{key}", value) }
-          template = File.read("#{File.dirname(__FILE__)}/templates/#{template}.js.erb")
+          path = template_paths.find { |f| File.exist?(File.join(f, "#{template}.js.erb")) }
+          raise_error "Sorry but we didn't found the template #{template}.js.erb in your template_paths" unless path
+          template = File.read(File.join(path, "#{template}.js.erb"))
           return ERB.new(template).result(binding)
         end
         
