@@ -154,7 +154,7 @@ de:
         confirmation: "entspricht nicht der Bestätigung" 
         accepted: "muss akzeptiert werden"
         empty: "Darf nicht leer sein"
-        blank: "Darf nicht nur Leerzeichen sein
+        blank: "Darf nicht nur Leerzeichen sein"
         too_long: "ist zu lang (Maximum ist {{count}} Zeichen)"
         too_short: "ist zu kurz (Minimum ist {{count}} Zeichen)"
         wrong_length: "ist ungültiger Länge (soll {{count}} Zeichen sein)"
