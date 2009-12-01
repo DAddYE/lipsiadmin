@@ -27,13 +27,6 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-desc 'Clean up files.'
-task :clean do |t|
-  FileUtils.rm_rf "doc"
-  FileUtils.rm_rf "tmp"
-  FileUtils.rm_rf "pkg"
-end
-
 spec = Gem::Specification.new do |s| 
   s.name              = PKG_NAME
   s.version           = PKG_VERSION
@@ -48,6 +41,13 @@ spec = Gem::Specification.new do |s|
   s.requirements << "ImageMagick"
   s.add_dependency('haml')
   s.add_dependency('rails', '>= 2.2.1')
+end
+
+desc 'Clean up files.'
+task :clean do |t|
+  FileUtils.rm_rf "doc"
+  FileUtils.rm_rf "tmp"
+  FileUtils.rm_rf "pkg"
 end
 
 Rake::GemPackageTask.new(spec) do |p|

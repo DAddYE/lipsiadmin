@@ -5,12 +5,12 @@ en:
     buttons:
       save: "Save"
     exceptions:
-      404:
+      "404":
         title: "The page you were looking for doesn't exist"
         description: "You may have mistyped the address or the page may have moved."
-      422:
+      "422":
         title: "The change you wanted was rejected"
         description: "Maybe you tried to change something you didn't have access to."
-      500:
+      "500":
         title: "We're sorry, but something went wrong"
         description: "We've been notified about this issue and we'll take a look at it shortly"
