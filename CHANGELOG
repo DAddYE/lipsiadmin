@@ -1,3 +1,7 @@
+2009-12-16
+  * Bump to 5.1.0
+  * Fixed a problem with title helpers when a string contains dot chars.
+
 2009-12-1
   * Bump to 5.0.9
   * Fixed an error in lipsiadmin default locales

@@ -87,7 +87,7 @@ module Lipsiadmin
         #   title :welcome_here
         # 
         def title(title)
-          title = I18n.t("backend.titles.#{title.to_s.downcase}", :default => title.to_s.humanize)
+          title = I18n.t("backend.titles.#{title.gsub(/\./,"").to_s.downcase}", :default => title.to_s.humanize)
           content_tag(:script, "Backend.app.setTitle(#{title.to_json})", :type => Mime::JS)
         end
         
