@@ -211,8 +211,7 @@ public class Pd4Ruby {
     converter.generatePDF( url, file, width, pagesize, permissions, password, bookmarks, orientation, insets, ttf, header, footer, debug ); 
   }
  
-  private void generatePDF(String inputUrl, String inputFile, int htmlWidth, String pageFormat, int permissions, String password, String bookmarks, String orientation, String insets, String fontsDir, String headerBody, String footerBody, int debug)
-      throws Exception {
+  private void generatePDF(String inputUrl, String inputFile, int htmlWidth, String pageFormat, int permissions, String password, String bookmarks, String orientation, String insets, String fontsDir, String headerBody, String footerBody, int debug) throws Exception {
  
     PD4ML pd4ml = new PD4ML();
     

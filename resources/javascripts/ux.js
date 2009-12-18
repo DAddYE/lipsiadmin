@@ -680,7 +680,6 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
    * @cfg {String} searchText Text to display on menu button
    */
    ,searchText:'Search'
-
   /**
    * @cfg {String} searchTipText Text to display as input tooltip. Set to '' for no tooltip
    */ 
@@ -801,18 +800,19 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
    */
   ,init:function(grid) {
     this.grid = grid;
-
+    this.id   = this.grid.id+'-search';
+    
     // setup toolbar container if id was given
     if('string' === typeof this.toolbarContainer) {
       this.toolbarContainer = Ext.getCmp(this.toolbarContainer);
     }
 
     // do our processing after grid render and reconfigure
-    grid.onRender = grid.onRender.createSequence(this.onRender, this);
+    grid.store.load  = grid.store.load.createInterceptor(this.load, this);
+    grid.onRender    = grid.onRender.createSequence(this.onRender, this);
     grid.reconfigure = grid.reconfigure.createSequence(this.reconfigure, this);
   } // eo function init
-  // }}}
-  // {{{
+
   /**
    * private add plugin controls to <b>existing</b> toolbar and calls reconfigure
    */
@@ -873,9 +873,9 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
     }, this, {single:true});
 
     tb.add(this.field);
-
-    // reconfigure
-    this.reconfigure();
+    
+    // Init our State/Configuration
+    this.initState();
 
     // keyMap
     if(this.shortcutKey && this.shortcutModifier) {
@@ -898,6 +898,43 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
   } // eo function onRender
   // }}}
   // {{{
+    
+  // private
+  ,initState:function(){
+    if(Ext.state.Manager){
+      var state = Ext.state.Manager.get(this.id);
+      this.applyState(state)
+    }
+  }
+  ,applyState:function(state){
+    if(state){
+      if(state.checked && state.checked instanceof Array) { this.checkIndexes=state.checked };
+      if(state.value) { this.field.setValue(state.value) };
+    }
+    this.reconfigure();
+    this.onTriggerSearch();
+  }
+  ,saveState:function(){
+    if(Ext.state.Manager){
+      var state = this.getState();
+      Ext.state.Manager.set(this.id, state);
+    }
+  }
+  ,getState:function(){
+    var checked = [];
+    this.menu.items.each(function(item) {
+      if (item.dataIndex && item.checked) { checked.push(item.dataIndex) }
+    });
+    this.inited = true;
+    return { value: this.field.getValue(), checked: checked }
+  }
+  /**
+   * Prevent our grid from double datastore loading
+   * @private
+   */
+  ,load:function(){
+    return (this.field != undefined && this.inited == true)
+  }
   /**
    * field el keypup event handler. Triggers the search
    * @private
@@ -919,6 +956,7 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
       this.field.focus();
       this.onTriggerSearch();
     }
+    this.saveState();
   } // eo function onTriggerClear
   // }}}
   // {{{
@@ -985,7 +1023,7 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
       // reload store
       store.reload();
     }
-
+    this.saveState();
   } // eo function onTriggerSearch
   // }}}
   // {{{
@@ -1017,7 +1055,6 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
    * private (re)configures the plugin, creates menu items from column model
    */
   ,reconfigure:function() {
-
     // {{{
     // remove old items
     var menu = this.menu;
@@ -1099,7 +1136,6 @@ Ext.extend(Ext.grid.Search, Ext.util.Observable, {
 }); // eo extend
 
 // eof
-
 /**
  * This class store state session of extjs in the database for the current account
  */

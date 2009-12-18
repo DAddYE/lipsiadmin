@@ -19,7 +19,6 @@ a:hover.black                 { text-decoration:none; color:#663900; }
 a.white                       { text-decoration:none; color:#FFF; }
 a:hover.white                 { text-decoration:none; color:#663900; }
 img                           { border:none; }
-form                          { display: inline; }
 .fixed                        { width:150px; line-height:25px; }
 .full                         { width:100%; }
 .half                         { width:50%; }

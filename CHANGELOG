@@ -1,3 +1,11 @@
+2009-12-18
+  * Bump to 5.1.1
+  * Updated ExtJS to 3.1+ Version
+  * Updated ExtJS CSS according to new 3.1 Version
+  * Fixed a small problem with ExtJS and our standard.css with inline forms.
+  * Updated Backend.js now it's more clean and fast.
+  * Grid now can store the value of search field in a grid. Useful when refreshing.
+
 2009-12-16
   * Bump to 5.1.0
   * Fixed a problem with title helpers when a string contains dot chars.
@@ -23,7 +31,6 @@
   * Bump to 5.0.7
   * Fix some compatibility issues on IE6+
   * Fix stackoverflow with prototype
-
 
 2009-09-4
   * Fix header height on ie6+

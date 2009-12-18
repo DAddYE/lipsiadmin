@@ -57,10 +57,10 @@ Backend.app = function(){
       // Used for history the browsing
       Ext.History.init();
       Ext.History.on('change', function(token){ if(token != Backend.app.oldUrl) { Backend.app.load(token) } });
-      
+
       this.cache = {};
       var header;
-      
+
       <% if params[:small] != "1" %>
       var header = new Ext.Panel({
         contentEl: 'header',
@@ -69,7 +69,7 @@ Backend.app = function(){
         bbar: <%= backend_menu %>
       });
       <% end %>
-      
+
       this.contentDynamic = new Ext.Panel({
         id:'dynamic',
         region:'center',
@@ -78,7 +78,7 @@ Backend.app = function(){
         title: this.title() ? '&nbsp;' : '',
         layout:'fit'
       });
-      
+
       this.viewport = new Ext.Viewport({
         layout:'border',
         items: header ? [header, this.contentDynamic] : [this.contentDynamic]
@@ -90,19 +90,19 @@ Backend.app = function(){
         Ext.get('loading-mask').fadeOut({remove:true});
       }, 250);
     }, // init
-    
+
     smallView : function(){
       return window.location.search ? Ext.urlDecode(window.location.search.substring(1)).small : false;
     }, // smalloallProductsGroupingStore
-    
+
     toolbar: function(){
       return window.location.search ? Ext.urlDecode(window.location.search.substring(1)).toolbar!="0" : true;
     }, // hideToolbar
-    
+
     title: function(){
       return window.location.search ? Ext.urlDecode(window.location.search.substring(1)).title!="0" : true;
     }, // hideTite
-    
+
     load : function(url){
       var ext  = (/[.]/.exec(url)) ? /[^.]+$/.exec(url) : 'html';
 
@@ -125,6 +125,7 @@ Backend.app = function(){
         hd.appendChild(s);
       } else if (ext == 'html'){
         // Clean the html and scripts if requested
+        this.mask();
         Ext.Ajax.request({
           url: url,
           headers: { 'Accept': 'text/html' },
@@ -134,7 +135,7 @@ Backend.app = function(){
         Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
       }
     }, // load
-    
+
     back: function(){
       if (Backend.app.smallView()){
         window.location.reload(true);
@@ -142,18 +143,18 @@ Backend.app = function(){
         Ext.History.back();
       }
     },// back
-    
+
     update : function(html){
       this.cleanScripts();
       this.clean();
       var el = this.contentDynamic.body.update(html);
       this.inspectContent(el, html);
     }, // update
-    
+
     cleanScripts: function(){
       Ext.select('head > script').each(function(el){ el.remove(); });
     }, // cleanScripts
-    
+
     clean : function(){
       this.mask();
       this.contentDynamic.items.each(function(i){ i.destroy(); });
@@ -161,12 +162,12 @@ Backend.app = function(){
       this.contentDynamic.body.update(''); // Another check ;)
       this.contentDynamic.doLayout();
     }, // clean
-    
+
     addItem : function(item){
       this.contentDynamic.add(item);
       this.contentDynamic.doLayout();
     }, // addItem
-    
+
     submitForm : function(){
       Backend.app.mask(Backend.locale.messages.wait.message);
       Backend.app.contentDynamic.findByType('tabpanel').each(function(tabpanel){
@@ -174,18 +175,16 @@ Backend.app = function(){
       });
       Ext.select('form[target=ajax-iframe]').each(function(form){ form.dom.submit(); });
     }, // submitForms
-    
+
     setTitle: function(title){
       this.contentDynamic.setTitle(title);
     }, // SetTitle
-    
+
     inspectContent: function(el, originalHtml){
       try {
         // Search for forms (except ajax-frame) in the page, usually only one.
-        el.select('form').each(function(form){
-          if (form.id != 'ajax-iframe'){
-            form.dom.target = 'ajax-iframe';
-          }
+        el.select('form[id!=ajax-iframe]').each(function(form){
+          form.dom.target = 'ajax-iframe';
         });
 
         // Search for tabs in the page
@@ -194,36 +193,31 @@ Backend.app = function(){
         if (tabs.elements.length > 0){
           // Build Tabs
           var items = tabs.elements.collect(function(tab){
-            return { id: tab.id, contentEl: tab.id, title: tab.title };
+            return { id: tab.id+'-tabbed', contentEl: tab.id, title: tab.title };
           });
 
           // Get ActiveTab
           var activeTab = (cache.activeTab || 0);
 
+          // We select the first form in the dom
           var form = el.select('form[target=ajax-iframe]').first();
-          
-          this.tabPanel = new Ext.TabPanel({
-            applyTo: form,
-            xtype:'tabpanel',
+
+          // We need this for IE8
+          var formId = Ext.id(form, 'ajax-form-');
+
+          var tabConfig = {
+            applyTo: formId,
             activeTab: activeTab,
             border:false,
             items: items,
-            deferredRender: true, 
+            deferredRender: false, 
             layoutOnTabChange: true,
             enableTabScroll: true,
             defaults: { autoScroll:true, layout:'fit' }
-          });
-          
-          // We need to add an extra container for maximize compatibility with 
-          // lastest safari builds.
-          var panelConfig = {
-            border:false,
-            layout:'fit',
-            items: this.tabPanel
           };
 
           if (this.toolbar()){
-            Ext.apply(panelConfig, {
+            Ext.apply(tabConfig, {
               bbar: [{ 
                 text: Backend.locale.buttons.back, 
                 cls: 'x-btn-text-icon back', 
@@ -236,14 +230,16 @@ Backend.app = function(){
             });
           }
 
-          // Build the Container
-          var panel = new Ext.Panel(panelConfig);
-          this.addItem(panel);
-          
+          // We can build the tabPanel
+          this.tabPanel = new Ext.TabPanel(tabConfig);
+
+          // Now we add the tab panel to our main container
+          this.addItem(this.tabPanel);
+
           // Need to use this because some times we add tabs from inline scripts
           this.tabPanel.on('add', function(container, tab){ if (tab.id == activeTab) { Backend.app.tabPanel.setActiveTab(activeTab); } });
         }
-        
+
         // Now we can load scripts an eval scripts from the original html
         var re = /(?:<script([^>]*)?>)((\n|\r|.)*?)(?:<\/script>)/ig;
         var srcRe = /\ssrc=([\'\"])(.*?)\1/i;
@@ -277,7 +273,7 @@ Backend.app = function(){
         throw this.error(e)
       }
     },//inspectContent
-    
+
     error: function(e){
       if (typeof console != 'undefined') { 
         console.error(e);
@@ -285,7 +281,7 @@ Backend.app = function(){
         Ext.Msg.alert(Backend.locale.messages.alert.title, e);
       }
     }, // error
-    
+
     openHelp: function(){
       var form = new Ext.FormPanel({
         baseCls: 'x-plain',
@@ -300,7 +296,8 @@ Backend.app = function(){
       });
 
       var formDialog = new Ext.Window({
-        title: Backend.locale.help.title, 
+        id: 'help-window',
+        title: Backend.locale.help.title,
         items: form, 
         width: 500,
         height: 300,
@@ -330,11 +327,11 @@ Backend.app = function(){
           }
         });
       }, this);
-      
+
       formDialog.addButton(Backend.locale.buttons.close, formDialog.close, formDialog);
       formDialog.show();
     }, // openHelp
-    
+
     doLayout : function(){
       this.contentDynamic.doLayout();
     }, //doLayout
@@ -345,13 +342,13 @@ Backend.app = function(){
         this.contentDynamic.el.mask(text);
       }
     }, // mask
-    
+
     unmask : function(){
       if (this.contentDynamic){
         this.contentDynamic.el.unmask();
       }
     }, // unmask
-    
+
     collapseBoxes : function(current){
       var el = current.up().down('div.x-box-collapsible');
       var currentEl = Ext.get(el);
@@ -397,16 +394,16 @@ Backend.window = Ext.extend(Ext.Window, {
     }
     this.html = '<iframe id="'+this.iframeId+'" class="windowed" src="/backend/base/?small=1&toolbar='+(this.form?0:1)+'&load='+this.url+'" frameBorder="0" width="100%" height="100%" />';
   }, // initComponent
-  
+
   afterShow : function(afterShow){
     Backend.window.superclass.afterShow.call(this);
     this.contentWindow = Ext.fly(this.iframeId).dom.contentWindow;
   }, // onRender
-  
+
   getSelections: function(){
     return this.contentWindow[this.grid].getSelectionModel().getSelections();
   }, // getSelections
-  
+
   closeWithSelections: function(){
     if (this.getSelections().length > 0){
       this.fireEvent('selected', this, this.getSelections());
@@ -415,7 +412,7 @@ Backend.window = Ext.extend(Ext.Window, {
       Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.notSelected); 
     }
   }, // closeWithSelections
-  
+
   saveForm: function(){
     this.contentWindow.Backend.app.submitForm();
     this.fireEvent('saved', this);
