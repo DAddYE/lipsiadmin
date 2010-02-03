@@ -1,4 +1,3 @@
-# If you translate this other language or have something to fix please send me an email at: d.dagostino@lipsiasoft.com
 en:
   backend:
     tabs:
@@ -14,7 +13,7 @@ en:
       of: "of"
     sessions:
       wrong: "Wrong email or password"
-      logout: "Correctly Logged Out"
+      logout: "Successfully Logged Out"
     menus:
       account: "Account"
       list: "List"
@@ -43,15 +42,15 @@ en:
         send: "Send"
       help:
         title: "Support request"
-        description: "Say us what problem do you have and how we can reproduce it"
-        compliments: "Your request was correctly delivered."
+        description: "Tell us the problem you have and how we can reproduce it."
+        compliments: "Your request was delivered successfully."
       labels:
         all: "All "
         search: "Search"
       messages:
         compliments: 
           title: "Congratulations"
-          message: "Your data are correctly saved."
+          message: "Your data was saved successfully."
         wait:
           title: "Sending Data"
           message: "Sending data to servers..."
@@ -60,8 +59,8 @@ en:
           message: "Are you sure to destroy {0} element/s ?"
         alert:
           title: "Attention"
-          message: "There are some connection issues.<br />Contact tecnical support."
-          notConfigured: "This fatures is not ready yet.<br />Contact tecnical support."
+          message: "There are some connection issues.<br />Contact technical support."
+          notConfigured: "This feature is not ready yet.<br />Contact technical support."
           notSelected: "You must select at least one record"
 
     emails:
@@ -70,7 +69,7 @@ en:
         body: "Hello {{name}},\nyour account has been activated.\n\nYou can login with the following email/password:\n\n- Email: {{email}}\n- Password: {{password}}\n\nusing the following url: {{url}}"
       support:
         object: "Support Request"
-      footer: "\n---------------------------\nCordiali Saluti,\nLipsiaSoft s.r.l."
+      footer: "\n---------------------------\nThank you,\nLipsiaSoft s.r.l."
     
     print:
       footer: 
