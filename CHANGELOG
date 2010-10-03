@@ -1,3 +1,7 @@
+2010-09-3
+  * Fixed haml supports
+  * Fixed Rails 3 compatiblity
+
 2009-12-18
   * Bump to 5.1.1
   * Updated ExtJS to 3.1+ Version
@@ -26,7 +30,7 @@
   * Changed the rake lipsiadmin:update:javascripts now update also backend.js.erb and locale.js.erb
   * Added a new frontend helper method for resize images on the fly
   * Added new locales for rails 2.3.4
-  
+
 2009-09-7
   * Bump to 5.0.7
   * Fix some compatibility issues on IE6+
@@ -131,7 +135,7 @@
   * Added ImageMagick requirements to gem
   * Improved doc
   * Allow models to have multiple attachments definitions
-  
+
 2009-05-18
   * Small fix in generation of account access
   * Fix an issue in backend_page generator
@@ -157,7 +161,7 @@
   * Removed unusued routes
   * Fix few typos
   * Require at least Rails 2.2.x
-  
+
 2009-04-30
   * Fix a small typo in extgrid
   * Fix a dependency problem in lipsiadmin rake tasks
@@ -190,7 +194,7 @@
 2009-03-17
   * Bump to version 3.3.3
   * Fix a typo in attachment migration
-  
+
 2009-03-16
   * Bump to version 3.3.2
   * Updated locales for work with rails 2.3.2 (do rake lipsiadmin:update:locales)
@@ -199,7 +203,7 @@
   * Bump to version 3.3.1
   * Removed debug code from state_session_controller
   * Fix mistake in ux.js [Joseph]
-  
+
 2009-03-13
   * Improve licensed PD4ML detection, now will look first into vendor/pd4ml
   * Bump to version 3.3
@@ -208,7 +212,7 @@
   * Added a new utils for use your licensed (if you have it) pd4ml jar
   * Fix pluralization when lipsiadmin generate migrations (attachment)
   * Removed debug info in lipsiadmin rake
-  
+
 2009-03-10
   * Fixed some typos in attachment table [Vakiliy]
 
@@ -232,7 +236,7 @@
 
 2009-02-28
   * Fixed a small js error on dblclick on grids
-  * Added for Ext::Component a new method for remove listener, remove_listener 
+  * Added for Ext::Component a new method for remove listener, remove_listener
   * Added for Ext::Component a new alias for grid.on, called add_listener
   * Fixed problem with generation of template for boolean cols
   * Improvement in Backend.js, now mask() when clean()
@@ -256,7 +260,7 @@
   * Added scope to the component events
   * Added a new task for update javascripts (add require 'lipsiadmin_tasks' if you don't have yet in your RakeFile)
   * Fixed padding in DateTime Field for firefox
-  * Removed not necessary frontend images 
+  * Removed not necessary frontend images
   * Extended Ext Component to be more flexible
   * Small refactoring of ext components
 
@@ -293,7 +297,7 @@
   * Refactored text_field, text_area, password_field helpers
   * Refactored country_select helper
   * Refactored ext_date_select, ext_datetime_select helpers
-  
+
 2008-02-24
   * Rename Js app from Lipsiadmin.app to Backend.app
   * Added the possibility to reuse pages/froms/grids in windows.
@@ -317,7 +321,7 @@
   * Added utility scopes for paginate, include, search
   * Added a new literal method for prevent json to "strignify" javascripts funtctions (eg. "function() { alert('me')}".to_l)
   * Added a new module for escape utf8 chars for servers that don't have java with utf8 fonts (it's used by pdf builder)
-  
+
 2008-05-21
   * Added a new PDF generator, we don't need the expensive PRINCEXML, we can use pd4ml
 
@@ -326,7 +330,7 @@
 
 2008-05-09.
   * Added ext-all-debug.js (Was autodetect if env == development)
-  * Removed menuitems table and added new module project 
+  * Removed menuitems table and added new module project
   * Improve Auth System with project modules
   * Initial rdoc documentation
   * Removed from admin view list to index so we can use cruds

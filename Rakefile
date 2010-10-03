@@ -27,7 +27,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-spec = Gem::Specification.new do |s| 
+spec = Gem::Specification.new do |s|
   s.name              = PKG_NAME
   s.version           = PKG_VERSION
   s.author            = "Davide D'Agostino"
@@ -39,7 +39,7 @@ spec = Gem::Specification.new do |s|
   s.files             = FileList["CHANGELOG", "README.rdoc", "MIT-LICENSE", "Rakefile", "init.rb", "{lipsiadmin_generators,lib,resources,tasks}/**/*"].to_a
   s.has_rdoc          = true
   s.requirements << "ImageMagick"
-  s.add_dependency('haml')
+  s.add_dependency('haml', '<= 3.0.18')
   s.add_dependency('rails', '>= 2.2.1')
 end
 
@@ -65,7 +65,7 @@ desc "Unistall the gem from local"
 task :uninstall => [:clean] do
   sh %{sudo gem uninstall #{PKG_NAME}} rescue nil
 end
- 
+
 desc "Generate a gemspec file for GitHub"
 task :gemspec do
   File.open("#{spec.name}.gemspec", 'w') do |f|
@@ -74,19 +74,12 @@ task :gemspec do
 end
 
 desc "Publish the API documentation"
-task :pdoc => [:rdoc] do 
+task :pdoc => [:rdoc] do
   Rake::SshDirPublisher.new("root@lipsiasoft.net", "/mnt/www/apps/lipsiasoft/doc", "doc").upload
 end
 
 desc "Publish the release files to RubyForge."
-task :release => [ :package ] do
-  require 'rubyforge'
-  require 'rake/contrib/rubyforgepublisher'
-
-  packages = %w( gem tgz zip ).collect{ |ext| "pkg/#{PKG_NAME}-#{PKG_VERSION}.#{ext}" }
-
-  rubyforge = RubyForge.new
-  rubyforge.configure
-  rubyforge.login
-  rubyforge.add_release(PKG_NAME, PKG_NAME, "REL #{PKG_VERSION}", *packages)
+desc "Release the gem"
+task :release => :package do
+  sh "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
 end

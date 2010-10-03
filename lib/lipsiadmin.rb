@@ -22,6 +22,7 @@ require 'data_base/translate_attributes'
 require 'data_base/attachment'
 require 'data_base/attachment_table'
 require 'data_base/utility_scopes'
+gem 'haml', '3.0.18'
 require 'haml'
 require 'version'
 require 'generator'
@@ -61,7 +62,7 @@ end
 
 ActionMailer::Base.class_eval do
   include Lipsiadmin::Mailer::PdfBuilder
-  include Lipsiadmin::View::Helpers::PdfHelper  
+  include Lipsiadmin::View::Helpers::PdfHelper
 end
 
 # For Attachments
