@@ -81,5 +81,5 @@ end
 desc "Publish the release files to RubyForge."
 desc "Release the gem"
 task :release => :package do
-  sh "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
+  sh "gem push pkg/#{spec.name}-#{spec.version}.gem"
 end
