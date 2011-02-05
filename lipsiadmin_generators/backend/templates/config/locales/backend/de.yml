@@ -6,9 +6,9 @@ de:
     titles:
       welcome: "Willkommen"
     general:
-      list: "Liste {{model}}"
-      editForm: "Ändern {{model}} {{value}}"
-      newForm: "Neu {{model}}"
+      list: "Liste %{model}"
+      editForm: "Ändern %{model} %{value}"
+      newForm: "Neu %{model}"
       cantDelete: "Du kannst diesen Satz nicht löschen!"
       page: "Seite"
       of: "von"
@@ -67,7 +67,7 @@ de:
     emails:
       registration: 
         object: "Ihr Benutzerkonto wurde aktiviert"
-        body: "Hallo {{name}},\nIhr Benutzerkonto wurde aktiviert.\n\nDu kanst Dich mit dem folgenden Email-Kennung und Passwort anmelden:\n\n- Email: {{email}}\n- Passwort: {{password}}\n\nbenutze folgende URL: {{url}}"
+        body: "Hallo %{name},\nIhr Benutzerkonto wurde aktiviert.\n\nDu kanst Dich mit dem folgenden Email-Kennung und Passwort anmelden:\n\n- Email: %{email}\n- Passwort: %{password}\n\nbenutze folgende URL: %{url}"
       support:
         object: "Support Anfrage"
       footer: "\n---------------------------\nViele Grüße,\nLipsiaSoft s.r.l."

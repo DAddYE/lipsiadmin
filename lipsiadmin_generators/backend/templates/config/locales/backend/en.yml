@@ -5,9 +5,9 @@ en:
     titles:
       welcome: "Welcome"
     general:
-      list: "List {{model}}"
-      editForm: "Edit {{model}} {{value}}"
-      newForm: "New {{model}}"
+      list: "List %{model}"
+      editForm: "Edit %{model} %{value}"
+      newForm: "New %{model}"
       cantDelete: "You cannot delete this record."
       page: "Page"
       of: "of"
@@ -66,7 +66,7 @@ en:
     emails:
       registration: 
         object: "Your account has been activated"
-        body: "Hello {{name}},\nyour account has been activated.\n\nYou can login with the following email/password:\n\n- Email: {{email}}\n- Password: {{password}}\n\nusing the following url: {{url}}"
+        body: "Hello %{name},\nyour account has been activated.\n\nYou can login with the following email/password:\n\n- Email: %{email}\n- Password: %{password}\n\nusing the following url: %{url}"
       support:
         object: "Support Request"
       footer: "\n---------------------------\nThank you,\nLipsiaSoft s.r.l."

@@ -5,9 +5,9 @@ it:
     titles:  
       welcome: "Benvenuto"
     general:
-      list: "Elenco {{model}}"
-      editForm: "Modifica {{model}} {{value}}"
-      newForm: "Nuovo {{model}}"
+      list: "Elenco %{model}"
+      editForm: "Modifica %{model} %{value}"
+      newForm: "Nuovo %{model}"
       cantDelete: "Non puoi cancellare questo record."
       page: "Pagina"
       of: "di"
@@ -66,7 +66,7 @@ it:
     emails:
       registration: 
         object: "Il tuo account ora è stato creato"
-        body: "Salve {{name}},\nil tuo account ora è attivo.\n\nTi puoi loggare utilizzando i seguenti dati:\n\n- Email: {{email}}\n- Password: {{password}}\n\ncollegandoti al seguente url: {{url}}"
+        body: "Salve %{name},\nil tuo account ora è attivo.\n\nTi puoi loggare utilizzando i seguenti dati:\n\n- Email: %{email}\n- Password: %{password}\n\ncollegandoti al seguente url: %{url}"
       support:
         object: "Richiesta di supporto"
       footer: "\n---------------------------\nCordiali Saluti,\nLipsiaSoft s.r.l."
