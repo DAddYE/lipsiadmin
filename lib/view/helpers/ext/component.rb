@@ -182,7 +182,7 @@ module Lipsiadmin#:nodoc:
       #   Component.new("Ext.grid.RowSelectionModel").to_s
       # 
       def to_s(options={})
-        script = returning [] do |script|
+        script = [].tap do |script|
           script << @before.uniq.compact.join("\n\n")
           script << "var #{get_var} = new #{@klass}(#{config.to_s});"
           script << @after.uniq.compact.join("\n\n")
@@ -216,7 +216,7 @@ module Lipsiadmin#:nodoc:
         end
         
         def build_var
-          returning "" do |val|
+          "".tap do |val|
             if @prefix.blank?
               val << @klass.split(".").last.demodulize.slice(0..0).downcase
               val << @klass.split(".").last.demodulize.slice(1..-1)

@@ -1,3 +1,6 @@
+2011-09-1
+  * Fix deprecations
+
 2010-09-3
   * Fixed haml supports
   * Fixed Rails 3 compatiblity
