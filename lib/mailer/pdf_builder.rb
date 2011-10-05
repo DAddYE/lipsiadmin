@@ -72,7 +72,9 @@ module Lipsiadmin
         input.gsub!('url(','url('+RAILS_ROOT+'/public')
 
         # write our temp file
-        t = Tempfile.new("pd4ml.html", "#{Rails.root}/tmp")
+        tmp = File.join(Rails.root, 'tmp')
+        Dir.mkdir(tmp) unless File.exist?(tmp)
+        t = Tempfile.new("pd4ml.html", tmp)
         t.binmode
         t.write(input)
         t.flush
