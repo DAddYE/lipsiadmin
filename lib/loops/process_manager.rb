@@ -38,7 +38,7 @@ module Lipsiadmin
 
           break if @shutdown
           logger.debug("Sleeping for #{@config['poll_period']} seconds...")
-          sleep(@config['poll_period']) 
+          sleep(@config['poll_period'])
         end
       ensure
         unless wait_for_workers(10)
@@ -70,7 +70,7 @@ module Lipsiadmin
 
           logger.debug("#{running_total} workers are still running! Sleeping for a second...")
           sleep(1)
-        end    
+        end
 
         return false
       end

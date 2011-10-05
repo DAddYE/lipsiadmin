@@ -7,7 +7,7 @@ module Lipsiadmin
     #
     # Processors are required to be defined inside the Attachment module and
     # are also required to be a subclass of Attachment::Processor. There are
-    # only two methods you must implement to properly be a subclass: 
+    # only two methods you must implement to properly be a subclass:
     # #initialize and #make. Initialize's arguments are the file that will
     # be operated on (which is an instance of File), and a hash of options
     # that were defined in has_attached_file's style hash.

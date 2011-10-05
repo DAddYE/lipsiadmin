@@ -6,11 +6,11 @@ class CreateAccounts < ActiveRecord::Migration
     end
 
     # I'll create the first account
-    Account.create({:email => "info@lipsiasoft.com", 
-                    :name => "Davide", 
+    Account.create({:email => "info@lipsiasoft.com",
+                    :name => "Davide",
                     :surname => "D'Agostino",
-                    :password => "admin", 
-                    :password_confirmation => "admin", 
+                    :password => "admin",
+                    :password_confirmation => "admin",
                     :role => "administrator" })
   end
 

@@ -12,10 +12,10 @@ module Lipsiadmin
   # Attachment defines an attachment as any file, though it makes special considerations
   # for image files. You can declare that a model has an attached file with the
   # +has_one_attachment+ method:
-  # 
+  #
   # From your console:
   #   script/generate attachment
-  # 
+  #
   # Then in any model you can do:
   #
   #   class User < ActiveRecord::Base
@@ -29,15 +29,15 @@ module Lipsiadmin
   #
   # See the <tt>Lipsiadmin::DataBase::Attachment::ClassMethods</tt> documentation for more details.
   module Attachment
-    
+
     class << self
       # Provides configurability to Attachment. There are a number of options available, such as:
-      # * whiny_thumbnails: Will raise an error if Attachment cannot process thumbnails of 
+      # * whiny_thumbnails: Will raise an error if Attachment cannot process thumbnails of
       #   an uploaded image. Defaults to false.
       # * log: Logs progress to the Rails log. Uses ActiveRecord's logger, so honors
       #   log levels, etc. Defaults to true.
       # * command_path: Defines the path at which to find the command line
-      #   programs if they are not visible to Rails the system's search path. Defaults to 
+      #   programs if they are not visible to Rails the system's search path. Defaults to
       #   nil, which uses the first executable found in the user's search path.
       # * image_magick_path: Deprecated alias of command_path.
       def options
@@ -53,15 +53,15 @@ module Lipsiadmin
         name = name.to_s.camelize
         processor = Lipsiadmin::Attachment.const_get(name)
         unless processor.ancestors.include?(Lipsiadmin::Attachment::Processor)
-          raise AttachmentError.new("Processor #{name} was not found") 
+          raise AttachmentError.new("Processor #{name} was not found")
         end
         processor
       end
-      
+
       def interpolates(key, &block) #:nodoc:
         Lipsiadmin::Attachment.interpolations[key] = block
       end
-      
+
       # The run method takes a command to execute and a string of parameters
       # that get passed to it. The command is prefixed with the :command_path
       # option from Attachment.options. If you have many commands to run and
@@ -80,7 +80,7 @@ module Lipsiadmin
         end
         output
       end
-      
+
       def path_for_command(command)#:nodoc:
         path = [options[:command_path] || options[:image_magick_path], command].compact
         File.join(*path)
@@ -90,7 +90,7 @@ module Lipsiadmin
         File.exists?("/dev/null") ? "/dev/null" : "NUL"
       end
     end
-    
+
     class AttachmentError < StandardError #:nodoc:
     end
 
@@ -99,7 +99,7 @@ module Lipsiadmin
 
     class NotIdentifiedByImageMagickError < AttachmentError #:nodoc:
     end
-    
+
     # The Attachment class manages the files for a given attachment. It saves
     # when the model saves, deletes when the model is destroyed, and processes
     # the file upon assignment.
@@ -148,7 +148,7 @@ module Lipsiadmin
 
         normalize_style_definition
         initialize_storage
-                
+
         log("Attachment on #{instance.class} initialized.")
       end
 
@@ -156,7 +156,7 @@ module Lipsiadmin
       # errors, assigns attributes, processes the file, and runs validations. It
       # also queues up the previous file for deletion, to be flushed away on
       # #save of its host.  In addition to form uploads, you can also assign
-      # another Attachment attachment: 
+      # another Attachment attachment:
       #   new_user.avatar = old_user.avatar
       # If the file that is assigned is not valid, the processing (i.e.
       # thumbnailing, etc) will NOT be run.
@@ -193,7 +193,7 @@ module Lipsiadmin
 
         solidify_style_definitions
         post_process if valid?
-        
+
         # Reset the file size if the original file was reprocessed.
         instance_write(:file_size, @queued_for_write[:original].size.to_i)
       ensure
@@ -282,7 +282,7 @@ module Lipsiadmin
         instance_read(:content_type)
       end
 
-      # Returns the last modified time of the file as originally assigned, and 
+      # Returns the last modified time of the file as originally assigned, and
       # lives in the <attachment>_updated_at attribute of the model.
       def updated_at
         time = instance_read(:updated_at)
@@ -304,7 +304,7 @@ module Lipsiadmin
           :basename     => lambda do |attachment,style|
                              attachment.original_filename.gsub(/#{File.extname(attachment.original_filename)}$/, "")
                            end,
-          :extension    => lambda do |attachment,style| 
+          :extension    => lambda do |attachment,style|
                              ((style = attachment.styles[style]) && style[:format]) ||
                              File.extname(attachment.original_filename).gsub(/^\.+/, "")
                            end,
@@ -415,7 +415,7 @@ module Lipsiadmin
       def solidify_style_definitions #:nodoc:
         @styles.each do |name, args|
           if @styles[name][:geometry].respond_to?(:call)
-            @styles[name][:geometry] = @styles[name][:geometry].call(instance) 
+            @styles[name][:geometry] = @styles[name][:geometry].call(instance)
           end
         end
       end

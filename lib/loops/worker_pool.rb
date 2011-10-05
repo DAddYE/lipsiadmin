@@ -15,7 +15,7 @@ module Lipsiadmin
 
       def start_workers(number)
         logger.debug("Creating #{number} workers for #{name} loop...")
-        number.times do 
+        number.times do
           @workers << Lipsiadmin::Loops::Worker.new(name, logger, @engine, &@worker_block)
         end
       end

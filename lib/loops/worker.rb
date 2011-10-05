@@ -10,7 +10,7 @@ module Lipsiadmin
 
         @name = name
         @logger = logger
-        @engine = engine    
+        @engine = engine
         @worker_block = blk
 
         @shutdown = false

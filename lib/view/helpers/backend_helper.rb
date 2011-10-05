@@ -39,35 +39,35 @@ module Lipsiadmin
               contents = ''
               contents << content_tag(:p, message) unless message.blank?
               contents << content_tag(:ul, error_messages, :class => :list)
-              
+
               content_tag(:script, "Ext.Msg.show({
                           title: '#{header_message}',
                           msg: '<ul>#{contents}</ul>',
                           buttons: Ext.Msg.OK,
-                          minWidth: 400 
+                          minWidth: 400
                         });", :type => Mime::JS)
             end
           else
             ''
           end
         end
-        
+
         # This method add tab for in your view.
-        # 
-        # First argument is the name and title of the tab, an interesting thing wose that this helper 
+        #
+        # First argument is the name and title of the tab, an interesting thing wose that this helper
         # try to translate itself to your current locale ex:
-        # 
+        #
         #   # Look for: I18n.t("backend.tabs.settings", :default => "Settings")
         #   tab :settings do
         #     ...
-        # 
+        #
         # The second argument specify if is necessary 10px of padding inside the tab, default is +true+
-        # 
+        #
         # Third argument is an hash that accepts:
-        # 
+        #
         # <tt>:id</tt>::    The id of the tab
         # <tt>:style</tt>:: Custom style of the tab
-        # 
+        #
         def tab(name, padding=true, options={}, &block)
           options[:id]    ||= name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/-+$/, '').gsub(/^-+$/, '')
           options[:style] ||= "padding:10px;#{options[:style]}" if padding
@@ -77,85 +77,85 @@ module Lipsiadmin
           container = content_tag(:div, capture(&block), :class => :full) # Is necessary for IE6+
           concat content_tag(:div, container, options)
         end
-        
+
         # Set the title of the page.
-        # 
-        # An interesting thing wose that this helper 
+        #
+        # An interesting thing wose that this helper
         # try to translate itself to your current locale ex:
-        # 
+        #
         #   # Look for: I18n.t("backend.titles.welcome_here", :default => "Welcome Here")
         #   title :welcome_here
-        # 
+        #
         def title(title)
           title = I18n.t("backend.titles.#{title.gsub(/\./,"").to_s.downcase}", :default => title.to_s.humanize)
           content_tag(:script, "Backend.app.setTitle(#{title.to_json})", :type => Mime::JS)
         end
-        
+
         # Get the title for grids of the specified model based on your
         # current locale.
-        # 
+        #
         # The locale file for this translation is located: config/locales/backend
-        # 
+        #
         #   # Generate: List all Accounts
         #   list_title_for(Account)
-        # 
+        #
         #   # Generate: List all My Accounts
         #   list_title_for("My Accounts")
-        # 
+        #
         def list_title_for(text)
           I18n.t("backend.general.list", :model => text.is_a?(String) ? text : text.send(:human_name))
         end
-        
+
         # Get the title for edit action of a form based on your current locale
-        # 
+        #
         # The locale file for this translation is located: config/locales/backend
-        # 
+        #
         #   # Generate: Edit Account 18
         #   edit_title_for(Account, @account.id)
-        #   
+        #
         #   # Generate: Edit My Account Foo Bar
         #   edit_title_for("My Account", @account.full_name)
-        # 
+        #
         def edit_title_for(text, value)
           title I18n.t("backend.general.editForm", :model => text.is_a?(String) ? text : text.send(:human_name), :value => value)
         end
 
         # Get the title for new action of a form based on your current locale
-        # 
+        #
         # The locale file for this translation is located: config/locales/backend
-        # 
+        #
         #   # Generate: New Account
         #   new_title_for(Account)
-        #   
+        #
         #   # Generate: New My Account
         #   new_title_for("My Account")
-        # 
+        #
         def new_title_for(text)
           title I18n.t("backend.general.newForm", :model => text.is_a?(String) ? text : text.send(:human_name))
         end
-        
+
         # Try to translate the given word
-        # 
+        #
         #   # Generate: I18n.t("backend.labels.add", :default => "Add")
         #   tl("Add")
-        # 
+        #
         def translate_label(text)
           I18n.t("backend.labels.#{text.to_s.downcase.gsub(/\s/, "_")}", :default => text.to_s.humanize)
         end
         alias_method :tl, :translate_label
 
         # Try to translate the given pharse
-        # 
+        #
         #   # Generate: I18n.t("backend.labels.lipsiadmin_is_beautifull", :default => "Lipsiadmin is beautifull")
         #   tt("Lipsiadmin is beautifull")
-        # 
+        #
         def translate_text(text)
           I18n.t("backend.texts.#{text.to_s.downcase.gsub(/\s/, "_")}", :default => text.to_s.humanize)
         end
         alias_method :tt, :translate_text
-        
+
         # Return the translated attribute based on your current locale
-        # 
+        #
         #   # In config/locales/backend/models/en.yml
         #   en:
         #     activerecord:
@@ -164,8 +164,8 @@ module Lipsiadmin
         #           name: "Account Name"
         #           suranme: "Custom Title For Surname"
         #           role: "Im a"
-        #   
-        #   # Generates: 
+        #
+        #   # Generates:
         #   #   Account Name
         #   #   Custom Title For Surname
         #   #   Im a
@@ -174,11 +174,11 @@ module Lipsiadmin
         #   human_name_for :account, :surname
         #   human_name_for :account, :role
         #   human_name_for :account, :attribute_not_translated
-        # 
+        #
         def human_name_for(instance, method)
           I18n.t("activerecord.attributes.#{instance}.#{method}", :default => method.to_s.humanize)
         end
-        
+
         # Generate the menu from the Lispiadmin::AccessControl
         def backend_menu
           config = AccountAccess.maps_for(current_account).collect(&:project_modules).flatten.uniq.collect(&:config)
@@ -187,38 +187,38 @@ module Lipsiadmin
         end
 
         # Returns html for upload one image or generic file.
-        # 
+        #
         # Options can be one of the following:
-        # 
+        #
         # <tt>:image</tt>::       Indicate if the attachments are ONLY images.
         # <tt>:only_upload</tt>:: Indicate that is not necessary manage the old attachments.
-        # 
+        #
         # Examples:
-        # 
+        #
         #   class Category < ActiveRecord::Base
         #     has_one_attachments    :file,   :dependent => :destroy
         #   ...
-        # 
+        #
         # Then in our view we can simply add this:
-        # 
+        #
         #   attachments_tag(:category, :file)
-        # 
+        #
         # Remember that al labels can be translated. See Locales for Backend.
-        # 
+        #
         def attachment_tag(object_name, method, options={})
           variable = instance_variable_get("@#{object_name}")
           html     = []
           html    << '<!-- Generated from Lipsiadmin -->'
-          
+
           unless options[:only_upload]
             html    << '<ul id="' + "#{method}-order" + '" class="label">'
-            
+
             if attachment = variable.send(method)
               # Create first the remove link
-              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
-                                                        :method => :delete, 
+              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}",
+                                                        :method => :delete,
                                                         :success => "$('#{method}_#{attachment.id}').remove();")
-            
+
               if options[:image]
                 fstyle  = "float:left;margin:5px;margin-left:0px;"
                 fclass  = "box-image"
@@ -237,12 +237,12 @@ module Lipsiadmin
                 ftag   += '</div>'
                 ftag   += '<br style="clear:both" />'
               end
-            
+
               html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
               html << ' ' + ftag
               html << '</li>'
             end # End of Loop
-            
+
             html << '</ul>'
             html << '<br style="clear:both" />'
           end
@@ -258,41 +258,41 @@ module Lipsiadmin
           html << '</table>'
           html.join("\n")
         end
-        
+
         # Returns html for upload multiple images or generic files.
-        # 
+        #
         # Options can be one of the following:
-        # 
+        #
         # <tt>:image</tt>::       Indicate if the attachments are ONLY images.
         # <tt>:only_upload</tt>:: Indicate that is not necessary manage the old attachments.
         # <tt>:order</tt>::       Indicate if user can order files.
-        # 
+        #
         # Examples:
-        # 
+        #
         #   class Category < ActiveRecord::Base
         #     has_many_attachments    :images,   :dependent => :destroy
         #     validates_attachment_content_type_for :images, /^image/
         #   ...
-        # 
+        #
         # Then in our view we can simply add this:
-        # 
+        #
         #   attachments_tag(:category, :images, :image => true, :order => true)
-        # 
+        #
         # Remember that al labels can be translated. See Locales for Backend.
-        # 
+        #
         def attachments_tag(object_name, method, options={})
           variable = instance_variable_get("@#{object_name}")
           html     = []
           html    << '<!-- Generated from Lipsiadmin -->'
           unless options[:only_upload]
             html    << '<ul id="' + "#{method}-order" + '" class="label">'
-            
+
             for attachment in variable.send(method).all(:order => :position)
               # Create first the remove link
-              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}", 
-                                                        :method => :delete, 
+              remove_link = link_to_remote(tl(:remove), :url => "/backend/attachments/#{attachment.id}",
+                                                        :method => :delete,
                                                         :success => "$('#{method}_#{attachment.id}').remove();")
-            
+
               if options[:image]
                 fstyle  = "float:left;margin:5px;margin-left:0px;"
                 fstyle += "cursor:move;" if options[:order]
@@ -313,15 +313,15 @@ module Lipsiadmin
                 ftag   += '</div>'
                 ftag   += '<br style="clear:both" />'
               end
-            
+
               html << '<li id="' + "#{method}_#{attachment.id}" + '" class="' + fclass + '" style="' + fstyle + '">'
               html << ' ' + ftag
               html << '</li>'
             end # End of Loop
-            
+
             html << '</ul>'
             html << '<br style="clear:both" />'
-          
+
 
             if options[:order]
               constraint = options[:image] ? "horizontal" : "vertical"
@@ -330,7 +330,7 @@ module Lipsiadmin
                                                           :complete => visual_effect(:highlight, "#{method}-message", :duration => 0.5))
             end
           end
-          
+
           flbl = options[:image] ? :upload_images : :upload_files
           html << '<div class="label-title">'+ tl(flbl) +'</div>'
           html << '<table>'
@@ -351,26 +351,26 @@ module Lipsiadmin
         end
 
         # Build a new windows that can contain an existent grid
-        # 
+        #
         # The first argument name is used as the link text.
-        # 
+        #
         # The second argument is the url where js of grid are stored.
-        # 
+        #
         # The third argument is the name of the gird var usually gridPanel or editorGridPanel.
-        # 
+        #
         # The four argument are callbacks that may be specified:
-        # 
+        #
         # <tt>:before</tt>::     Called before request is initiated.
         # <tt>:update</tt>::     Called after user press +select+ button.
         #                        This call are performed in an handler where
         #                        you have access to two variables:
         #                        <tt>:win</tt>::  Backend.window
         #                        <tt>:selections</tt>::  Records selected in the grid
-        # 
-        #   # Generates: <a onclick="      
-        #   #   new Backend.window({ 
-        #   #     url: '/backend/categories.js', 
-        #   #     grid: 'gridPanel',  
+        #
+        #   # Generates: <a onclick="
+        #   #   new Backend.window({
+        #   #     url: '/backend/categories.js',
+        #   #     grid: 'gridPanel',
         #   #     listeners: {
         #   #       selected: function(win, selections){
         #   #         $('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');
@@ -382,14 +382,14 @@ module Lipsiadmin
         #   build_grid "Select a Category", "/backend/categories.js", "gridPanel",
         #     :update => "$('post_category_ids').value = selections.collect(function(s) { return s.id }).join(',');" +
         #     "$('category_names').innerHTML = selections.collect(function(s) { return s.data['categories.name'] }).join(', ');"
-        # 
+        #
         def build_grid(text, url, grid, options={})
           options[:before] = options[:before] + ";" if options[:before]
           javascript = <<-JAVASCRIPT
             #{options[:before]}
-            new Backend.window({ 
-              url: '#{url}', 
-              grid: '#{grid}',  
+            new Backend.window({
+              url: '#{url}',
+              grid: '#{grid}',
               listeners: {
                 selected: function(win, selections){
                   #{options[:update]}
@@ -402,23 +402,23 @@ module Lipsiadmin
         alias_method :open_grid, :build_grid
 
         # Open a Standard window that can contain a standard existent grid
-        # 
+        #
         # Options can be one of the following:
-        # 
+        #
         # <tt>:grid</tt>::       The name of the grid var. Default "gridPanel"
         # <tt>:url</tt>::        The url where the grid is stored. Default is autogenerated.
         # <tt>:name</tt>::       The name of the link that open the window grid. Default a image.
-        # 
+        #
         #   # Generates: <a onclick="
-        #   #   new Backend.window({ 
-        #   #     url: '/backend/suppliers.js', 
-        #   #     grid: 'gridPanel', 
-        #   #     listeners: {  
-        #   #       selected: function(win, selections){  
-        #   #         $('warehouse_supplier_id').value = selections.first().id; 
-        #   #         $('warehouse_supplier_name').innerHTML = selections.first().data['suppliers.name']  
-        #   #       }  
-        #   #     }  
+        #   #   new Backend.window({
+        #   #     url: '/backend/suppliers.js',
+        #   #     grid: 'gridPanel',
+        #   #     listeners: {
+        #   #       selected: function(win, selections){
+        #   #         $('warehouse_supplier_id').value = selections.first().id;
+        #   #         $('warehouse_supplier_name').innerHTML = selections.first().data['suppliers.name']
+        #   #       }
+        #   #     }
         #   #   }).show(); return false;">
         #   # <img alt="New" src="/images/backend/new.gif?1242655402" style="vertical-align:bottom" /></a>
         #   # <input id="warehouse_supplier_id" name="warehouse[supplier_id]" type="hidden" value="16" />
@@ -430,7 +430,7 @@ module Lipsiadmin
           options[:grid]    ||= "gridPanel"
           options[:url]     ||= "/backend/#{ext_object.to_s.pluralize}.js"
           options[:name]    ||= image_tag("backend/new.gif", :style => "vertical-align:bottom")
-          update_function     = "$('#{object_name}_#{ext_object}_#{value}').value = selections.first().#{value_field}; " + 
+          update_function     = "$('#{object_name}_#{ext_object}_#{value}').value = selections.first().#{value_field}; " +
                                 "$('#{object_name}_#{ext_object}_#{display}').innerHTML = selections.first().data['#{ext_object.to_s.pluralize}.#{display}']"
 
           content_tag(:span, current_value, :id => "#{object_name}_#{ext_object}_#{display}" ) + ' ' +
@@ -439,23 +439,23 @@ module Lipsiadmin
         end
 
         # Open a new windows that can contain a form that you can reuse
-        # 
+        #
         # The first argument name is used as the link text.
-        # 
+        #
         # The second argument is the url where html of form are stored.
-        # 
+        #
         # The third argument are callbacks that may be specified:
-        # 
+        #
         # <tt>:before</tt>::     Called before request is initiated.
         # <tt>:after</tt>::      Called after  request is initiated.
         # <tt>:on_save</tt>::    Called after user press +save+ button.
         #                        This call are performed in an handler where
         #                        you have access to one variables:
         #                        <tt>:win</tt>::  Backend.window
-        # 
-        #   # Generates: <a onclick="  
-        #   #     new Backend.window({ 
-        #   #       url: '/backend/posts/'+$('comment_post_id').value+'/edit', 
+        #
+        #   # Generates: <a onclick="
+        #   #     new Backend.window({
+        #   #       url: '/backend/posts/'+$('comment_post_id').value+'/edit',
         #   #       form: true,
         #   #       listeners: {
         #   #         saved: function(win){
@@ -465,13 +465,13 @@ module Lipsiadmin
         #   #     }).show();
         #   # return false;" href="#">Edit Post</a>
         #   open_form "Edit Post", "/backend/posts/'+$('comment_post_id').value+'/edit", :update => "someFn(win);"
-        #   
+        #
         def open_form(text, url, options={})
           options[:before] = options[:before] + ";" if options[:before]
           javascript = <<-JAVASCRIPT
             #{options[:before]}
-            new Backend.window({ 
-              url: '#{url}', 
+            new Backend.window({
+              url: '#{url}',
               form: true,
               listeners: {
                 saved: function(win){ #{options[:on_save]} },
@@ -481,15 +481,15 @@ module Lipsiadmin
           JAVASCRIPT
           link_to_function(text, javascript.gsub(/\n/, " "))
         end
-        
-        # This method call a remote_function and in the same time do a 
-        # 
+
+        # This method call a remote_function and in the same time do a
+        #
         #   Backend.app.mask()
         #
-        # and when the function is complete 
-        # 
+        # and when the function is complete
+        #
         #   Backend.app.unmask()
-        # 
+        #
         def link_to_remote_with_wait(name, options={}, html_options={})
           options[:complete] = "Backend.app.unmask();"
           options[:before]  = "Backend.app.mask('#{I18n.t('backend.javascripts.messages.wait.message')}')";
@@ -497,18 +497,18 @@ module Lipsiadmin
         end
 
         # This method generates a new ExtJs BoxComponent.
-        # 
+        #
         #   Examples:
-        # 
+        #
         #     -box "My Title", "My Subtitle", :submit => true, :collapsible => true, :style => "padding:none", :start => :close do
         #       my content
-        # 
+        #
         # Defaults:
-        # 
+        #
         # * :submit => false
         # * :collapsible => false
         # * :start => :close
-        # 
+        #
         def box(title=nil, subtitle=nil, options={}, &block)
           options[:style] ||= "width:100%;"
           options[:start] ||= :open
@@ -544,7 +544,7 @@ module Lipsiadmin
             </div>
           HTML
         end
-        
+
       end
     end
   end

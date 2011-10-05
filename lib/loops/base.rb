@@ -12,7 +12,7 @@ module Lipsiadmin
     #
     class Base#:nodoc:
       attr_accessor :name, :config, :logger
-      
+
       # The initialize method, default we pass the logger
       def initialize(logger)
         self.logger = logger

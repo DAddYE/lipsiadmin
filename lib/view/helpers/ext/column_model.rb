@@ -3,7 +3,7 @@ module Lipsiadmin
     # Generate a new Ext.grid.ColumnModel
     #
     #   Examples:
-    # 
+    #
     #     var columnModel = new Ext.grid.ColumnModel({
     #       columns: [{
     #         header: "Name",
@@ -19,32 +19,32 @@ module Lipsiadmin
     #         header: "Created At",
     #         dataIndex: "created_at"
     #     }]});
-    #     
+    #
     #   ColumnModel.new do |columns|
     #     columns.add :name,             "Name"
     #     columns.add :category_name,    "Category",      :dataIndex => "categories.name"
     #     columns.add :date,             "Date"
     #     columns.add :created_at,       "Created At"
     #   end
-    #     
-    class ColumnModel < Component      
+    #
+    class ColumnModel < Component
       def initialize(options={}, &block)#:nodoc:
         super("Ext.grid.ColumnModel", { :columns => [] }.merge(options))
         yield self if block_given?
       end
-      
+
       # This add automatically fields from an array
       def fields(fields)
         fields.each { |options| add_column(nil, nil, options); }
       end
-      
+
       # Add columns to a Ext.grid.ColumnModel
       #
       #   # Generates: { header: "Created At", dataIndex: "accounts.datetime", sortable => true }
       #   add "Created At", "accounts.datetime", :sortable => true
-      # 
+      #
       # You can pass :renderer
-      #   
+      #
       #   # Generates: Ext.util.Format.dateRenderer()
       #   :render   => :time_to_date # This render a datetime to a date
       #   # Generates: Ext.util.Format.dateRenderer()
@@ -66,11 +66,11 @@ module Lipsiadmin
       #   :render => :trim
       #   :render => :undef
       #   :render => :upcase
-      # 
+      #
       # For more see http://extjs.com/deploy/dev/docs/?class=Ext.util.Format
-      # 
+      #
       # You can pass :editor
-      # 
+      #
       #   # Generates: { checkbox: true }
       #   :editor => { :xtype => :checkbox, :someConfig => true }
       #   # Generates: new Ext.form.ComboBox({ someConfig => true });
@@ -87,7 +87,7 @@ module Lipsiadmin
       #   :editor => { :xtype => :textfield, :someConfig => true }
       #   # Generates: new Ext.form.TimeField({ someConfig => true });
       #   :editor => { :xtype => :timefield, :someConfig => true }
-      # 
+      #
       #   Form components so are:
       #   ---------------------------------------
       #   :checkbox      =>   Ext.form.Checkbox
@@ -98,11 +98,11 @@ module Lipsiadmin
       #   :textarea      =>   Ext.form.TextArea
       #   :textfield     =>   Ext.form.TextField
       #   :timefield     =>   Ext.form.TimeField
-      # 
+      #
       def add_column(name=nil, data=nil, options={})
         options[:header] = name if name
         options[:dataIndex] = data if data
-        
+
         if options[:editor]
           xtype = options[:editor][:xtype]
           case xtype
@@ -117,7 +117,7 @@ module Lipsiadmin
             when :datetimefield then options.merge!(:editor => "new Ext.form.DateTimeField(#{Configuration.new(options[:editor]).to_s(3)})".to_l)
           end
         end
-        
+
         case options[:renderer]
           when :time_to_date then options.merge!(:renderer => "Ext.util.Format.dateRenderer()".to_l)
           when :date         then options.merge!(:renderer => "Ext.util.Format.dateRenderer()".to_l)
@@ -133,8 +133,8 @@ module Lipsiadmin
           when :undef        then options.merge!(:renderer => "Ext.util.Format.undef".to_l)
           when :upcase       then options.merge!(:renderer => "Ext.util.Format.uppercase".to_l)
         end
-        
-        raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? || 
+
+        raise ComponentError, "You must provide header and dataIndex for generate a column model" if options[:header].blank? ||
                                                                                                      options[:dataIndex].blank?
 
         config[:columns] << Configuration.new(options)

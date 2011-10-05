@@ -5,7 +5,7 @@ class CreateStateSessions < ActiveRecord::Migration
       t.string     :component,   :null => false
       t.text       :data
     end
-    
+
     add_index :state_sessions, :component
   end
 

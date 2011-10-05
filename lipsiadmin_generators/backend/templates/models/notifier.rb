@@ -5,11 +5,11 @@ class Notifier < ActionMailer::Base
     subject     "[#{AppConfig.project}] #{I18n.t('backend.emails.registration.object')}"
     body        :account => account, :url => "#{AppConfig.host_addr}/backend"
   end
-  
+
   def support_request(account, message)
     from        account.email
     recipients  AppConfig.email_help
     subject     "[#{AppConfig.project}] #{I18n.t('backend.emails.support.object')}"
     body        :message => message
   end
-end 
+end

@@ -3,9 +3,9 @@ require 'action_view/helpers/tag_helper'
 module Lipsiadmin
   module View
     module Helpers#:nodoc:
-      # Returns text_area, text_field, password_field with 
+      # Returns text_area, text_field, password_field with
       # a default extjs css style.
-      # 
+      #
       module FormHelper
         def self.included(base)#:nodoc:
           base.alias_method_chain :text_area, :style
@@ -15,9 +15,9 @@ module Lipsiadmin
 
         # Returns text_area with extjs style
         # alias for text_area, for use the original tag use:
-        # 
+        #
         #   text_area_without_style
-        # 
+        #
         def text_area_with_style(name, value = nil, options = {})
           options[:class] ||= "x-form-field"
           options[:style] ||= "width:100%;height:80px"
@@ -26,20 +26,20 @@ module Lipsiadmin
 
         # Returns text_field with extjs style
         # alias for text_field, for use the original tag use:
-        # 
+        #
         #   text_field_without_style
-        #        
+        #
         def text_field_with_style(name, method, options = {})
           options[:class] ||= "x-form-text"
           options[:style] ||= "width:100%"
           text_field_without_style(name, method, options)
         end
-        
+
         # Returns password_field with extjs style
         # alias for password_field, for use the original tag use:
-        # 
+        #
         #   password_field_without_style
-        #        
+        #
         def password_field_with_style(name, method, options = {})
           options[:class] ||= "x-form-text"
           options[:style] ||= "width:100%"
@@ -47,11 +47,11 @@ module Lipsiadmin
         end
       end
 
-      # Returns text_area_tag, text_field_tag, password_field_tag with 
+      # Returns text_area_tag, text_field_tag, password_field_tag with
       # a default extjs css style.
-      #      
+      #
       module FormTagHelper
-        
+
         def self.included(base)#:nodoc:
           base.alias_method_chain :text_field_tag, :style
           base.alias_method_chain :text_area_tag, :style
@@ -60,9 +60,9 @@ module Lipsiadmin
 
         # Returns text_area_tag with extjs style
         # alias for text_area_tag, for use the original tag use:
-        # 
+        #
         #   text_area_tag_without_style
-        # 
+        #
         def text_area_tag_with_style(name, value = nil, options = {})
           options[:class] ||= "x-form-field"
           options[:style] ||= "width:100%;height:80px"
@@ -71,39 +71,39 @@ module Lipsiadmin
 
         # Returns text_field_tag with extjs style
         # alias for text_field_tag, for use the original tag use:
-        # 
+        #
         #   text_field_tag_without_style
-        # 
+        #
         def text_field_tag_with_style(name, value = nil, options = {})
           options[:class] ||= "x-form-text"
           options[:style] ||= "width:100%"
           text_field_tag_without_style(name, value, options)
         end
-        
+
         # Returns password_field_tag with extjs style
         # alias for password_field_tag, for use the original tag use:
-        # 
+        #
         #   password_field_tag_style
-        # 
+        #
         def password_field_tag_with_style(name, value = nil, options = {})
           options[:class] ||= "x-form-text"
           options[:style] ||= "width:100%"
           password_field_tag_without_style(name, value, options)
         end
       end
-      
+
       module DateHelper
         # Returns an ExtJs Calendar
-        # 
+        #
         #   Examples:
         #     =ext_date_select :post, :created_at
-        #       
+        #
         def ext_date_select(object_name, method, options = {}, html_options = {})
           InstanceTag.new(object_name, method, self, options.delete(:object)).to_ext_date_select_tag(options, html_options)
         end
-      
+
         # Returns an ExtJs Calendar and a Time selector
-        # 
+        #
         #   Examples:
         #     =ext_datetime_select :post, :updated_at
         #
@@ -174,7 +174,7 @@ module Lipsiadmin
 
       class InstanceTag < ActionView::Helpers::InstanceTag#:nodoc:
         include CountrySelectHelper
-        
+
         def to_ext_date_select_tag(options = {}, html_options = {})
           to_ext_datetime_select_tag({ :hideTime => true.to_l }.merge(options), html_options)
         end
@@ -190,7 +190,7 @@ module Lipsiadmin
           tag("input", html_options) +
           content_tag(:script, "new Ext.form.DateTimeField(#{options.to_json});", :type => Mime::JS)
         end
-        
+
         def to_country_select_tag(priority_countries, options, html_options)
           html_options = html_options.stringify_keys
           add_default_name_and_id(html_options)
@@ -212,7 +212,7 @@ module Lipsiadmin
         def ext_datetime_select(method, options = {}, html_options = {})
           @template.ext_datetime_select(@object_name, method, options.merge(:object => @object), html_options)
         end
-        
+
         def country_select(method, priority_countries = nil, options = {}, html_options = {})
           @template.country_select(@object_name, method, priority_countries, options.merge(:object => @object), html_options)
         end

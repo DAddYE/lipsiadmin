@@ -18,14 +18,14 @@ module Lipsiadmin
 
       @@email_prefix = "[ERROR] "
       cattr_accessor :email_prefix
-      
+
       self.mailer_name = "exception"
       self.template_root = "#{File.dirname(__FILE__)}"
 
       def self.reloadable?#:nodoc:
-        false 
+        false
       end
-      
+
       # This method deliver the exception for the given controller and request
       def exception(exception, controller, request)
         content_type "text/plain"
@@ -41,6 +41,6 @@ module Lipsiadmin
       end
 
     end
-    
+
   end
 end

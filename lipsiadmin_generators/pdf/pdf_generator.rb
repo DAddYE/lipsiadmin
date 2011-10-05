@@ -4,7 +4,7 @@ class PdfGenerator < Rails::Generator::NamedBase
     super
     usage if runtime_args.size == 1
   end
-  
+
   def manifest
     record do |m|
       # Copy Stylesheets
@@ -18,7 +18,7 @@ class PdfGenerator < Rails::Generator::NamedBase
         m.template 'view.html.haml', "app/views/pdf/#{action}.html.haml",
           :assigns => { :action => action }
       end
-      
+
       m.puts remember
     end
   end
@@ -28,20 +28,20 @@ class PdfGenerator < Rails::Generator::NamedBase
     def banner
       "Usage: #{$0} pdf action"
     end
-    
+
     def remember
       <<-MESSAGE
 
 ==============================================================================================
 
   Please remember to add in your controller(s) some like:
-  
-#{actions.collect { |a| 
+
+#{actions.collect { |a|
 "    def generate_pdf_#{a}
       render_pdf :#{a}, '#{a}_file.pdf'
     end" }.join("\n\n")}
 
 ==============================================================================================
       MESSAGE
-    end    
+    end
 end

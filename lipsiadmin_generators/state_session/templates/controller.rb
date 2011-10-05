@@ -1,5 +1,5 @@
 class Backend::StateSessionsController < BackendController
-  
+
   def index
     render :json => current_account.state_sessions
   end

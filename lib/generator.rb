@@ -11,7 +11,7 @@ module Lipsiadmin#:nodoc:
           alias_method_chain :use_component_sources!, :lipsiadmin
         end
       end
-      
+
       # Append my sources
       def use_component_sources_with_lipsiadmin!
         use_component_sources_without_lipsiadmin!
@@ -38,7 +38,7 @@ module Lipsiadmin#:nodoc:
                           "public/images/",
                           "public/javascripts/",
                           "public/stylesheet/"]
-        
+
         def with_source_in(path)
           root = source_path(path)
           Find.find(root) do |f|
@@ -63,7 +63,7 @@ module Lipsiadmin#:nodoc:
           # Need to do this for remove all directories
           directories.each { |d| directory(d) unless PROTECTED_DIRS.include?(d) }
         end
-        
+
         private
           def render_template_part(template_options)
             # Getting Sandbox to evaluate part template in it
@@ -89,7 +89,7 @@ module Lipsiadmin#:nodoc:
           end
         end
       end # Module Create
-      
+
       module Create#:nodoc:
         include Base
 

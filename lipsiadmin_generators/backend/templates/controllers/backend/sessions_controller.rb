@@ -1,7 +1,7 @@
-# This controller handles the login/logout function of the site.  
+# This controller handles the login/logout function of the site.
 class Backend::SessionsController < ApplicationController
   layout "backend"
-  
+
   def create
     self.current_account = Account.authenticate(params[:email], params[:password])
     if logged_in?

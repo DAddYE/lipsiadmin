@@ -1,15 +1,15 @@
 module Lipsiadmin
   module Ext
     # Ext configuration used by components
-    # 
+    #
     #   Generates: { name: 'name', handler: function(){ alert('Hello World') } }
     #
     class Configuration < Hash
-      
+
       def initialize(hash)#:nodoc:
         hash.each { |k,v| self[k] = v }
       end
-      
+
       # Returns the configuration as a string.
       # Optionally you can specify the indentation spaces.
       def to_s(indent=1)
@@ -19,7 +19,7 @@ module Lipsiadmin
         r = "{#{s}" + self.collect { |k,v| "#{i*2}#{k}: #{s(v)}" if k != :var }.join(",#{s}") + "#{s}#{i if i.size > 1}}"
         return r =~ /\{\s*\}/ ? "" : r
       end
-      
+
       private
         def javascript_object_for(object)
           case object

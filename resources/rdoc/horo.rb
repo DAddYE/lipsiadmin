@@ -207,7 +207,7 @@ dd {
 CSS
 
 XHTML_PREAMBLE = %{<?xml version="1.0" encoding="%charset%"?>
-<!DOCTYPE html 
+<!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 }
@@ -215,7 +215,7 @@ XHTML_PREAMBLE = %{<?xml version="1.0" encoding="%charset%"?>
 XHTML_FRAMESET_PREAMBLE = %{
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">    
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 }
 
 HEADER = XHTML_PREAMBLE + <<ENDHEADER
@@ -541,7 +541,7 @@ FILE_INDEX = XHTML_PREAMBLE + <<HTML
 <!--
   body {
     background-color: #EEE;
-    font-family: #{FONTS}; 
+    font-family: #{FONTS};
     color: #000;
     margin: 0px;
   }

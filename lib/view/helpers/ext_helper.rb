@@ -11,24 +11,24 @@ module Lipsiadmin
     module Helpers
       # Module containing the methods useful for ext/prototype
       module ExtHelper
-      
+
         def self.included(base)#:nodoc:
           base.class_eval do
             alias_method_chain :to_s, :refactoring
           end
         end
-      
+
         def to_s_with_refactoring #:nodoc:
           returning javascript = @lines * $/ do
             source = javascript.dup
           end
         end
-      
+
         # Hide all open dialogs
         def hide_dialogs
           record "Ext.Msg.getDialog().hide()"
         end
-      
+
         # Replaces the inner HTML of the Main Panel of +Backend+.
         #
         # +options_for_render+ may be either a string of HTML to insert, or a hash
@@ -37,13 +37,13 @@ module Lipsiadmin
         #   # Replaces the inner HTML of the Main Panel of +Backend+.
         #   # Generates:  Backend.app.update("-- Contents of 'person' partial --");
         #   page.update :partial => 'person', :object => @person
-        #      
+        #
         def update(*options_for_render)
           call "Backend.app.update", render(*options_for_render), true
         end
-      
+
         # Load html/js and eval it's code
-        # 
+        #
         #   # Generates: Backend.app.loadJs('/my/javascript.js');
         #   load(:controller => :my, :action => :javascript, :format => :js)
         #
@@ -51,11 +51,11 @@ module Lipsiadmin
           url = location.is_a?(String) ? location : @context.url_for(location)
           call "Backend.app.load", url
         end
-      
-        # Show errors (if they are) for the given +objects+ and show a Ext.Message 
+
+        # Show errors (if they are) for the given +objects+ and show a Ext.Message
         # with explanation of the errors or if errors are empty, a congratulation message.
-        # 
-        #   # Generates: 
+        #
+        #   # Generates:
         #   #   Ext.Msg.show({
         #   #     title:Backend.locale.messages.alert.title,
         #   #     msg: '<ul>Name can't be blank!</ul>',
@@ -80,7 +80,7 @@ module Lipsiadmin
         end
 
         # Show a Ext.alert popup
-        # 
+        #
         #   # Generates: Ext.Msg.alert('Hey!', 'Hello World')
         #   ext_alert('Hey!', 'Hello World')
         #
@@ -89,25 +89,25 @@ module Lipsiadmin
         end
 
         # Unmask the Backend App
-        # 
+        #
         #   # Generates: Backend.app.unmask()
         #   unmask
         #
         def unmask
           call "Backend.app.unmask"
         end
-        
+
         # Mask the Backend App
-        # 
+        #
         #   # Generates: Backend.app.mask('Hello World')
         #   mask("Hello World")
         #
         def mask(title=nil)
           call "Backend.app.mask", title
-        end        
-      
+        end
+
         # Create a javascript function
-        # 
+        #
         #   # Generates: function() { window.show(); };
         #   page.fn("window.show();")
         #   or
@@ -120,7 +120,7 @@ module Lipsiadmin
             record block_to_function(function || block)
           end
         end
-      
+
         # Generate a full customizable Ext.GridPanel
         #
         # Examples:
@@ -141,7 +141,7 @@ module Lipsiadmin
         #     end
         #     grid.bbar  :store => grid.get_store, :pageSize => params[:limit]
         #   end
-        # 
+        #
         def grid(options={}, &block)
           self << Lipsiadmin::Ext::Grid.new(options, &block)
         end

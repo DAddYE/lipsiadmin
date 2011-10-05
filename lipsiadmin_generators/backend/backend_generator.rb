@@ -11,7 +11,7 @@ class BackendGenerator < Rails::Generator::Base
   map.backend                 '/backend',              :controller => 'backend/base', :action => 'index'
   map.connect                 '/javascripts/:action.:format', :controller => 'javascripts'
   ROUTES
-  
+
     lipsiadmin_task = <<-EOF
 begin
   gem 'lipsiadmin'
@@ -19,14 +19,14 @@ begin
 rescue Gem::LoadError
 end
     EOF
-    
+
     record do |m|
       m.directory("app/views/exceptions")
-      
+
       m.append("config/routes.rb", routes, "ActionController::Routing::Routes.draw do |map|")
       m.append("public/robots.txt", "User-agent: *\nDisallow: /backend")
       m.append("Rakefile", lipsiadmin_task)
-      
+
       m.create_all("controllers", "app/controllers")
       m.create_all("helpers", "app/helpers")
       m.create_all("images", "public/images")
@@ -37,7 +37,7 @@ end
       m.create_all("views", "app/views")
       m.create_all("config", "config")
       m.create_all("test", "test")
-      
+
       # Using this for prevent raising errors
       migration = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_accounts.rb$/)
       if migration.empty?
@@ -45,12 +45,12 @@ end
       else
         logger.exists migration.first
       end
-      
+
       %w(404 422 500).each do |page|
         m.template("exceptions/template.html.haml", "app/views/exceptions/#{page}.html.haml", :assigns => { :status_code => page })
       end
-      
-      m.readme "../REMEMBER"      
+
+      m.readme "../REMEMBER"
     end
   end
 

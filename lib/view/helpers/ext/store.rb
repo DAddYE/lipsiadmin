@@ -1,12 +1,12 @@
 module Lipsiadmin#:nodoc:
   module Ext#:nodoc:
     # Generate a new Ext.data.GroupingStore
-    # 
+    #
     # Examples:
-    # 
+    #
     #   var store = new Ext.data.GroupingStore({
     #     reader: new Ext.data.JsonReader({
-    #       id:'id', 
+    #       id:'id',
     #       totalProperty:'count', root:'results',
     #       fields:[{
     #       name: "accounts.name"
@@ -26,7 +26,7 @@ module Lipsiadmin#:nodoc:
     #     proxy: new Ext.data.HttpProxy({ url:'/backend/accounts.json' }),
     #     remoteSort: true
     #   });
-    # 
+    #
     #   grid.store do |store|
     #     store.url "/backend/accounts.json"
     #     store.add "accounts.name"
@@ -44,28 +44,28 @@ module Lipsiadmin#:nodoc:
         baseParams("_method" => "GET")      if config[:baseParams].blank?
         yield self if block_given?
       end
-      
+
       # The url for getting the json data
       def url(value)
         @url = value
       end
-      
+
       # This add automatically fields from an array
       def fields(fields)
         fields.each { |options| add_field(nil, options) }
       end
 
-      # Add fields to a Ext.data.JsonReader 
-      # 
+      # Add fields to a Ext.data.JsonReader
+      #
       # Examples:
-      # 
+      #
       #   {
       #     type: "date",
       #     renderer: Ext.util.Format.dateTimeRenderer(),
       #     name: "accounts.datetime",
       #     dateFormat: "c"
       #   }
-      # 
+      #
       #   add "accounts.datetime", :type => :datetime
       #
       def add_field(name=nil, options={})#:nodoc:
@@ -78,8 +78,8 @@ module Lipsiadmin#:nodoc:
         raise ComponentError, "You must provide a Name for all fields" if options[:name].blank?
         @fields << Configuration.new(options)
       end
-      
-      # Return the javascript for create a new Ext.data.GroupingStore 
+
+      # Return the javascript for create a new Ext.data.GroupingStore
       def to_s
         raise ComponentError, "You must provide the correct var the store."       if get_var.blank?
         raise ComponentError, "You must provide the url for get the store data."  if @url.blank? && config[:proxy].blank?
@@ -88,7 +88,7 @@ module Lipsiadmin#:nodoc:
         config[:reader] = default_reader if config[:reader].blank?
         super
       end
-      
+
       private
         def default_proxy
          "new Ext.data.HttpProxy(#{Configuration.new(:url => @url).to_s(2)})".to_l

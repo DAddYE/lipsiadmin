@@ -3,9 +3,9 @@ require 'openssl'
 class Account < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
-  
+
   serialize                 :modules
-  
+
   # Validations
   validates_presence_of     :name, :surname, :email
   validates_presence_of     :password,                   :if => :password_required?
@@ -19,24 +19,24 @@ class Account < ActiveRecord::Base
 
   # Relations
   # go here
-  
+
   # Callbacks
   before_save               :encrypt_password
   after_create              :deliver_registration
-  
+
   # Named Scopes
   # go here
-  
+
   def full_name
     "#{name} #{surname}".strip
   end
-  
-  # If we don't found a module we need to 
+
+  # If we don't found a module we need to
   # to return an empty array
   def modules
     read_attribute(:modules) || []
   end
-  
+
   # We need to perform a little rewrite
   def modules=(perms)
     perms = perms.collect {|p| p.to_sym unless p.blank? }.compact if perms
@@ -58,7 +58,7 @@ class Account < ActiveRecord::Base
   rescue
     nil
   end
-  
+
   # Get the uncripted password
   def password_clean
     unless @password
@@ -71,7 +71,7 @@ class Account < ActiveRecord::Base
   rescue
     nil
   end
-  
+
   # If you want you can integrate you custom activation/blocking system
   # Our auth system already check this method so don't delete it
   def active?
@@ -83,11 +83,11 @@ class Account < ActiveRecord::Base
     self.class.encrypt(password, salt)
   end
 
-  # Check if the db password 
+  # Check if the db password
   def authenticated?(password)
     crypted_password.chomp == encrypt(password).chomp rescue false
   end
-  
+
   # Generate Methods takes from AccessControl rules
   # Example:
   #
@@ -95,18 +95,18 @@ class Account < ActiveRecord::Base
   #     role == "administrator"
   #   end
   AccountAccess.roles.each { |r| define_method("#{r.to_s.downcase.gsub(" ","_").to_sym}?") { role.to_s.downcase == r.to_s.downcase } }
-  
+
 protected
   def encrypt_password
     return if password.blank?
     self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--") if new_record?
     self.crypted_password = encrypt(password)
   end
-    
+
   def password_required?
     crypted_password.blank? || !password.blank?
   end
-  
+
   def deliver_registration
     Notifier.deliver_registration(self)
   end

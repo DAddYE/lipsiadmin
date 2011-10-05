@@ -10,7 +10,7 @@ module Lipsiadmin
       # which is a "WxH"-style string. +format+ will be inferred from the +file+
       # unless specified. Thumbnail creation will raise no errors unless
       # +whiny+ is true (which it is, by default. If +convert_options+ is
-      # set, the options will be appended to the convert command upon image conversion 
+      # set, the options will be appended to the convert command upon image conversion
       def initialize(file, options = {})
         super
         geometry          = options[:geometry]

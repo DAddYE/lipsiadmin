@@ -2,8 +2,8 @@ module Lipsiadmin
   module Loops
     module Daemonize#:nodoc:
       def self.read_pid(pid_file)
-        File.open(pid_file) do |f| 
-          f.gets.to_i 
+        File.open(pid_file) do |f|
+          f.gets.to_i
         end
       rescue Errno::ENOENT
         0
@@ -15,7 +15,7 @@ module Lipsiadmin
         if defined?(::JRuby)
           system "kill -0 #{pid} &> /dev/null"
           return $? == 0
-        else 
+        else
           Process.kill(0, pid)
         end
         true
@@ -66,7 +66,7 @@ module Lipsiadmin
         File.umask(0000) # Insure sensible umask
 
         return sess_id
-      end    
+      end
     end
   end
 end

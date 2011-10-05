@@ -8,23 +8,23 @@ module Lipsiadmin
         def title(text)
           content_for(:title) { text + " - #{AppConfig.project}" }
         end
-        
+
         # Set the meta description of the page
         # Usefull for google & c.
         def description(text)
           content_for(:description) { text }
         end
-        
+
         # Set the meta keywords of the page
         # Usefull for google & c.
         def keywords(text)
           content_for(:keywords) { text }
         end
-        
+
         # Override the default image tag with a special option
         # <tt>resize</tt> that crop/resize on the fly the image
         # and store them in <tt>uploads/thumb</tt> directory.
-        # 
+        #
         def image_tag(source, options = {})
           options.symbolize_keys!
           # We set here the upload path

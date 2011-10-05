@@ -1,19 +1,19 @@
 module Lipsiadmin
   module Mailer
     # This module convert a string/controller to a pdf through Pd4ml java library (included in this plugin)
-    # 
-    # PD4ML is a powerful PDF generating tool that uses HTML and CSS (Cascading Style Sheets) as page layout 
-    # and content definition format. Written in 100% pure Java, it allows users to easily add PDF generation 
+    #
+    # PD4ML is a powerful PDF generating tool that uses HTML and CSS (Cascading Style Sheets) as page layout
+    # and content definition format. Written in 100% pure Java, it allows users to easily add PDF generation
     # functionality to end products.
-    # 
+    #
     # For generate a pdf you can simply do
-    #   
+    #
     #     script/generate pdf invoice
-    # 
+    #
     # then edit your template /app/views/pdf/invoice.html.haml
-    # 
+    #
     # Then in any of your mailers add some like this:
-    # 
+    #
     #   def order_invoiced(order)
     #     recipients my@mail.com
     #     from       my@server.com
@@ -25,31 +25,31 @@ module Lipsiadmin
     #
     #     part "text/plain" do |a|
     #       a.body = render_message("order_invoiced", :order => order, :body_template => @body_template)
-    #     end       
+    #     end
     #   end
     #
-    # Lipsiadmin include a trial fully functional evaluation version, but if you want buy it, 
+    # Lipsiadmin include a trial fully functional evaluation version, but if you want buy it,
     # go here: http://pd4ml.com/buy.htm and then put your licensed jar in a directory in your
     # project then simply calling this:
-    # 
+    #
     #   Lipsiadmin::Utils::PdfBuilder.jars_path = "here/is/my/licensed/pd4ml"
     #   Lipsiadmin::Utils::PdfBuilder.view_path = "keep/template/in/other/path"
-    # 
+    #
     # you can use your version without any problem.
     #
     # By default Lipsiadmin will look into your "vendor/pd4ml" and if:
-    # 
+    #
     # * pd4ml.jar
     # * ss_css2.jar
-    # 
+    #
     # are present will use it
     #
     module PdfBuilder
       include Lipsiadmin::Utils::HtmlEntities
-      
+
       # Convert a stream to pdf, the template must be located in app/view/pdf/yourtemplate.pdf.erb
       def render_pdf(template, body)
-        
+
         # path to the pd4ml jarfile
         jars_path = Lipsiadmin::Utils::PdfBuilder.jars_path
         # path to our templates

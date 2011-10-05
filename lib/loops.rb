@@ -1,54 +1,54 @@
 require 'yaml'
 
 module Lipsiadmin
-  
+
   # ==Simple background loops framework for rails
-  # 
-  # Loops is a small and lightweight framework for Ruby on Rails created to support simple 
-  # background loops in your application which are usually used to do some background data processing 
+  #
+  # Loops is a small and lightweight framework for Ruby on Rails created to support simple
+  # background loops in your application which are usually used to do some background data processing
   # on your servers (queue workers, batch tasks processors, etc).
-  # 
+  #
   # Authors:: Alexey Kovyrin and Dmytro Shteflyuk
   # Comments:: This plugin has been created in Scribd.com for internal use.
-  # 
+  #
   # == What tasks could you use it for?
-  # 
-  # Originally loops plugin was created to make our own loops code more organized. We used to have tens 
-  # of different modules with methods that were called with script/runner and then used with nohup and 
-  # other not so convenient backgrounding techniques. When you have such a number of loops/workers to 
-  # run in background it becomes a nightmare to manage them on a regular basis (restarts, code upgrades, 
+  #
+  # Originally loops plugin was created to make our own loops code more organized. We used to have tens
+  # of different modules with methods that were called with script/runner and then used with nohup and
+  # other not so convenient backgrounding techniques. When you have such a number of loops/workers to
+  # run in background it becomes a nightmare to manage them on a regular basis (restarts, code upgrades,
   # status/health checking, etc).
-  # 
-  # After a short time of writing our loops in more organized ways we were able to generalize most of the 
-  # loops code so now our loops look like a classes with a single mandatory public method called *run*. 
-  # Everything else (spawning many workers, managing them, logging, backgrounding, pid-files management, 
+  #
+  # After a short time of writing our loops in more organized ways we were able to generalize most of the
+  # loops code so now our loops look like a classes with a single mandatory public method called *run*.
+  # Everything else (spawning many workers, managing them, logging, backgrounding, pid-files management,
   # etc) is handled by the plugin it
-  # 
-  # 
+  #
+  #
   # == But there are dozens of libraries like this! Why do we need one more?
-  # 
-  # The major idea behind this small project was to create a deadly simple and yet robust framework to 
-  # be able to run some tasks in background and do not think about spawning many workers, restarting 
-  # them when they die, etc. So, if you need to be able to run either one or many copies of your worker or 
-  # you do not want to think about re-spawning dead workers and do not want to spend megabytes of RAM on 
-  # separate copies of Ruby interpreter (when you run each copy of your loop as a separate process 
+  #
+  # The major idea behind this small project was to create a deadly simple and yet robust framework to
+  # be able to run some tasks in background and do not think about spawning many workers, restarting
+  # them when they die, etc. So, if you need to be able to run either one or many copies of your worker or
+  # you do not want to think about re-spawning dead workers and do not want to spend megabytes of RAM on
+  # separate copies of Ruby interpreter (when you run each copy of your loop as a separate process
   # controlled by monit/god/etc), then I'd recommend you to try this framework -- you'd like it.
-  # 
-  # 
+  #
+  #
   # == How to use?
-  # 
-  # Generate binary and configuration files by running 
-  # 
-  #   script/generate loops 
-  # 
+  #
+  # Generate binary and configuration files by running
+  #
+  #   script/generate loops
+  #
   # This will create the following list of files:
-  # 
+  #
   #   script/loops        # binary file that will be used to manage your loops
   #   config/loops.yml    # example configuration file
   #   app/loops/simple.rb # REALLY simple loop example
-  # 
+  #
   # Here is a simple loop scaffold for you to start from (put this file to app/loops/hello_world_loop.rb):
-  # 
+  #
   #   class HelloWorldLoop < Lipsiadmin::Loops::Base
   #     def run
   #       debug("Hello, debug log!")
@@ -56,73 +56,73 @@ module Lipsiadmin
   #       debug("Hello, debug log (yes, once again)!")
   #     end
   #   end
-  # 
-  # When you have your loop ready to use, add the following lines to your (maybe empty yet) config/loops.yml 
+  #
+  # When you have your loop ready to use, add the following lines to your (maybe empty yet) config/loops.yml
   # file:
-  # 
+  #
   #   hello_world:
   #     sleep_period: 10
-  # 
+  #
   # This is it! To start your loop, just run one of the following commands:
-  # 
+  #
   #   # Generates: list all configured loops:
   #   $ script/loops -L
-  #   
+  #
   #   # Generates: run all enabled (actually non-disabled) loops in foreground:
   #   $ script/loops -a
-  #   
+  #
   #   # Generates: run all enabled loops in background:
   #   $ script/loops -d -a
-  #   
+  #
   #   # Generates: run specific loop in background:
   #   $ ./script/loops -d -l hello_world
-  #   
+  #
   #   # Generates: all possible options:
   #   $ ./script/loops -h
-  # 
-  # 
+  #
+  #
   # == How to run more than one worker?
-  # 
-  # If you want to have more than one copy of your worker running, that is as simple as adding one 
+  #
+  # If you want to have more than one copy of your worker running, that is as simple as adding one
   # option to your loop configuration:
-  # 
+  #
   #   hello_world:
   #     sleep_period: 10
-  #     workers_number: 1  
-  # 
-  # This _workers_number_ option would say loops manager to spawn more than one copy of your loop 
-  # and run them in parallel. The only thing you'd need to do is to think about concurrent work of 
-  # your loops. For example, if you have some kind of database table with elements you need to 
+  #     workers_number: 1
+  #
+  # This _workers_number_ option would say loops manager to spawn more than one copy of your loop
+  # and run them in parallel. The only thing you'd need to do is to think about concurrent work of
+  # your loops. For example, if you have some kind of database table with elements you need to
   # process, you can create a simple database-based locks system or use any memcache-based locks.
-  # 
-  # 
+  #
+  #
   # == There is this <tt>workers_engine</tt> option in config file. What it could be used for?
-  # 
-  # There are two so called "workers engines" in this plugin: <tt>fork</tt> and <tt>thread</tt>. They're used 
-  # to control the way process manager would spawn new loops workers: with <tt>fork</tt> engine we'll 
-  # load all loops classes and then fork ruby interpreter as many times as many workers we need. 
-  # With <tt>thread</tt> engine we'd do Thread.new instead of forks. Thread engine could be useful if you 
-  # are sure your loop won't lock ruby interpreter (it does not do native calls, etc) or if you 
+  #
+  # There are two so called "workers engines" in this plugin: <tt>fork</tt> and <tt>thread</tt>. They're used
+  # to control the way process manager would spawn new loops workers: with <tt>fork</tt> engine we'll
+  # load all loops classes and then fork ruby interpreter as many times as many workers we need.
+  # With <tt>thread</tt> engine we'd do Thread.new instead of forks. Thread engine could be useful if you
+  # are sure your loop won't lock ruby interpreter (it does not do native calls, etc) or if you
   # use some interpreter that does not support forks (like jruby).
-  # 
+  #
   # Default engine is <tt>fork</tt>.
-  # 
-  # 
+  #
+  #
   # == What Ruby implementations does it work for?
-  # 
-  # We've tested and used the plugin on MRI 1.8.6 and on JRuby 1.1.5. At this point we do not support 
-  # demonization in JRuby and never tested the code on Ruby 1.9. Obviously because of JVM limitations 
+  #
+  # We've tested and used the plugin on MRI 1.8.6 and on JRuby 1.1.5. At this point we do not support
+  # demonization in JRuby and never tested the code on Ruby 1.9. Obviously because of JVM limitations
   # you won't be able to use +fork+ workers engine in JRuby, but threaded workers do pretty well.
   #
   module Loops
-    
+
     class << self
-      
+
       # Set/Return the main config
       def config
         @@config
       end
-      
+
       # Set/Return the loops config
       def loops_config
         @@loops_config
@@ -132,7 +132,7 @@ module Lipsiadmin
       def global_config
         @@global_config
       end
-      
+
       # Load the yml config file, default config/loops.yml
       def load_config(file)
         @@config = YAML.load_file(file)
@@ -141,7 +141,7 @@ module Lipsiadmin
 
         @@logger = create_logger('global', global_config)
       end
-      
+
       # Start loops, default :all
       def start_loops!(loops_to_start = :all)
         @@running_loops = []
@@ -154,7 +154,7 @@ module Lipsiadmin
           klass = load_loop_class(name)
           next unless klass
 
-          start_loop(name, klass, config) 
+          start_loop(name, klass, config)
           @@running_loops << name
         end
 
@@ -184,7 +184,7 @@ module Lipsiadmin
 
       def load_loop_class(name)
         begin
-          klass_file = LOOPS_ROOT + "/app/loops/#{name}.rb" 
+          klass_file = LOOPS_ROOT + "/app/loops/#{name}.rb"
           debug "Loading class file: #{klass_file}"
           require(klass_file)
         rescue Exception
@@ -253,12 +253,12 @@ module Lipsiadmin
           @@pm.stop_workers!
         }
 
-        trap('INT') { 
+        trap('INT') {
           warn "Received an INT signal... stopping..."
           @@pm.stop_workers!
         }
 
-        trap('EXIT') { 
+        trap('EXIT') {
           warn "Received a EXIT 'signal'... stopping..."
           @@pm.stop_workers!
         }
@@ -268,7 +268,7 @@ module Lipsiadmin
         ActiveRecord::Base.clear_active_connections!
         ActiveRecord::Base.verify_active_connections!
       end
-      
+
     end
   end
 end

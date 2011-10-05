@@ -9,11 +9,11 @@ module Lipsiadmin
       # * +path+: The location of the repository of attachments on disk. This can (and, in
       #   almost all cases, should) be coordinated with the value of the +url+ option to
       #   allow files to be saved into a place where Apache can serve them without
-      #   hitting your app. Defaults to 
+      #   hitting your app. Defaults to
       #   ":rails_root/public/:attachment/:id/:style/:basename.:extension"
-      #   By default this places the files in the app's public directory which can be served 
-      #   directly. If you are using capistrano for deployment, a good idea would be to 
-      #   make a symlink to the capistrano-created system directory from inside your app's 
+      #   By default this places the files in the app's public directory which can be served
+      #   directly. If you are using capistrano for deployment, a good idea would be to
+      #   make a symlink to the capistrano-created system directory from inside your app's
       #   public directory.
       #   See Attachment::Attachment#interpolate for more information on variable interpolaton.
       #     :path => "/var/app/attachments/:class/:id/:style/:basename.:extension"
@@ -83,25 +83,25 @@ module Lipsiadmin
       #   database.yml file, so different environments can use different accounts:
       #     development:
       #       access_key_id: 123...
-      #       secret_access_key: 123... 
+      #       secret_access_key: 123...
       #     test:
       #       access_key_id: abc...
-      #       secret_access_key: abc... 
+      #       secret_access_key: abc...
       #     production:
       #       access_key_id: 456...
-      #       secret_access_key: 456... 
+      #       secret_access_key: 456...
       #   This is not required, however, and the file may simply look like this:
       #     access_key_id: 456...
-      #     secret_access_key: 456... 
+      #     secret_access_key: 456...
       #   In which case, those access keys will be used in all environments. You can also
       #   put your bucket name in this file, instead of adding it to the code directly.
-      #   This is useful when you want the same account but a different bucket for 
+      #   This is useful when you want the same account but a different bucket for
       #   development versus production.
       # * +s3_permissions+: This is a String that should be one of the "canned" access
       #   policies that S3 provides (more information can be found here:
       #   http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html#RESTCannedAccessPolicies)
       #   The default for Attachment is "public-read".
-      # * +s3_protocol+: The protocol for the URLs generated to your S3 assets. Can be either 
+      # * +s3_protocol+: The protocol for the URLs generated to your S3 assets. Can be either
       #   'http' or 'https'. Defaults to 'http' when your :s3_permissions are 'public-read' (the
       #   default), and 'https' when your :s3_permissions are anything else.
       # * +s3_headers+: A hash of headers such as {'Expires' => 1.year.from_now.httpdate}

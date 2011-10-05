@@ -1,9 +1,9 @@
 module Lipsiadmin
   module Ext
     # Generate a new Ext.Button
-    # 
+    #
     # This component is usefull for ex in toolbars
-    # 
+    #
     #   # Generates:
     #   #{
     #   #  buttons: [{
@@ -39,7 +39,7 @@ module Lipsiadmin
     #   tbar.add_button :text => "Backend.locale.buttons.print".to_l,  :id => "print",  :disabled => false,  :cls => "x-btn-text-icon print" do |menu|
     #     menu.add_button :text => "Test Me"
     #     menu.add_button :text => "IM a sub Menu"
-    #   end    
+    #   end
     #
     class Button < Component
 
@@ -47,12 +47,12 @@ module Lipsiadmin
         super("Ext.Button", options)
         yield self if block_given?
       end
-      
+
       # Add new Button to the menu of this one
-      # 
+      #
       #   # Generates: { handler: show, text: "Add", other: "...", icon: "..." }
       #   add_button :text => "Add",  :handler => "show".to_l, :icon => "...", :other => "..."
-      # 
+      #
       def add_button(options, &block)
         config[:menu] ||= []
         config[:menu] << (options.is_a?(String) ? options : Button.new(options, &block).config)
