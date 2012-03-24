@@ -19,9 +19,7 @@ module Lipsiadmin
         end
 
         def to_s_with_refactoring #:nodoc:
-          returning javascript = @lines * $/ do
-            source = javascript.dup
-          end
+          source = @lines.join("\n")
         end
 
         # Hide all open dialogs

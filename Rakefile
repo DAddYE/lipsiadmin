@@ -58,12 +58,12 @@ end
 
 desc "Install the gem locally"
 task :install => [:uninstall, :repackage] do
-  sh %{sudo gem install pkg/#{PKG_FILE_NAME}.gem --no-ri --no-rdoc}
+  sh %{gem install pkg/#{PKG_FILE_NAME}.gem --no-ri --no-rdoc}
 end
 
 desc "Unistall the gem from local"
 task :uninstall => [:clean] do
-  sh %{sudo gem uninstall #{PKG_NAME}} rescue nil
+  sh %{gem uninstall #{PKG_NAME}} rescue nil
 end
 
 desc "Generate a gemspec file for GitHub"

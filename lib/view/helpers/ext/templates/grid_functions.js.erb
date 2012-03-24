@@ -45,10 +45,13 @@
   var columnId  = <%= @var %>.getColumnModel().getColumnId(e.column);
   var column    = <%= @var %>.getColumnModel().getColumnById(columnId);
 
+  params = {};
+  params[column.name] = e.value;
+
   Ext.Ajax.request({
     url: '<%= @base_path %>/'+e.record.id+".json",
     method: 'PUT',
-    params: column.name+'='+e.value,
+    params: params,
     success: function(result, request){
       var resultValue = Ext.decode(result.responseText);
       if (resultValue.success == true){
@@ -57,7 +60,7 @@
         Ext.Msg.alert(Backend.locale.messages.alert.title, resultValue.msg);
         e.record.reject();
       }
-    },                
+    },
     failure: function(result, request) {
       Ext.Msg.alert(Backend.locale.messages.alert.title, Lipsiadmin.locale.alert.msg);
       e.record.reject();
@@ -88,14 +91,14 @@ function remove(){
           params: {<%= @forgery_protection_token %>: '<%= @authenticity_token %>'},
           success: function(result, request){
             Backend.app.unmask();
-            var resultValue = Ext.decode(result.responseText); 
+            var resultValue = Ext.decode(result.responseText);
             if (resultValue.success == true){
               <%= @store %>.remove(r);
-            } else { 
+            } else {
               Ext.MessageBox.alert(Backend.locale.messages.alert.title, resultValue.msg);
               return;
             }
-          },                
+          },
           failure: function(result, request) {
             Backend.app.unmask();
             Ext.Msg.alert(Backend.locale.messages.alert.title, Backend.locale.messages.alert.message);
