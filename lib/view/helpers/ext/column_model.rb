@@ -29,7 +29,7 @@ module Lipsiadmin
     #
     class ColumnModel < Component
       def initialize(options={}, &block)#:nodoc:
-        super("Ext.grid.ColumnModel", { :columns => [] }.merge(options))
+        super("Ext.grid.ColumnModel", { :columns => [], :defaults => { :sortable => true } }.merge(options))
         yield self if block_given?
       end
 
