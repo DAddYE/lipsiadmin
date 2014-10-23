@@ -43,7 +43,7 @@ If you want install the edge version you can simply do:
   script/plugin install git://github.com/Lipsiasoft/lipsiadmin.git
 
 Remember that for use your attachment processor (Paperclip) you need ImageMagick installed
-on your sistem
+on your system
   
 ==Examples
 
